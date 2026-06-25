@@ -521,11 +521,58 @@ fetch("https://wttr.in/?format=j1")
 const temp =
 data.current_condition[0].temp_C;
 
-const desc =
+let desc =
 data.current_condition[0].weatherDesc[0].value;
 
+/* 英文转中文 */
+
+const weatherMap = {
+
+"Sunny":"晴天",
+"Clear":"晴朗",
+"Cloudy":"多云",
+"Partly cloudy":"局部多云",
+
+"Light rain":"小雨",
+"Light rain shower":"阵雨",
+"Patchy rain nearby":"附近有雨",
+
+"Moderate rain":"中雨",
+"Heavy rain":"大雨",
+
+"Thunderstorm":"雷暴",
+
+"Mist":"薄雾",
+"Fog":"大雾",
+
+"Snow":"下雪"
+
+};
+
+desc = weatherMap[desc] || desc;
+
+/* 天气图标 */
+
+let icon = "🌤️";
+
+if(desc.includes("晴")){
+icon="☀️";
+}
+else if(desc.includes("云")){
+icon="☁️";
+}
+else if(desc.includes("雨")){
+icon="🌧️";
+}
+else if(desc.includes("雷")){
+icon="⛈️";
+}
+else if(desc.includes("雪")){
+icon="❄️";
+}
+
 document.getElementById("weather").innerHTML =
-`🌤️ ${temp}°C · ${desc}`;
+`${icon} ${temp}°C · ${desc}`;
 
 })
 .catch(()=>{
