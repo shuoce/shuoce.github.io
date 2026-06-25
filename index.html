@@ -82,6 +82,13 @@ margin-top:10px;
 font-size:15px;
 opacity:.9;
 }
+
+.welcome{
+margin-top:12px;
+font-size:14px;
+opacity:.75;
+letter-spacing:1px;
+ }   
     
 .search-box{
 margin:35px auto;
@@ -366,6 +373,9 @@ flex-direction:column;
 <div id="weather" class="weather">
 🌤️ 获取天气中...
 </div>
+<div id="welcome" class="welcome">
+加载中...
+</div>    
 </div>
 
 <div class="search-box">
@@ -514,6 +524,31 @@ document.getElementById("date").innerText=date;
 setInterval(updateTime,1000);
 updateTime();
 
+const hour = new Date().getHours();
+
+let welcomeText="";
+
+if(hour<6){
+
+welcomeText="🌙 夜深了，早点休息";
+
+}else if(hour<12){
+
+welcomeText="☀️ 早上好";
+
+}else if(hour<18){
+
+welcomeText="🌤️ 下午好";
+
+}else{
+
+welcomeText="🌆 晚上好";
+
+}
+
+document.getElementById("welcome")
+.innerText=welcomeText;
+    
 fetch("https://wttr.in/?format=j1")
 .then(res=>res.json())
 .then(data=>{
