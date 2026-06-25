@@ -477,6 +477,12 @@ target="_blank">
   
 <div class="footer">
 
+<div id="runtime">
+🚀 已运行 0 天
+</div>
+
+<br>
+
 © 2026 shuoce.eu.cc
 
 <br><br>
@@ -692,7 +698,22 @@ localStorage.getItem("theme");
 if(savedTheme){
 setTheme(savedTheme);
     }
-    
+
+ const startDate =
+new Date("2026-06-25");
+
+const now =
+new Date();
+
+const days =
+Math.floor(
+(now-startDate)/86400000
+);
+
+document.getElementById("runtime")
+.innerHTML=
+`🚀 已运行 ${days} 天`;
+ 
 </script>
 
 <script async
