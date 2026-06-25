@@ -266,21 +266,23 @@ color:white;
 
 border-radius:20px;
 
-background:linear-gradient(
-135deg,
-#00b4ff,
-#0066ff
-);
+/* 毛玻璃风格 */
+background:rgba(255,255,255,.08);
 
-box-shadow:0 10px 30px rgba(0,102,255,.35);
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.12);
 
 transition:.3s;
 }
-
+    
 .sim-banner:hover{
 transform:translateY(-4px);
-box-shadow:0 15px 40px rgba(0,102,255,.5);
-}
+
+background:rgba(255,255,255,.15);
+
+box-shadow:0 8px 30px rgba(0,0,0,.25);
+    }
 
 .sim-title{
 font-size:24px;
@@ -300,7 +302,11 @@ padding:8px 18px;
 
 border-radius:999px;
 
-background:rgba(255,255,255,.2);
+background:#4fc3f7;
+
+color:white;
+
+font-weight:bold;
 
 font-size:14px;
 }
@@ -381,11 +387,11 @@ href="https://172.lot-ml.com/ProductEn/Index/c68981b403e80740"
 target="_blank">
 
 <div class="sim-title">
-📶 流量卡专区
+📡 流量卡专区
 </div>
 
 <div class="sim-desc">
-长期套餐 · 大流量 · 在线办理
+高性价套餐 · 大流量 · 在线办理
 </div>
 
 <div class="sim-btn">
