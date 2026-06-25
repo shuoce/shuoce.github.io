@@ -192,7 +192,70 @@ font-size:13px;
 
     color:white;
 }
-  
+
+.theme-switch{
+position:fixed;
+top:20px;
+right:20px;
+z-index:999;
+display:flex;
+gap:8px;
+}
+
+.theme-switch button{
+border:none;
+padding:10px 12px;
+border-radius:12px;
+cursor:pointer;
+background:rgba(255,255,255,.15);
+color:white;
+font-size:18px;
+backdrop-filter:blur(10px);
+}
+
+.theme-switch button:hover{
+background:rgba(255,255,255,.3);
+}
+
+.transparent-mode .panel,
+.transparent-mode .card,
+.transparent-mode .quote-box{
+background:rgba(255,255,255,.03);
+backdrop-filter:none;
+}
+
+.dark-mode .panel,
+.dark-mode .card,
+.dark-mode .quote-box{
+background:rgba(0,0,0,.55);
+border:1px solid rgba(255,255,255,.08);
+}
+
+.light-mode{
+color:#222;
+}
+
+.light-mode .panel{
+background:rgba(255,255,255,.75);
+}
+
+.light-mode .card{
+background:rgba(255,255,255,.65);
+color:#222;
+}
+
+.light-mode .quote-box{
+background:rgba(255,255,255,.65);
+color:#222;
+}
+
+.light-mode .card-title,
+.light-mode .card-desc,
+.light-mode .footer,
+.light-mode .date{
+color:#222;
+}
+    
 @media(max-width:768px){
 
 .panel{
@@ -216,6 +279,13 @@ flex-direction:column;
 </head>
 
 <body>
+
+<div class="theme-switch">
+    <button onclick="setTheme('glass')">🧊</button>
+    <button onclick="setTheme('transparent')">👁️</button>
+    <button onclick="setTheme('dark')">🌙</button>
+    <button onclick="setTheme('light')">☀️</button>
+</div>
 
 <div class="container">
 
@@ -383,6 +453,43 @@ document.getElementById("hitokoto").innerHTML =
 
 });  
 
+function clearTheme(){
+
+document.body.classList.remove(
+"transparent-mode",
+"dark-mode",
+"light-mode"
+);
+
+}
+
+function setTheme(mode){
+
+clearTheme();
+
+if(mode==="transparent"){
+document.body.classList.add("transparent-mode");
+}
+
+if(mode==="dark"){
+document.body.classList.add("dark-mode");
+}
+
+if(mode==="light"){
+document.body.classList.add("light-mode");
+}
+
+localStorage.setItem("theme",mode);
+
+}
+
+const savedTheme =
+localStorage.getItem("theme");
+
+if(savedTheme){
+setTheme(savedTheme);
+    }
+    
 </script>
 
 </body>
