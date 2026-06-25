@@ -1,39 +1,230 @@
-<div class="avatar">
-硕
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Shuoce 导航页</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Microsoft YaHei",sans-serif;
+}
+
+body{
+background:#0b1020;
+color:#fff;
+min-height:100vh;
+padding:30px;
+background-image:
+radial-gradient(circle at 20% 20%,rgba(0,255,255,.15),transparent 25%),
+radial-gradient(circle at 80% 80%,rgba(98,0,255,.15),transparent 25%);
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header{
+text-align:center;
+margin-bottom:40px;
+}
+
+.header h1{
+font-size:48px;
+margin-bottom:10px;
+}
+
+.header p{
+opacity:.7;
+}
+
+.search{
+max-width:700px;
+margin:30px auto;
+}
+
+.search form{
+display:flex;
+gap:10px;
+}
+
+.search input{
+flex:1;
+padding:15px;
+border:none;
+border-radius:12px;
+background:#151c33;
+color:#fff;
+font-size:16px;
+}
+
+.search button{
+padding:15px 25px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:#00d4ff;
+font-weight:bold;
+}
+
+.section{
+margin-top:40px;
+}
+
+.section-title{
+font-size:22px;
+margin-bottom:15px;
+border-left:4px solid #00d4ff;
+padding-left:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:15px;
+}
+
+.card{
+background:#151c33;
+padding:18px;
+border-radius:16px;
+text-decoration:none;
+color:white;
+transition:.3s;
+border:1px solid rgba(255,255,255,.05);
+}
+
+.card:hover{
+transform:translateY(-5px);
+border-color:#00d4ff;
+box-shadow:0 0 20px rgba(0,212,255,.3);
+}
+
+.card-title{
+font-size:18px;
+margin-bottom:8px;
+}
+
+.card-desc{
+font-size:13px;
+opacity:.7;
+}
+
+.footer{
+text-align:center;
+margin-top:50px;
+opacity:.5;
+font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>Shuoce 导航页</h1>
+<p>常用网站快捷入口</p>
 </div>
 
-<h1>SHUOCE</h1>
-
-<div class="subtitle">
-技术探索者 · 创作者 · 开发者
+<div class="search">
+<form action="https://www.baidu.com/s" method="get">
+<input type="text" name="wd" placeholder="输入关键词搜索...">
+<button type="submit">搜索</button>
+</form>
 </div>
 
-<div class="line"></div>
+<div class="section">
+<div class="section-title">开发工具</div>
+<div class="grid">
 
-<div class="desc">
-欢迎来到我的个人空间。<br>
-这里记录技术学习、项目实践与生活思考。<br>
-保持热爱，持续探索，创造更多可能。
+<a class="card" href="https://github.com" target="_blank">
+<div class="card-title">GitHub</div>
+<div class="card-desc">代码托管平台</div>
+</a>
+
+<a class="card" href="https://chatgpt.com" target="_blank">
+<div class="card-title">ChatGPT</div>
+<div class="card-desc">AI 助手</div>
+</a>
+
+<a class="card" href="https://stackoverflow.com" target="_blank">
+<div class="card-title">Stack Overflow</div>
+<div class="card-desc">程序员问答</div>
+</a>
+
+<a class="card" href="https://vercel.com" target="_blank">
+<div class="card-title">Vercel</div>
+<div class="card-desc">网站部署</div>
+</a>
+
+</div>
 </div>
 
-<div class="links">
-<a href="https://github.com/shuoce" target="_blank">
-GitHub
+<div class="section">
+<div class="section-title">学习资源</div>
+<div class="grid">
+
+<a class="card" href="https://www.runoob.com" target="_blank">
+<div class="card-title">菜鸟教程</div>
+<div class="card-desc">编程学习</div>
 </a>
 
-<a href="#">
-项目展示
+<a class="card" href="https://developer.mozilla.org" target="_blank">
+<div class="card-title">MDN</div>
+<div class="card-desc">Web 文档</div>
 </a>
 
-<a href="#">
-技术博客
+<a class="card" href="https://www.bilibili.com" target="_blank">
+<div class="card-title">B站</div>
+<div class="card-desc">学习视频</div>
 </a>
 
-<a href="#">
-联系我
+<a class="card" href="https://www.coursera.org" target="_blank">
+<div class="card-title">Coursera</div>
+<div class="card-desc">在线课程</div>
 </a>
+
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">常用网站</div>
+<div class="grid">
+
+<a class="card" href="https://www.google.com" target="_blank">
+<div class="card-title">Google</div>
+<div class="card-desc">搜索引擎</div>
+</a>
+
+<a class="card" href="https://www.youtube.com" target="_blank">
+<div class="card-title">YouTube</div>
+<div class="card-desc">视频平台</div>
+</a>
+
+<a class="card" href="https://mail.google.com" target="_blank">
+<div class="card-title">Gmail</div>
+<div class="card-desc">邮箱</div>
+</a>
+
+<a class="card" href="https://drive.google.com" target="_blank">
+<div class="card-title">Google Drive</div>
+<div class="card-desc">云盘</div>
+</a>
+
+</div>
 </div>
 
 <div class="footer">
-© 2026 shuoce.eu.cc · Powered by GitHub Pages & Cloudflare
+© 2026 shuoce.eu.cc
 </div>
+
+</div>
+
+</body>
+</html>
