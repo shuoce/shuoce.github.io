@@ -359,6 +359,33 @@ font-size:30px;
 flex-direction:column;
 }
 
+/* 🔥 在这里新增播放器移动端优化 */
+.music-player{
+    width:92%;
+    right:4%;
+    bottom:12px;
+    padding:14px;
+    border-radius:18px;
+}
+
+.music-title{
+    font-size:15px;
+}
+
+.music-artist{
+    font-size:12px;
+}
+
+.music-control button{
+    width:42px;
+    height:42px;
+    font-size:18px;
+}
+
+#progress{
+    height:4px;
+}
+
 }
  /* ==========================
    头像样式
@@ -591,15 +618,29 @@ cursor:pointer;
 transition:.25s;
 }
 
-.music-control button:hover{
+.music-fold{
+position:absolute;
+top:10px;
+left:10px;
 
-background:#4fc3f7;
+width:30px;
+height:30px;
 
-transform:translateY(-3px) scale(1.08);
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,.15);
+color:white;
 
-box-shadow:
-0 0 20px rgba(79,195,247,.5);
+cursor:pointer;
+font-size:16px;
+transition:.2s;
 }
+
+.music-fold:hover{
+background:#4fc3f7;
+transform:scale(1.1);
+}
+
 .music-close{
 position:absolute;
 top:10px;
@@ -796,7 +837,7 @@ target="_blank">
 <!-- ===== macOS 音乐播放器 ===== -->
 <div class="music-player" id="musicPlayer">
 
-<button id="togglePlayer" class="music-close">✖</button>
+    <button id="foldBtn" class="music-fold">⏴</button>
 
     <div class="music-cover" id="musicCover">
     <img src="Personalization/player icon.png" alt="封面">
@@ -1158,14 +1199,17 @@ avatar.onclick = () => {
 
 };
 
-const togglePlayer = document.getElementById("togglePlayer");
-
-togglePlayer.onclick = () => {
-    musicPlayer.classList.add("hide");
-};
-
 /* 初始化 */
 loadSong(index);
+
+audio.autoplay = true;
+
+audio.play().then(() => {
+    playBtn.innerText = "⏸";
+    musicCover.classList.add("playing");
+}).catch(() => {
+    console.log("浏览器阻止自动播放，需要用户交互");
+});
  
 </script>
 
@@ -1241,6 +1285,21 @@ particlesJS("particles-js",{
   },
   retina_detect:true
 });
+const foldBtn = document.getElementById("foldBtn");
+
+let folded = false;
+
+foldBtn.onclick = () => {
+    folded = !folded;
+
+    if(folded){
+        musicPlayer.style.width = "90px";
+        musicPlayer.style.height = "90px";
+    }else{
+        musicPlayer.style.width = "360px";
+        musicPlayer.style.height = "auto";
+    }
+};
 </script>
 
 </body>
