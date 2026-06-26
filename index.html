@@ -392,65 +392,213 @@ box-shadow:
 0 0 80px rgba(79,195,247,.35);
 }
 /* ==========================
-   音乐播放器
+   macOS 音乐播放器
 ========================== */
 
 .music-player{
 position:fixed;
-right:25px;
-bottom:25px;
-width:320px;
-padding:18px;
+right:24px;
+bottom:24px;
+width:360px;
+padding:22px;
+border-radius:24px;
+
 background:rgba(255,255,255,.08);
-backdrop-filter:blur(20px);
-border:1px solid rgba(255,255,255,.12);
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.25);
+backdrop-filter:blur(30px);
+-webkit-backdrop-filter:blur(30px);
+
+border:1px solid rgba(255,255,255,.18);
+
+box-shadow:
+0 12px 40px rgba(0,0,0,.35),
+0 0 30px rgba(79,195,247,.18);
+
+overflow:hidden;
 z-index:9999;
+transition:.35s ease;
+}
+
+/* 展开/收起 */
+
+.music-player.hide{
+transform:translateY(150%);
+opacity:0;
+pointer-events:none;
+}
+
+/* 流光 */
+
+.music-player::before{
+
+content:"";
+
+position:absolute;
+
+left:-50%;
+top:-50%;
+
+width:200%;
+height:200%;
+
+background:
+linear-gradient(
+120deg,
+transparent,
+rgba(79,195,247,.08),
+transparent
+);
+
+animation:flow 10s linear infinite;
+
+pointer-events:none;
+}
+
+@keyframes flow{
+
+from{
+transform:rotate(0deg);
+}
+
+to{
+transform:rotate(360deg);
+}
+
+}
+
+/* 唱片封面 */
+
+.music-cover{
+
+width:76px;
+height:76px;
+
+margin:auto;
+
+border-radius:50%;
+
+overflow:hidden;
+
+box-shadow:
+0 0 18px rgba(79,195,247,.45);
+
+margin-bottom:15px;
+}
+
+.music-cover img{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+}
+
+.music-cover.playing{
+
+animation:spin 10s linear infinite;
+
+}
+
+@keyframes spin{
+
+from{
+transform:rotate(0);
+}
+
+to{
+transform:rotate(360deg);
+}
+
 }
 
 .music-title{
-font-size:16px;
-font-weight:bold;
+
 text-align:center;
-margin-bottom:12px;
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-bottom:5px;
+
 }
 
-.music-time{
-display:flex;
-justify-content:space-between;
-font-size:12px;
-opacity:.8;
-margin-top:6px;
+.music-artist{
+
+text-align:center;
+
+font-size:13px;
+
+opacity:.75;
+
+margin-bottom:15px;
+
 }
 
 #progress{
+
 width:100%;
+
+accent-color:#4fc3f7;
+
 cursor:pointer;
+
+}
+
+.music-time{
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:12px;
+
+opacity:.75;
+
+margin-top:6px;
+
 }
 
 .music-control{
+
 display:flex;
+
 justify-content:center;
-gap:15px;
-margin-top:15px;
+
+gap:18px;
+
+margin-top:18px;
+
 }
 
 .music-control button{
-width:46px;
-height:46px;
+
+width:52px;
+height:52px;
+
 border:none;
+
 border-radius:50%;
-background:rgba(255,255,255,.15);
+
+background:rgba(255,255,255,.12);
+
 color:#fff;
-font-size:20px;
+
+font-size:22px;
+
 cursor:pointer;
-transition:.3s;
+
+transition:.25s;
 }
 
 .music-control button:hover{
+
 background:#4fc3f7;
-transform:scale(1.08);
+
+transform:translateY(-3px) scale(1.08);
+
+box-shadow:
+0 0 20px rgba(79,195,247,.5);
 }
 </style>
 </head>
@@ -621,11 +769,19 @@ target="_blank">
 
 </div>
 
-<!-- ===== 音乐播放器 ===== -->
-<div class="music-player">
+<!-- ===== macOS 音乐播放器 ===== -->
+<div class="music-player hide" id="musicPlayer">
+
+    <div class="music-cover" id="musicCover">
+    <img src="Personalization/player icon.png" alt="封面">
+</div>
 
     <div class="music-title" id="musicTitle">
-        🎵 奶酪
+        奶酪
+    </div>
+
+    <div class="music-artist" id="musicArtist">
+        未知歌手
     </div>
 
     <input
@@ -858,9 +1014,29 @@ document.getElementById("runtime")
 .innerHTML=
 `🚀 已运行 ${days} 天`;
  
- /* ==========================
-   音乐播放器
+/* ==========================
+   macOS 音乐播放器控制
 ========================== */
+
+const musicPlayer = document.getElementById("musicPlayer");
+const musicCover = document.getElementById("musicCover");
+
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("playBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+audio.addEventListener("error", () => {
+    console.log("音乐加载失败");
+    playBtn.innerText = "▶";
+    musicCover.classList.remove("playing");
+});
+
+const progress = document.getElementById("progress");
+const currentTime = document.getElementById("currentTime");
+const duration = document.getElementById("duration");
+
+const musicTitle = document.getElementById("musicTitle");
 
 const playlist = [
 {
@@ -869,110 +1045,95 @@ src:"Personalization/Music/Music/奶酪.mp3"
 }
 ];
 
-let currentIndex = 0;
+let index = 0;
 
-const audio = document.getElementById("audio");
-const playBtn = document.getElementById("playBtn");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const progress = document.getElementById("progress");
-const musicTitle = document.getElementById("musicTitle");
-const currentTime = document.getElementById("currentTime");
-const duration = document.getElementById("duration");
-
-function formatTime(sec){
-sec = Math.floor(sec || 0);
-const m = Math.floor(sec / 60);
-const s = sec % 60;
-return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-}
-
-function loadSong(index){
-audio.src = playlist[index].src;
-musicTitle.innerHTML = "🎵 " + playlist[index].title;
+function loadSong(i){
+audio.src = playlist[i].src;
+musicTitle.innerText = playlist[i].title;
 audio.load();
 }
 
-loadSong(currentIndex);
+function format(t){
+t = Math.floor(t || 0);
+const m = Math.floor(t / 60);
+const s = t % 60;
+return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
 
-playBtn.onclick = function(){
-
+/* 播放/暂停 */
+playBtn.onclick = () => {
 if(audio.paused){
-
 audio.play();
-playBtn.innerHTML = "⏸";
-
+playBtn.innerText = "⏸";
+musicCover.classList.add("playing");
 }else{
-
 audio.pause();
-playBtn.innerHTML = "▶";
-
+playBtn.innerText = "▶";
+musicCover.classList.remove("playing");
 }
-
 };
 
-audio.onloadedmetadata = function(){
-
-duration.innerHTML = formatTime(audio.duration);
-
-};
-
-audio.ontimeupdate = function(){
-
-progress.value = audio.currentTime / audio.duration * 100 || 0;
-
-currentTime.innerHTML = formatTime(audio.currentTime);
-
-};
-
-progress.oninput = function(){
-
-audio.currentTime =
-progress.value / 100 * audio.duration;
-
-};
-
-nextBtn.onclick = function(){
-
-currentIndex++;
-
-if(currentIndex >= playlist.length){
-
-currentIndex = 0;
-
-}
-
-loadSong(currentIndex);
-
+/* 上一首 */
+prevBtn.onclick = () => {
+index = (index - 1 + playlist.length) % playlist.length;
+loadSong(index);
 audio.play();
-
-playBtn.innerHTML = "⏸";
-
+playBtn.innerText = "⏸";
+musicCover.classList.add("playing");
 };
 
-prevBtn.onclick = function(){
-
-currentIndex--;
-
-if(currentIndex < 0){
-
-currentIndex = playlist.length - 1;
-
-}
-
-loadSong(currentIndex);
-
+/* 下一首 */
+nextBtn.onclick = () => {
+index = (index + 1) % playlist.length;
+loadSong(index);
 audio.play();
-
-playBtn.innerHTML = "⏸";
-
+playBtn.innerText = "⏸";
+musicCover.classList.add("playing");
 };
 
-audio.onended = function(){
+/* 进度条 */
+audio.ontimeupdate = () => {
+progress.value = (audio.currentTime / audio.duration) * 100 || 0;
+currentTime.innerText = format(audio.currentTime);
+};
 
+/* 拖动进度 */
+progress.oninput = () => {
+audio.currentTime = (progress.value / 100) * audio.duration;
+};
+
+/* 时长 */
+audio.onloadedmetadata = () => {
+duration.innerText = format(audio.duration);
+};
+
+/* 自动下一首 */
+audio.onended = () => {
 nextBtn.click();
+};
+
+/* 点击头像开关播放器 */
+const avatar = document.getElementById("avatar");
+
+avatar.onclick = () => {
+
+    if(musicPlayer.classList.contains("hide")){
+        musicPlayer.classList.remove("hide");
+        musicPlayer.style.transform = "translateY(20px)";
+        setTimeout(()=>{
+            musicPlayer.style.transform = "translateY(0)";
+        },50);
+    }else{
+        musicPlayer.style.transform = "translateY(20px)";
+        setTimeout(()=>{
+            musicPlayer.classList.add("hide");
+        },200);
+    }
 
 };
+
+/* 初始化 */
+loadSong(index);
  
 </script>
 
@@ -1053,4 +1214,3 @@ particlesJS("particles-js",{
 </body>
 
 </html>
-
