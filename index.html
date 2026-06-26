@@ -600,6 +600,30 @@ transform:translateY(-3px) scale(1.08);
 box-shadow:
 0 0 20px rgba(79,195,247,.5);
 }
+.music-close{
+position:absolute;
+top:10px;
+right:12px;
+
+width:30px;
+height:30px;
+
+border:none;
+border-radius:50%;
+
+background:rgba(255,255,255,.15);
+color:#fff;
+
+cursor:pointer;
+font-size:16px;
+
+transition:.2s;
+}
+
+.music-close:hover{
+background:#ff4d4f;
+transform:scale(1.1);
+}
 </style>
 </head>
 
@@ -770,7 +794,9 @@ target="_blank">
 </div>
 
 <!-- ===== macOS 音乐播放器 ===== -->
-<div class="music-player hide" id="musicPlayer">
+<div class="music-player" id="musicPlayer">
+
+<button id="togglePlayer" class="music-close">✖</button>
 
     <div class="music-cover" id="musicCover">
     <img src="Personalization/player icon.png" alt="封面">
@@ -1132,6 +1158,12 @@ avatar.onclick = () => {
 
 };
 
+const togglePlayer = document.getElementById("togglePlayer");
+
+togglePlayer.onclick = () => {
+    musicPlayer.classList.add("hide");
+};
+
 /* 初始化 */
 loadSong(index);
  
@@ -1214,3 +1246,4 @@ particlesJS("particles-js",{
 </body>
 
 </html>
+
