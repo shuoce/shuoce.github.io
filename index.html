@@ -665,6 +665,32 @@ transition:.2s;
 background:#ff4d4f;
 transform:scale(1.1);
 }
+/* ===== 折叠模式 ===== */
+.music-player.folded{
+    width:90px;
+    height:90px;
+    padding:10px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* 折叠时隐藏内容 */
+.music-player.folded .music-title,
+.music-player.folded .music-artist,
+.music-player.folded .music-control,
+.music-player.folded #progress,
+.music-player.folded .music-time{
+    display:none;
+}
+
+/* 折叠时封面变小 */
+.music-player.folded .music-cover{
+    width:60px;
+    height:60px;
+    margin:0;
+}
 </style>
 </head>
 
