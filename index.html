@@ -863,7 +863,7 @@ target="_blank">
 <!-- ===== macOS 音乐播放器 ===== -->
 <div class="music-player" id="musicPlayer">
 
-    <button id="foldBtn" class="music-fold">⏴</button>
+    <button id="foldBtn" class="music-fold">❌</button>
 
     <div class="music-cover" id="musicCover">
     <img src="Personalization/player icon.png" alt="封面">
@@ -1316,14 +1316,14 @@ const foldBtn = document.getElementById("foldBtn");
 let folded = false;
 
 foldBtn.onclick = () => {
-    folded = !folded;
+    musicPlayer.classList.toggle("folded");
 
-    if(folded){
-        musicPlayer.style.width = "90px";
-        musicPlayer.style.height = "90px";
+    if(musicPlayer.classList.contains("folded")){
+        // 已折叠 → 显示展开按钮
+        foldBtn.innerText = "←";
     }else{
-        musicPlayer.style.width = "360px";
-        musicPlayer.style.height = "auto";
+        // 已展开 → 显示收起按钮
+        foldBtn.innerText = "❌";
     }
 };
 </script>
