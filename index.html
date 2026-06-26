@@ -391,10 +391,67 @@ box-shadow:
 0 0 35px rgba(79,195,247,.8),
 0 0 80px rgba(79,195,247,.35);
 }
-.music-player
-.music-control
-.music-title
-#progress   
+/* ==========================
+   音乐播放器
+========================== */
+
+.music-player{
+position:fixed;
+right:25px;
+bottom:25px;
+width:320px;
+padding:18px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.12);
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.25);
+z-index:9999;
+}
+
+.music-title{
+font-size:16px;
+font-weight:bold;
+text-align:center;
+margin-bottom:12px;
+}
+
+.music-time{
+display:flex;
+justify-content:space-between;
+font-size:12px;
+opacity:.8;
+margin-top:6px;
+}
+
+#progress{
+width:100%;
+cursor:pointer;
+}
+
+.music-control{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-top:15px;
+}
+
+.music-control button{
+width:46px;
+height:46px;
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,.15);
+color:#fff;
+font-size:20px;
+cursor:pointer;
+transition:.3s;
+}
+
+.music-control button:hover{
+background:#4fc3f7;
+transform:scale(1.08);
+}
 </style>
 </head>
 
@@ -567,35 +624,30 @@ target="_blank">
 <!-- ===== 音乐播放器 ===== -->
 <div class="music-player">
 
-<div class="music-info">
+    <div class="music-title" id="musicTitle">
+        🎵 奶酪
+    </div>
 
-<div class="music-title">
-🎵 奶酪
-</div>
+    <input
+        type="range"
+        id="progress"
+        min="0"
+        max="100"
+        value="0"
+    >
 
-<input
-type="range"
-id="progress"
-value="0"
-min="0"
-max="100"
->
+    <div class="music-time">
+        <span id="currentTime">00:00</span>
+        <span id="duration">00:00</span>
+    </div>
 
-</div>
+    <div class="music-control">
+        <button id="prevBtn">⏮</button>
+        <button id="playBtn">▶</button>
+        <button id="nextBtn">⏭</button>
+    </div>
 
-<div class="music-control">
-
-<button id="prevBtn">⏮</button>
-
-<button id="playBtn">▶</button>
-
-<button id="nextBtn">⏭</button>
-
-</div>
-
-<audio id="audio">
-<source src="Personalization/Music/Music/奶酪.mp3">
-</audio>
+    <audio id="audio"></audio>
 
 </div>
 
@@ -806,6 +858,122 @@ document.getElementById("runtime")
 .innerHTML=
 `🚀 已运行 ${days} 天`;
  
+ /* ==========================
+   音乐播放器
+========================== */
+
+const playlist = [
+{
+title:"奶酪",
+src:"Personalization/Music/Music/奶酪.mp3"
+}
+];
+
+let currentIndex = 0;
+
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("playBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const progress = document.getElementById("progress");
+const musicTitle = document.getElementById("musicTitle");
+const currentTime = document.getElementById("currentTime");
+const duration = document.getElementById("duration");
+
+function formatTime(sec){
+sec = Math.floor(sec || 0);
+const m = Math.floor(sec / 60);
+const s = sec % 60;
+return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function loadSong(index){
+audio.src = playlist[index].src;
+musicTitle.innerHTML = "🎵 " + playlist[index].title;
+audio.load();
+}
+
+loadSong(currentIndex);
+
+playBtn.onclick = function(){
+
+if(audio.paused){
+
+audio.play();
+playBtn.innerHTML = "⏸";
+
+}else{
+
+audio.pause();
+playBtn.innerHTML = "▶";
+
+}
+
+};
+
+audio.onloadedmetadata = function(){
+
+duration.innerHTML = formatTime(audio.duration);
+
+};
+
+audio.ontimeupdate = function(){
+
+progress.value = audio.currentTime / audio.duration * 100 || 0;
+
+currentTime.innerHTML = formatTime(audio.currentTime);
+
+};
+
+progress.oninput = function(){
+
+audio.currentTime =
+progress.value / 100 * audio.duration;
+
+};
+
+nextBtn.onclick = function(){
+
+currentIndex++;
+
+if(currentIndex >= playlist.length){
+
+currentIndex = 0;
+
+}
+
+loadSong(currentIndex);
+
+audio.play();
+
+playBtn.innerHTML = "⏸";
+
+};
+
+prevBtn.onclick = function(){
+
+currentIndex--;
+
+if(currentIndex < 0){
+
+currentIndex = playlist.length - 1;
+
+}
+
+loadSong(currentIndex);
+
+audio.play();
+
+playBtn.innerHTML = "⏸";
+
+};
+
+audio.onended = function(){
+
+nextBtn.click();
+
+};
+ 
 </script>
 
 <script async
@@ -885,3 +1053,4 @@ particlesJS("particles-js",{
 </body>
 
 </html>
+
