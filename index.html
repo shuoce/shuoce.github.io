@@ -1,13 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硕策 导航页</title>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Microsoft YaHei",sans-serif;
+}
+
+body{
+min-height:100vh;
+color:#fff;
+overflow-x:hidden;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:url("background.jpg") center center no-repeat;
+background-size:cover;
+filter:blur(12px);
+transform:scale(1.1);
+z-index:-2;
+}
+
+body::after{
+content:"";
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+z-index:-1;
+}
+
+/* =========================
+   粒子背景
+========================= */
+
+#particles-js{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+pointer-events:none;
+}
+ 
+.container{
+max-width:1100px;
+margin:40px auto;
+padding:25px;
+}
+
+.panel{
+position:relative;
+z-index:2;
+
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.12);
+border-radius:30px;
+padding:40px;
+box-shadow:0 8px 40px rgba(0,0,0,.25);
+}
+
+.header{
+text-align:center;
+margin-bottom:30px;
+}
+
+.header h1{
+font-size:42px;
+letter-spacing:3px;
+margin-bottom:10px;
+}
+
+.time{
+font-size:42px;
+font-weight:bold;
+}
+
+.date{
+opacity:.8;
+margin-top:8px;
+}
+
+.weather{
+margin-top:10px;
+font-size:15px;
+opacity:.9;
+}
+
+.welcome{
+margin-top:12px;
+font-size:14px;
+opacity:.75;
+letter-spacing:1px;
+ }   
+    
+.search-box{
+margin:35px auto;
+max-width:700px;
+}
+
+.search-form{
+display:flex;
+gap:10px;
+}
+
+.search-form select{
+padding:15px;
+border:none;
+border-radius:14px;
+background:rgba(255,255,255,.15);
+color:white;
+}
+
+.search-form option{
+color:black;
+}
+
+.search-form input{
+flex:1;
+padding:15px;
+border:none;
+border-radius:14px;
+background:rgba(255,255,255,.15);
+color:white;
+outline:none;
+}
+
+.search-form input::placeholder{
+color:#ddd;
+}
+
+.search-form button{
+padding:15px 25px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-weight:bold;
+background:#4fc3f7;
+}
+
+.section-title{
+margin:20px 0;
+font-size:20px;
+font-weight:bold;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:18px;
+}
+
+.card{
+text-decoration:none;
+color:white;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.08);
+border-radius:20px;
+padding:22px;
+text-align:center;
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+background:rgba(255,255,255,.15);
+}
+
+.card i{
+font-size:34px;
+margin-bottom:12px;
+display:block;
+}
+
+.card-title{
+font-size:18px;
+font-weight:bold;
+}
+
+.card-desc{
+font-size:13px;
+opacity:.75;
+margin-top:5px;
+}
+
+.footer{
+text-align:center;
+margin-top:30px;
+opacity:.6;
+font-size:13px;
+}
+
+.quote-box{
+    margin-top:25px;
+    padding:18px;
+
+    border-radius:16px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    text-align:center;
+
+    line-height:1.8;
+
+    font-size:15px;
+
+    color:white;
+}
+
+.theme-switch{
+position:fixed;
+top:20px;
+right:20px;
+z-index:999;
+display:flex;
+gap:8px;
+}
+
+.theme-switch button{
+border:none;
+padding:10px 12px;
+border-radius:12px;
+cursor:pointer;
+background:rgba(255,255,255,.15);
+color:white;
+font-size:18px;
+backdrop-filter:blur(10px);
+}
+
+.theme-switch button:hover{
+background:rgba(255,255,255,.3);
+}
+
+.transparent-mode .panel,
+.transparent-mode .card,
+.transparent-mode .quote-box{
+background:rgba(255,255,255,.03);
+backdrop-filter:none;
+}
+
+.dark-mode .panel,
+.dark-mode .card,
+.dark-mode .quote-box{
+background:rgba(0,0,0,.55);
+border:1px solid rgba(255,255,255,.08);
+}
+
+.light-mode{
+color:#222;
+}
+
+.light-mode .panel{
+background:rgba(255,255,255,.75);
+}
+
+.light-mode .card{
+background:rgba(255,255,255,.65);
+color:#222;
+}
+
+.light-mode .quote-box{
+background:rgba(255,255,255,.65);
+color:#222;
+}
+
+.light-mode .card-title,
+.light-mode .card-desc,
+.light-mode .footer,
+.light-mode .date{
+color:#222;
+}
+
+.sim-banner{
+display:block;
+margin:25px 0;
+padding:24px;
+
+text-decoration:none;
+color:white;
+
+border-radius:20px;
+
+/* 毛玻璃风格 */
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.12);
+
+transition:.3s;
+}
+    
+.sim-banner:hover{
+transform:translateY(-4px);
+
+background:rgba(255,255,255,.15);
+
+box-shadow:0 8px 30px rgba(0,0,0,.25);
+    }
+
+.sim-title{
+font-size:24px;
+font-weight:bold;
+margin-bottom:8px;
+}
+
+.sim-desc{
+opacity:.9;
+margin-bottom:12px;
+}
+
+.sim-btn{
+display:inline-block;
+
+padding:8px 18px;
+
+border-radius:999px;
+
+background:#4fc3f7;
+
+color:white;
+
+font-weight:bold;
+
+font-size:14px;
+}
+    
+@media(max-width:768px){
+
+.panel{
+padding:25px;
+}
+
+.time{
+font-size:30px;
+}
+
+.header h1{
+font-size:30px;
+}
+
+.search-form{
+flex-direction:column;
+}
+
+}
+ /* ==========================
+   头像样式
+========================== */
+
+#avatar{
+width:90px;
+height:90px;
+
+display:block;
+margin:0 auto 18px;
+
+border-radius:50%;
+object-fit:cover;
+
+border:3px solid rgba(255,255,255,.25);
+
+box-shadow:
+0 0 20px rgba(79,195,247,.5),
+0 0 60px rgba(79,195,247,.2);
+
+transition:.3s;
+cursor:pointer;
+}
+
+#avatar:hover{
+transform:scale(1.08);
+
+box-shadow:
+0 0 35px rgba(79,195,247,.8),
+0 0 80px rgba(79,195,247,.35);
+}
+.music-player
+.music-control
+.music-title
+#progress   
+</style>
+</head>
+
 <body>
-
-<!-- =========================
-     粒子背景
-========================= -->
+   
 <div id="particles-js"></div>
-
-<!-- =========================
-     主题切换按钮
-========================= -->
+   
 <div class="theme-switch">
     <button onclick="setTheme('glass')">🧊</button>
     <button onclick="setTheme('transparent')">👁️</button>
@@ -15,84 +409,55 @@
     <button onclick="setTheme('light')">☀️</button>
 </div>
 
-<!-- =========================
-     页面主体
-========================= -->
 <div class="container">
 
 <div class="panel">
 
-<!-- ===== 顶部 ===== -->
 <div class="header">
+ 
+<img id="avatar" src="/Personalization/avatar.png">
+ 
+<h1>硕策 导航页</h1>
 
-    <!-- 用户头像 -->
-    <img id="avatar"
-         src="Personalization/avatar.png"
-         alt="头像">
-
-    <!-- 网站标题 -->
-    <h1>硕策 导航页</h1>
-
-    <!-- 当前时间 -->
-    <div id="time" class="time">
-        00:00:00
-    </div>
-
-    <!-- 当前日期 -->
-    <div id="date" class="date">
-        加载中...
-    </div>
-
-    <!-- 天气 -->
-    <div id="weather" class="weather">
-        🌤️ 获取天气中...
-    </div>
-
-    <!-- 欢迎语 -->
-    <div id="welcome" class="welcome">
-        欢迎回来
-    </div>
-
+<div class="time" id="time">
+00:00:00
 </div>
 
-<!-- =========================
-      搜索框
-========================= -->
+<div class="date" id="date">
+加载中...
+</div>
+
+<div id="weather" class="weather">
+🌤️ 获取天气中...
+</div>
+<div id="welcome" class="welcome">
+加载中...
+</div>    
+</div>
 
 <div class="search-box">
 
-<form class="search-form"
-      onsubmit="doSearch(event)">
+<form class="search-form" onsubmit="doSearch(event)">
 
 <select id="engine">
-
-<option value="google">
-Google
-</option>
-
-<option value="bing">
-Bing
-</option>
-
+<option value="google">Google</option>
+<option value="bing">Bing</option>
 </select>
 
 <input
-id="keyword"
 type="text"
+id="keyword"
 placeholder="输入关键词搜索..."
-required>
+required
+>
 
 <button type="submit">
-🔍 搜索
+搜索
 </button>
 
 </form>
 
 </div>
-
-<!-- =========================
-      流量卡专区
-========================= -->
 
 <a class="sim-banner"
 href="https://172.lot-ml.com/ProductEn/Index/c68981b403e80740"
@@ -112,153 +477,61 @@ target="_blank">
 
 </a>
 
-<!-- =========================
-      常用网站
-========================= -->
-
 <div class="section-title">
 常用网站
 </div>
-
 <div class="grid">
 
-<!-- ChatGPT -->
-<a class="card"
-href="https://chatgpt.com"
-target="_blank">
-
+<a class="card" href="https://chatgpt.com" target="_blank">
 <i class="bi bi-robot"></i>
-
-<div class="card-title">
-ChatGPT
-</div>
-
-<div class="card-desc">
-AI 助手
-</div>
-
+<div class="card-title">ChatGPT</div>
+<div class="card-desc">AI 助手</div>
 </a>
 
-<!-- 豆包 -->
-<a class="card"
-href="https://www.doubao.com"
-target="_blank">
-
+<a class="card" href="https://www.doubao.com" target="_blank">
 <i class="bi bi-lightning-charge"></i>
-
-<div class="card-title">
-豆包
-</div>
-
-<div class="card-desc">
-字节 AI
-</div>
-
+<div class="card-title">豆包</div>
+<div class="card-desc">字节 AI</div>
 </a>
 
-<!-- 问小白 -->
-<a class="card"
-href="https://www.wenxiaobai.com"
-target="_blank">
-
+<a class="card" href="https://www.wenxiaobai.com" target="_blank">
 <i class="bi bi-chat-dots"></i>
-
-<div class="card-title">
-问小白
-</div>
-
-<div class="card-desc">
-智能问答
-</div>
-
+<div class="card-title">问小白</div>
+<div class="card-desc">智能问答</div>
 </a>
 
-<!-- YouTube -->
-<a class="card"
-href="https://www.youtube.com"
-target="_blank">
-
+<a class="card" href="https://www.youtube.com" target="_blank">
 <i class="bi bi-youtube"></i>
-
-<div class="card-title">
-YouTube
-</div>
-
-<div class="card-desc">
-视频平台
-</div>
-
+<div class="card-title">YouTube</div>
+<div class="card-desc">视频平台</div>
 </a>
 
-<!-- 哔哩哔哩 -->
-<a class="card"
-href="https://www.bilibili.com"
-target="_blank">
-
+<a class="card" href="https://www.bilibili.com" target="_blank">
 <i class="bi bi-play-btn"></i>
-
-<div class="card-title">
-哔哩哔哩
-</div>
-
-<div class="card-desc">
-Bilibili
-</div>
-
+<div class="card-title">哔哩哔哩</div>
+<div class="card-desc">Bilibili</div>
 </a>
 
-<!-- 抖音 -->
-<a class="card"
-href="https://www.douyin.com"
-target="_blank">
-
+<a class="card" href="https://www.douyin.com" target="_blank">
 <i class="bi bi-music-note-beamed"></i>
-
-<div class="card-title">
-抖音
-</div>
-
-<div class="card-desc">
-短视频
-</div>
-
+<div class="card-title">抖音</div>
+<div class="card-desc">短视频</div>
 </a>
 
-<!-- X -->
-<a class="card"
-href="https://x.com"
-target="_blank">
-
+<a class="card" href="https://x.com" target="_blank">
 <i class="bi bi-twitter-x"></i>
-
-<div class="card-title">
-X
-</div>
-
-<div class="card-desc">
-社交平台
-</div>
-
+<div class="card-title">X</div>
+<div class="card-desc">社交平台</div>
 </a>
 
 </div>
-
-<!-- =========================
-      每日一言
-========================= -->
 
 <div class="quote-box">
-
-<div id="hitokoto">
-正在加载每日一言...
-</div>
-
-</div>
-
-<!-- =========================
-      页脚
-========================= -->
-
+    <div id="hitokoto">
+        正在加载每日一言...
+    </div>
+</div> 
+  
 <div class="footer">
 
 <div id="runtime">
@@ -291,52 +564,13 @@ X
 
 </div>
 
-<!-- =========================
-      底部音乐播放器
-========================= -->
-
+<!-- ===== 音乐播放器 ===== -->
 <div class="music-player">
 
-<div class="music-name">
+<div class="music-info">
+
+<div class="music-title">
 🎵 奶酪
-</div>
-
-<div class="music-time">
-
-<span id="currentTime">
-00:00
-</span>
-
-/
-
-<span id="totalTime">
-00:00
-</span>
-
-</div>
-
-<div class="music-buttons">
-
-<button id="randomBtn">
-🔀
-</button>
-
-<button id="prevBtn">
-⏮
-</button>
-
-<button id="playBtn">
-▶
-</button>
-
-<button id="nextBtn">
-⏭
-</button>
-
-<button id="loopBtn">
-🔁
-</button>
-
 </div>
 
 <input
@@ -344,30 +578,20 @@ type="range"
 id="progress"
 value="0"
 min="0"
-max="100">
+max="100"
+>
 
-<input
-type="range"
-id="volume"
-min="0"
-max="1"
-step="0.01"
-value="0.6">
+</div>
+
+<div class="music-control">
 
 <button id="prevBtn">⏮</button>
 
-<button id="playBtn"> </button>
+<button id="playBtn">▶</button>
 
 <button id="nextBtn">⏭</button>
 
 </div>
-
-<input
-type="range"
-id="progress"
-value="0"
-min="0"
-max="100">
 
 <audio id="audio">
 <source src="Personalization/Music/Music/奶酪.mp3">
@@ -375,530 +599,122 @@ max="100">
 
 </div>
 
-/*==========================================
-            页面动画
-==========================================*/
-
-html{
-scroll-behavior:smooth;
-}
-
-body{
-animation:fadeIn .8s ease;
-}
-
-@keyframes fadeIn{
-
-from{
-opacity:0;
-transform:translateY(15px);
-}
-
-to{
-opacity:1;
-transform:none;
-}
-
-}
-
-/*==========================================
-            头像
-==========================================*/
-
-#avatar{
-
-width:95px;
-height:95px;
-
-display:block;
-margin:0 auto 18px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-border:3px solid rgba(255,255,255,.25);
-
-box-shadow:
-0 0 20px rgba(79,195,247,.5),
-0 0 60px rgba(79,195,247,.2);
-
-cursor:pointer;
-
-transition:.35s;
-
-animation:avatarGlow 3s infinite alternate;
-
-}
-
-@keyframes avatarGlow{
-
-from{
-
-box-shadow:
-0 0 15px rgba(79,195,247,.35),
-0 0 45px rgba(79,195,247,.15);
-
-}
-
-to{
-
-box-shadow:
-0 0 35px rgba(79,195,247,.8),
-0 0 90px rgba(79,195,247,.45);
-
-}
-
-}
-
-#avatar:hover{
-
-transform:scale(1.08) rotate(3deg);
-
-}
-
-/*==========================================
-          Panel优化
-==========================================*/
-
-.panel{
-
-transition:.35s;
-
-}
-
-.panel:hover{
-
-box-shadow:
-0 15px 60px rgba(0,0,0,.35);
-
-}
-
-/*==========================================
-         搜索框升级
-==========================================*/
-
-.search-form{
-
-background:rgba(255,255,255,.05);
-
-padding:8px;
-
-border-radius:18px;
-
-backdrop-filter:blur(15px);
-
-}
-
-.search-form input{
-
-font-size:15px;
-
-transition:.3s;
-
-}
-
-.search-form input:focus{
-
-background:rgba(255,255,255,.22);
-
-}
-
-.search-form button{
-
-transition:.3s;
-
-}
-
-.search-form button:hover{
-
-transform:translateY(-2px);
-
-box-shadow:0 8px 25px rgba(79,195,247,.45);
-
-}
-
-/*==========================================
-          网站卡片
-==========================================*/
-
-.card{
-
-overflow:hidden;
-
-position:relative;
-
-transition:.35s;
-
-}
-
-.card::before{
-
-content:"";
-
-position:absolute;
-
-left:-120%;
-
-top:0;
-
-width:80%;
-
-height:100%;
-
-background:
-
-linear-gradient(
-
-90deg,
-
-transparent,
-
-rgba(255,255,255,.25),
-
-transparent
-
-);
-
-transition:.6s;
-
-}
-
-.card:hover::before{
-
-left:150%;
-
-}
-
-.card:hover{
-
-transform:
-
-translateY(-8px)
-
-scale(1.02);
-
-box-shadow:
-
-0 15px 35px rgba(0,0,0,.3);
-
-}
-
-.card i{
-
-transition:.35s;
-
-}
-
-.card:hover i{
-
-transform:
-
-scale(1.15)
-
-rotate(10deg);
-
-}
-
-/*==========================================
-      流量卡专区
-==========================================*/
-
-.sim-banner{
-
-position:relative;
-
-overflow:hidden;
-
-}
-
-.sim-banner::before{
-
-content:"";
-
-position:absolute;
-
-left:-100%;
-
-top:0;
-
-width:60%;
-
-height:100%;
-
-background:
-
-linear-gradient(
-
-90deg,
-
-transparent,
-
-rgba(255,255,255,.18),
-
-transparent
-
-);
-
-transition:.8s;
-
-}
-
-.sim-banner:hover::before{
-
-left:160%;
-
-}
-
-/*==========================================
-        一言
-==========================================*/
-
-.quote-box{
-
-transition:.3s;
-
-}
-
-.quote-box:hover{
-
-transform:translateY(-4px);
-
-}
-
-/*==========================================
-         音乐播放器
-==========================================*/
-
-.music-player{
-
-position:fixed;
-
-left:50%;
-
-bottom:22px;
-
-transform:translateX(-50%);
-
-width:360px;
-
-max-width:92%;
-
-padding:15px 22px;
-
-border-radius:18px;
-
-background:rgba(255,255,255,.08);
-
-backdrop-filter:blur(20px);
-
-border:1px solid rgba(255,255,255,.15);
-
-z-index:999;
-
-box-shadow:
-
-0 8px 30px rgba(0,0,0,.25);
-
-}
-
-.music-time{
-
-margin:8px 0;
-
-text-align:center;
-
-font-size:13px;
-
-opacity:.7;
-
-}
-
-#volume{
-
-width:100%;
-
-margin-top:12px;
-
-cursor:pointer;
-
-}
-
-.music-buttons{
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-gap:12px;
-
-flex-wrap:wrap;
-
-}
-
-.music-buttons button{
-
-transition:.3s;
-
-}
-
-.music-buttons button:hover{
-
-transform:scale(1.15);
-
-}
-   
-.music-name{
-
-text-align:center;
-
-font-size:15px;
-
-margin-bottom:12px;
-
-font-weight:bold;
-
-}
-
-.music-buttons{
-
-display:flex;
-
-justify-content:center;
-
-gap:15px;
-
-margin-bottom:12px;
-
-}
-
-.music-buttons button{
-
-width:45px;
-
-height:45px;
-
-border:none;
-
-border-radius:50%;
-
-cursor:pointer;
-
-font-size:18px;
-
-color:white;
-
-background:rgba(255,255,255,.15);
-
-transition:.3s;
-
-}
-
-.music-buttons button:hover{
-
-background:#4fc3f7;
-
-transform:scale(1.1);
-
-}
-
-#progress{
-
-width:100%;
-
-cursor:pointer;
-
-}
-
-/*==========================================
-      手机适配
-==========================================*/
-
-@media(max-width:768px){
-
-.music-player{
-
-width:94%;
-
-bottom:15px;
-
-}
-
-.music-buttons button{
-
-width:42px;
-
-height:42px;
-
-}
-
-#avatar{
-
-width:80px;
-
-height:80px;
-
-}
-
-}
-
-/* ==========================================
-            时间
-========================================== */
-
+<script>
 function updateTime(){
 
 const now=new Date();
 
-document.getElementById("time").innerHTML=
-now.toLocaleTimeString("zh-CN",{
+const time=now.toLocaleTimeString("zh-CN",{
 hour12:false
 });
 
-document.getElementById("date").innerHTML=
-now.toLocaleDateString("zh-CN",{
+const date=now.toLocaleDateString("zh-CN",{
 year:"numeric",
 month:"long",
 day:"numeric",
 weekday:"long"
 });
 
+document.getElementById("time").innerText=time;
+document.getElementById("date").innerText=date;
 }
 
 setInterval(updateTime,1000);
 updateTime();
 
+const hour = new Date().getHours();
 
-/* ==========================================
-            欢迎语（随机）
-========================================== */
+let welcomeText="";
 
-const welcomes=[
+if(hour<6){
 
-"☀️ 欢迎回来！",
+welcomeText="🌙 夜深了，早点休息";
 
-"🌤️ 今天也要加油！",
+}else if(hour<12){
 
-"😺 今天准备搜索什么？",
+welcomeText="☀️ 早上好";
 
-"✨ 愿你今天有所收获。",
+}else if(hour<18){
 
-"🚀 开始新的一天！"
+welcomeText="🌤️ 下午好";
 
-];
+}else{
 
-document.getElementById("welcome").innerHTML=
-welcomes[
-Math.floor(Math.random()*welcomes.length)
-];
+welcomeText="🌆 晚上好";
 
+}
 
-/* ==========================================
-            搜索
-========================================== */
+document.getElementById("welcome")
+.innerText=welcomeText;
+    
+fetch("https://wttr.in/?format=j1")
+.then(res=>res.json())
+.then(data=>{
 
+const temp =
+data.current_condition[0].temp_C;
+
+let desc =
+data.current_condition[0].weatherDesc[0].value;
+
+/* 英文转中文 */
+
+const weatherMap = {
+
+"Sunny":"晴天",
+"Clear":"晴朗",
+"Cloudy":"多云",
+"Partly cloudy":"局部多云",
+
+"Light rain":"小雨",
+"Light rain shower":"阵雨",
+"Patchy rain nearby":"附近有雨",
+
+"Moderate rain":"中雨",
+"Heavy rain":"大雨",
+
+"Thunderstorm":"雷暴",
+
+"Mist":"薄雾",
+"Fog":"大雾",
+
+"Snow":"下雪"
+
+};
+
+desc = weatherMap[desc] || desc;
+
+/* 天气图标 */
+
+let icon = "🌤️";
+
+if(desc.includes("晴")){
+icon="☀️";
+}
+else if(desc.includes("云")){
+icon="☁️";
+}
+else if(desc.includes("雨")){
+icon="🌧️";
+}
+else if(desc.includes("雷")){
+icon="⛈️";
+}
+else if(desc.includes("雪")){
+icon="❄️";
+}
+
+document.getElementById("weather").innerHTML =
+`${icon} ${temp}°C · ${desc}`;
+
+})
+.catch(()=>{
+
+document.getElementById("weather").innerHTML =
+"🌤️ 天气获取失败";
+
+});
+    
 function doSearch(e){
 
 e.preventDefault();
@@ -914,114 +730,36 @@ document.getElementById("engine").value;
 let url="";
 
 if(engine==="google"){
-
-url="https://www.google.com/search?q="+keyword;
-
+url=
+"https://www.google.com/search?q="+keyword;
 }else{
-
-url="https://www.bing.com/search?q="+keyword;
-
+url=
+"https://www.bing.com/search?q="+keyword;
 }
 
 window.open(url,"_blank");
-
 }
-
-
-/* ==========================================
-            天气
-========================================== */
-
-fetch("https://wttr.in/?format=j1")
-
-.then(res=>res.json())
-
-.then(data=>{
-
-const temp=
-data.current_condition[0].temp_C;
-
-let desc=
-data.current_condition[0].weatherDesc[0].value;
-
-const map={
-
-"Sunny":"晴",
-
-"Clear":"晴",
-
-"Cloudy":"多云",
-
-"Partly cloudy":"局部多云",
-
-"Light rain":"小雨",
-
-"Moderate rain":"中雨",
-
-"Heavy rain":"大雨",
-
-"Thunderstorm":"雷暴",
-
-"Snow":"下雪"
-
-};
-
-desc=map[desc]||desc;
-
-document.getElementById("weather").innerHTML=
-
-`🌤️ ${temp}°C · ${desc}`;
-
-})
-
-.catch(()=>{
-
-document.getElementById("weather").innerHTML=
-
-"🌤️ 天气获取失败";
-
-});
-
-
-/* ==========================================
-            一言
-========================================== */
-
 fetch("https://v1.hitokoto.cn/")
+.then(res => res.json())
+.then(data => {
 
-.then(res=>res.json())
-
-.then(data=>{
-
-document.getElementById("hitokoto").innerHTML=
-
+document.getElementById("hitokoto").innerHTML =
 `「${data.hitokoto}」<br><small>—— ${data.from}</small>`;
 
 })
+.catch(() => {
 
-.catch(()=>{
-
-document.getElementById("hitokoto").innerHTML=
-
+document.getElementById("hitokoto").innerHTML =
 "保持热爱，奔赴山海。";
 
-});
-
-
-/* ==========================================
-            主题切换
-========================================== */
+});  
 
 function clearTheme(){
 
 document.body.classList.remove(
-
 "transparent-mode",
-
 "dark-mode",
-
 "light-mode"
-
 );
 
 }
@@ -1031,266 +769,119 @@ function setTheme(mode){
 clearTheme();
 
 if(mode==="transparent"){
-
 document.body.classList.add("transparent-mode");
-
 }
 
 if(mode==="dark"){
-
 document.body.classList.add("dark-mode");
-
 }
 
 if(mode==="light"){
-
 document.body.classList.add("light-mode");
-
 }
 
 localStorage.setItem("theme",mode);
 
 }
 
-const theme=
+const savedTheme =
 localStorage.getItem("theme");
 
-if(theme){
+if(savedTheme){
+setTheme(savedTheme);
+    }
 
-setTheme(theme);
-
-}
-
-
-/* ==========================================
-            网站运行时间
-========================================== */
-
-const startDate=
-
+ const startDate =
 new Date("2026-06-25");
 
-function updateRuntime(){
+const now =
+new Date();
 
-const now=new Date();
-
-const days=Math.floor(
-
+const days =
+Math.floor(
 (now-startDate)/86400000
-
 );
 
-document.getElementById("runtime").innerHTML=
-
+document.getElementById("runtime")
+.innerHTML=
 `🚀 已运行 ${days} 天`;
-
-}
-
-updateRuntime();
-
-
-/* ==========================================
-            音乐播放器
-========================================== */
-
-const playlist=[
-
-"奶酪.mp3"
-
-];
-
-// 歌曲所在文件夹
-const musicPath="Personalization/Music/Music/";
-
-let index=0;
-
-const audio=
-document.getElementById("audio");
-
-const playBtn=
-document.getElementById("playBtn");
-
-const prevBtn=
-document.getElementById("prevBtn");
-
-const nextBtn=
-document.getElementById("nextBtn");
-
-const progress=
-document.getElementById("progress");
-
-const musicName=
-document.querySelector(".music-name");
-
-
-/* 加载歌曲 */
-
-function loadMusic(){
-
-audio.src=
-
-musicPath+playlist[index];
-
-musicName.innerHTML=
-
-"🎵 "+playlist[index].replace(".mp3","");
-
-}
-
-loadMusic();
-
-
-/* 播放暂停 */
-
-playBtn.onclick=function(){
-
-if(audio.paused){
-
-audio.play();
-
-playBtn.innerHTML="⏸";
-
-}else{
-
-audio.pause();
-
-playBtn.innerHTML=" ";
-
-}
-
-};
-
-
-/* 上一首 */
-
-prevBtn.onclick=function(){
-
-index--;
-
-if(index<0){
-
-index=
-
-playlist.length-1;
-
-}
-
-loadMusic();
-
-audio.play();
-
-playBtn.innerHTML="⏸";
-
-};
-
-
-/* 下一首 */
-
-nextBtn.onclick=function(){
-
-index++;
-
-if(index>=playlist.length){
-
-index=0;
-
-}
-
-loadMusic();
-
-audio.play();
-
-playBtn.innerHTML="⏸";
-
-};
-
-
-/* 自动下一首 */
-
-audio.onended=function(){
-
-nextBtn.click();
-
-};
-
-
-/* 播放进度 */
-
-audio.ontimeupdate=function(){
-
-progress.value=
-
-(audio.currentTime/
-
-audio.duration)*100||0;
-
-};
-
-
-/* 拖动进度 */
-
-progress.oninput=function(){
-
-audio.currentTime=
-
-(progress.value/100)
-
-*audio.duration;
-
-};
-
-/* ===========================
-      音量
-=========================== */
-
-const volume=
-
-document.getElementById("volume");
-
-audio.volume=0.6;
-
-volume.oninput=function(){
-
-audio.volume=this.value;
-
-};
-
-/* ===========================
-      时间
-=========================== */
-
-function formatTime(sec){
-
-const m=Math.floor(sec/60);
-
-const s=Math.floor(sec%60);
-
-return
-
-String(m).padStart(2,"0")
-
-+":"
-
-+
-
-String(s).padStart(2,"0");
-
-}
-
-audio.addEventListener("loadedmetadata",()=>{
-
-document.getElementById("totalTime").innerHTML=
-
-formatTime(audio.duration);
-
+ 
+</script>
+
+<script async
+src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<!-- 粒子背景 -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<script>
+particlesJS("particles-js",{
+  particles:{
+    number:{
+      value:60,
+      density:{
+        enable:true,
+        value_area:800
+      }
+    },
+    color:{
+      value:"#4fc3f7"
+    },
+    shape:{
+      type:"circle"
+    },
+    opacity:{
+      value:0.5
+    },
+    size:{
+      value:3,
+      random:true
+    },
+    line_linked:{
+      enable:true,
+      distance:150,
+      color:"#4fc3f7",
+      opacity:0.35,
+      width:1
+    },
+    move:{
+      enable:true,
+      speed:2,
+      direction:"none",
+      random:false,
+      straight:false,
+      out_mode:"out"
+    }
+  },
+  interactivity:{
+    detect_on:"canvas",
+    events:{
+      onhover:{
+        enable:true,
+        mode:"grab"
+      },
+      onclick:{
+        enable:true,
+        mode:"push"
+      }
+    },
+    modes:{
+      grab:{
+        distance:180,
+        line_linked:{
+          opacity:0.8
+        }
+      },
+      push:{
+        particles_nb:4
+      }
+    }
+  },
+  retina_detect:true
 });
+</script>
 
-audio.addEventListener("timeupdate",()=>{
+</body>
 
-document.getElementById("currentTime").innerHTML=
-
-formatTime(audio.currentTime);
-
-});   
-
-   
+</html>
