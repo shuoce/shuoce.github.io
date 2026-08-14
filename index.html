@@ -1909,6 +1909,8 @@ button{
 <script>
 "use strict";
 
+"use strict";
+
 /* Cloudflare KV 动态导航 */
 
 const NAVIGATION_API =
@@ -1916,8 +1918,7 @@ const NAVIGATION_API =
 
 
 /*
- * 安全处理网站地址
- * 只允许 http:// 和 https://
+ * 安全处理网址
  */
 function safeUrl(value) {
   try {
@@ -1985,36 +1986,114 @@ function createNavigationCard(card) {
 
 
 /*
- * 创建分类区域
+ * 生成安全的 HTML id
  */
-function createCategoryElement(category) {
-  const section =
+function createCategoryId(category, index) {
+  const originalId =
+    String(category.id || "").trim();
+
+  if (
+    originalId === "common" ||
+    originalId === "music"
+  ) {
+    return originalId + "Content";
+  }
+
+  return "kvCategoryContent" + index;
+}
+
+
+/*
+ * 创建一个动态分类
+ */
+function createCategoryElement(category, index) {
+  const categorySection =
     document.createElement("section");
 
-  section.className = "navigation-category";
+  categorySection.className = "category";
+  categorySection.dataset.kvCategory = "true";
 
-  section.dataset.categoryId =
-    category.id || "";
+  const contentId =
+    createCategoryId(category, index);
+
+  const arrowId =
+    contentId + "Arrow";
+
+  const sectionHead =
+    document.createElement("div");
+
+  sectionHead.className = "section-head";
+  sectionHead.setAttribute(
+    "onclick",
+    `toggleSection('${contentId}','${arrowId}')`
+  );
+
+  const sectionName =
+    document.createElement("div");
+
+  sectionName.className = "section-name";
+
+  const sectionIcon =
+    document.createElement("span");
+
+  sectionIcon.className = "section-icon";
+
+  const categoryIcon =
+    document.createElement("i");
+
+  let iconName =
+    category.icon || "bi-folder2-open";
+
+  if (!iconName.startsWith("bi-")) {
+    iconName = "bi-" + iconName;
+  }
+
+  categoryIcon.className =
+    `bi ${iconName}`;
+
+  sectionIcon.appendChild(categoryIcon);
 
   const title =
-    document.createElement("h2");
+    document.createTextNode(
+      category.title ||
+      category.name ||
+      category.id ||
+      "未命名分类"
+    );
 
-  title.className = "category-title";
+  sectionName.appendChild(sectionIcon);
+  sectionName.appendChild(title);
 
-  title.textContent =
-    category.title ||
-    category.name ||
-    category.id ||
-    "未命名分类";
+  const arrow =
+    document.createElement("i");
+
+  arrow.className =
+    "bi bi-chevron-down arrow open";
+
+  arrow.id = arrowId;
+
+  sectionHead.appendChild(sectionName);
+  sectionHead.appendChild(arrow);
+
+  const sectionContent =
+    document.createElement("div");
+
+  sectionContent.className =
+    "section-content show";
+
+  sectionContent.id = contentId;
+
+  const sectionInner =
+    document.createElement("div");
+
+  sectionInner.className = "section-inner";
 
   const grid =
     document.createElement("div");
 
   grid.className = "grid";
 
-  if (
-    Array.isArray(category.cards)
-  ) {
+  if (Array.isArray(category.cards)) {
     category.cards.forEach(card => {
       if (!card) {
         return;
@@ -2026,53 +2105,18 @@ function createCategoryElement(category) {
     });
   }
 
-  section.appendChild(title);
-  section.appendChild(grid);
+  sectionInner.appendChild(grid);
+  sectionContent.appendChild(sectionInner);
 
-  return section;
+  categorySection.appendChild(sectionHead);
+  categorySection.appendChild(sectionContent);
+
+  return categorySection;
 }
 
 
 /*
- * 获取动态导航容器
- *
- * 优先使用你页面中已有的：
- * #kvNavigation
- *
- * 如果没有，则尝试使用：
- * #navigation
- *
- * 如果还没有，则自动创建一个。
- */
-function getNavigationContainer() {
-  let container =
-    document.getElementById("kvNavigation");
-
-  if (container) {
-    return container;
-  }
-
-  container =
-    document.getElementById("navigation");
-
-  if (container) {
-    return container;
-  }
-
-  container =
-    document.createElement("main");
-
-  container.id = "kvNavigation";
-  container.className = "kv-navigation";
-
-  document.body.appendChild(container);
-
-  return container;
-}
-
-
-/*
- * 显示导航数据
+ * 渲染所有分类
  */
 function renderNavigation(data) {
   if (
@@ -2084,92 +2128,116 @@ function renderNavigation(data) {
     );
   }
 
-  /*
-   * 如果页面中有 #kvNavigation 或 #navigation，
-   * 就使用动态渲染模式。
-   */
-  const dynamicContainer =
-    document.getElementById("kvNavigation") ||
-    document.getElementById("navigation");
+  const main =
+    document.querySelector("main");
 
-  if (dynamicContainer) {
-    dynamicContainer.replaceChildren();
-
-    data.categories.forEach(category => {
-      if (
-        !category ||
-        !Array.isArray(category.cards)
-      ) {
-        return;
-      }
-
-      dynamicContainer.appendChild(
-        createCategoryElement(category)
-      );
-    });
-
-    return;
+  if (!main) {
+    throw new Error(
+      "页面中没有找到 main 元素"
+    );
   }
 
   /*
-   * 兼容你原来固定的 commonContent 和 musicContent
+   * 找到原来的固定分类区域
    */
-  data.categories.forEach(category => {
-    if (
-      !category ||
-      !Array.isArray(category.cards)
-    ) {
-      return;
-    }
+  const oldCategories =
+    main.querySelectorAll(
+      ":scope > .category"
+    );
 
-    let contentId = "";
+  /*
+   * 先记住每日一言的位置
+   */
+  const quoteBox =
+    main.querySelector(".quote-box");
 
-    if (category.id === "common") {
-      contentId = "commonContent";
-    }
+  /*
+   * 删除原来写死的“常用网站”和“音乐资源”
+   */
+  oldCategories.forEach(category => {
+    category.remove();
+  });
 
-    if (category.id === "music") {
-      contentId = "musicContent";
-    }
-
-    if (!contentId) {
-      return;
-    }
-
-    const content =
-      document.getElementById(contentId);
-
-    if (!content) {
-      return;
-    }
-
-    const grid =
-      content.querySelector(".grid");
-
-    if (!grid) {
-      return;
-    }
-
-    const fragment =
-      document.createDocumentFragment();
-
-    category.cards.forEach(card => {
-      if (!card) {
-        return;
-      }
-
-      fragment.appendChild(
-        createNavigationCard(card)
-      );
+  /*
+   * 删除之前动态生成的分类，
+   * 防止重复生成
+   */
+  main
+    .querySelectorAll(
+      '[data-kv-category="true"]'
+    )
+    .forEach(category => {
+      category.remove();
     });
 
-    grid.replaceChildren(fragment);
+  const fragment =
+    document.createDocumentFragment();
+
+  data.categories.forEach((category, index) => {
+    if (!category) {
+      return;
+    }
+
+    fragment.appendChild(
+      createCategoryElement(category, index)
+    );
+  });
+
+  /*
+   * 把 Cloudflare KV 中的分类放到每日一言之前
+   */
+  if (quoteBox) {
+    main.insertBefore(fragment, quoteBox);
+  } else {
+    main.appendChild(fragment);
+  }
+
+  /*
+   * 更新顶部快捷导航
+   */
+  updateQuickNavigation(data);
+}
+
+
+/*
+ * 更新顶部的“常用 / 音乐”快捷按钮
+ */
+function updateQuickNavigation(data) {
+  const quickNav =
+    document.querySelector(".quick-nav");
+
+  if (!quickNav) {
+    return;
+  }
+
+  quickNav.replaceChildren();
+
+  data.categories.forEach((category, index) => {
+    if (!category) {
+      return;
+    }
+
+    const link =
+      document.createElement("a");
+
+    const contentId =
+      createCategoryId(category, index);
+
+    link.href = "#" + contentId;
+
+    link.textContent =
+      category.title ||
+      category.name ||
+      category.id ||
+      "分类";
+
+    quickNav.appendChild(link);
   });
 }
 
 
 /*
- * 从 Cloudflare Worker 读取 KV 导航数据
+ * 从 Cloudflare Worker 读取导航
  */
 async function loadNavigationFromKV() {
   try {
