@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>网站管理</title>
+  <title>网站导航管理</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 0 20px;
+      max-width: 760px;
+      margin: 30px auto;
+      padding: 0 18px;
       font-family: Arial, sans-serif;
       color: #222;
     }
@@ -18,9 +22,15 @@
       margin-bottom: 25px;
     }
 
+    h2 {
+      margin-top: 30px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+
     label {
       display: block;
-      margin-top: 18px;
+      margin-top: 15px;
       margin-bottom: 6px;
       font-weight: bold;
     }
@@ -28,21 +38,21 @@
     input,
     select {
       width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
+      padding: 11px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 15px;
     }
 
     button {
-      margin-top: 25px;
-      padding: 12px 22px;
+      margin-top: 15px;
+      margin-right: 8px;
+      padding: 10px 17px;
       border: 0;
       border-radius: 6px;
       background: #1677ff;
       color: white;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
     }
 
@@ -55,61 +65,119 @@
       cursor: not-allowed;
     }
 
+    .danger {
+      background: #d9363e;
+    }
+
+    .danger:hover {
+      background: #a8071a;
+    }
+
+    .secondary {
+      background: #666;
+    }
+
+    .tip {
+      padding: 13px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
     #message {
       margin-top: 20px;
       line-height: 1.7;
       white-space: pre-wrap;
     }
 
-    .tip {
-      padding: 12px;
-      background: #f5f5f5;
-      border-radius: 6px;
-      line-height: 1.6;
-      font-size: 14px;
+    .category-box {
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 15px;
     }
   </style>
 </head>
 
 <body>
-  <h1>添加网站</h1>
+  <h1>网站导航管理</h1>
 
   <div class="tip">
-    只需要填写网站名称和网址，然后点击保存即可。
+    先输入管理员密码并读取导航，然后可以添加网站、添加分类或删除分类。
   </div>
 
-  <label for="token">管理员密码</label>
+  <label for="token">管理员密码 ADMIN_TOKEN</label>
   <input
     id="token"
     type="password"
-    placeholder="请输入 ADMIN_TOKEN"
-  >
-
-  <label for="category">选择分类</label>
-  <select id="category">
-    <option value="">请先读取导航</option>
-  </select>
-
-  <label for="title">网站名称</label>
-  <input
-    id="title"
-    type="text"
-    placeholder="例如：百度"
-  >
-
-  <label for="url">网站地址</label>
-  <input
-    id="url"
-    type="url"
-    placeholder="例如：https://www.baidu.com"
+    placeholder="请输入 Cloudflare 中设置的 ADMIN_TOKEN"
   >
 
   <button id="loadButton">
-    读取分类
+    读取当前导航
   </button>
 
-  <button id="saveButton">
-    添加并保存
+  <div class="category-box">
+    <h2>分类管理</h2>
+<!---->
+    <label for="newCategoryTitle">新分类名称</label>
+    <input
+      id="newCategoryTitle"
+      type="text"
+      placeholder="例如：影视资源"
+    >
+<!---->
+    <button id="addCategoryButton">
+      添加分类
+    </button>
+<!---->
+    <label for="categorySelect">当前分类</label>
+    <select id="categorySelect">
+      <option value="">请先读取导航</option>
+    </select>
+<!---->
+    <button
+      id="deleteCategoryButton"
+      class="danger"
+    >
+      删除当前分类
+    </button>
+  
+</div>
+
+
+
+  <div class="category-box">
+    <h2>添加网站</h2>
+<!---->
+    <label for="title">网站名称</label>
+    <input
+      id="title"
+      type="text"
+      placeholder="例如：百度"
+    >
+<!---->
+    <label for="url">网站地址</label>
+    <input
+      id="url"
+      type="url"
+      placeholder="例如：https://www.baidu.com"
+    >
+<!---->
+    <button id="addWebsiteButton">
+      添加网站
+    </button>
+  
+</div>
+
+
+
+  <button
+    id="saveButton"
+    class="secondary"
+  >
+    保存全部修改
   </button>
 
   <div id="message"></div>
@@ -123,8 +191,20 @@
     const tokenInput =
       document.getElementById("token");
 
+    const loadButton =
+      document.getElementById("loadButton");
+
+    const newCategoryTitleInput =
+      document.getElementById("newCategoryTitle");
+
+    const addCategoryButton =
+      document.getElementById("addCategoryButton");
+
     const categorySelect =
-      document.getElementById("category");
+      document.getElementById("categorySelect");
+
+    const deleteCategoryButton =
+      document.getElementById("deleteCategoryButton");
 
     const titleInput =
       document.getElementById("title");
@@ -132,8 +212,8 @@
     const urlInput =
       document.getElementById("url");
 
-    const loadButton =
-      document.getElementById("loadButton");
+    const addWebsiteButton =
+      document.getElementById("addWebsiteButton");
 
     const saveButton =
       document.getElementById("saveButton");
@@ -148,10 +228,53 @@
         : "crimson";
     }
 
-    async function loadNavigation() {
-      showMessage("正在读取分类……");
+    function createCategoryId(title) {
+      const englishId = title
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
 
+      if (englishId) {
+        return englishId;
+      }
+
+      return "category-" + Date.now();
+    }
+
+    function renderCategories() {
+      categorySelect.innerHTML = "";
+
+      if (
+        !navigationData ||
+        !Array.isArray(navigationData.categories) ||
+        navigationData.categories.length === 0
+      ) {
+        const option =
+          document.createElement("option");
+
+        option.value = "";
+        option.textContent = "暂无分类";
+
+        categorySelect.appendChild(option);
+        return;
+      }
+
+      navigationData.categories.forEach(category => {
+        const option =
+          document.createElement("option");
+
+        option.value = category.id;
+        option.textContent =
+          category.title || category.id;
+
+        categorySelect.appendChild(option);
+      });
+    }
+
+    async function loadNavigation() {
       loadButton.disabled = true;
+      showMessage("正在读取导航……");
 
       try {
         const response = await fetch(
@@ -173,33 +296,16 @@
           !Array.isArray(data.categories)
         ) {
           showMessage(
-            "导航数据格式错误，没有找到 categories。"
+            "导航数据格式错误。"
           );
           return;
         }
 
         navigationData = data;
-
-        categorySelect.innerHTML = "";
-
-        data.categories.forEach(category => {
-          const option =
-            document.createElement("option");
-
-          option.value = category.id;
-          option.textContent =
-            category.title || category.id;
-
-          categorySelect.appendChild(option);
-        });
-
-        if (data.categories.length === 0) {
-          showMessage("当前没有可用分类。");
-          return;
-        }
+        renderCategories();
 
         showMessage(
-          "读取成功，现在可以填写网站名称和地址。",
+          "读取成功，可以管理分类和网站。",
           true
         );
       } catch (error) {
@@ -211,9 +317,107 @@
       }
     }
 
-    async function saveNavigation() {
-      const token =
-        tokenInput.value.trim();
+    function addCategory() {
+      if (!navigationData) {
+        showMessage("请先点击“读取当前导航”。");
+        return;
+      }
+
+      const title =
+        newCategoryTitleInput.value.trim();
+
+      if (!title) {
+        showMessage("请输入分类名称。");
+        return;
+      }
+
+      const id = createCategoryId(title);
+
+      const sameCategory =
+        navigationData.categories.some(
+          category =>
+            category.id === id ||
+            category.title === title
+        );
+
+      if (sameCategory) {
+        showMessage("这个分类已经存在。");
+        return;
+      }
+
+      navigationData.categories.push({
+        id: id,
+        title: title,
+        cards: []
+      });
+
+      renderCategories();
+      categorySelect.value = id;
+      newCategoryTitleInput.value = "";
+
+      showMessage(
+        "分类已添加，请点击“保存全部修改”正式保存。",
+        true
+      );
+    }
+
+    function deleteCategory() {
+      if (!navigationData) {
+        showMessage("请先点击“读取当前导航”。");
+        return;
+      }
+
+      const categoryId =
+        categorySelect.value;
+
+      const index =
+        navigationData.categories.findIndex(
+          category => category.id === categoryId
+        );
+
+      if (index === -1) {
+        showMessage("请选择要删除的分类。");
+        return;
+      }
+
+      const category =
+        navigationData.categories[index];
+
+      const websiteCount =
+        Array.isArray(category.cards)
+          ? category.cards.length
+          : 0;
+
+      const confirmed = confirm(
+        "确定要删除分类“" +
+        category.title +
+        "”吗？\n\n" +
+        "该分类下有 " +
+        websiteCount +
+        " 个网站，也会一起删除。"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      navigationData.categories.splice(index, 1);
+      renderCategories();
+
+      showMessage(
+        "分类已删除，请点击“保存全部修改”正式保存。",
+        true
+      );
+    }
+
+    function addWebsite() {
+      if (!navigationData) {
+        showMessage("请先点击“读取当前导航”。");
+        return;
+      }
+
+      const categoryId =
+        categorySelect.value;
 
       const title =
         titleInput.value.trim();
@@ -221,16 +425,13 @@
       const websiteUrl =
         urlInput.value.trim();
 
-      const categoryId =
-        categorySelect.value;
+      const category =
+        navigationData.categories.find(
+          item => item.id === categoryId
+        );
 
-      if (!token) {
-        showMessage("请输入管理员密码。");
-        return;
-      }
-
-      if (!navigationData) {
-        showMessage("请先点击“读取分类”。");
+      if (!category) {
+        showMessage("请选择一个分类。");
         return;
       }
 
@@ -250,7 +451,7 @@
         parsedUrl = new URL(websiteUrl);
       } catch {
         showMessage(
-          "网站地址格式不正确，例如：https://www.baidu.com"
+          "网址格式不正确，例如：https://www.baidu.com"
         );
         return;
       }
@@ -262,16 +463,6 @@
         showMessage(
           "网站地址必须以 http:// 或 https:// 开头。"
         );
-        return;
-      }
-
-      const category =
-        navigationData.categories.find(
-          item => item.id === categoryId
-        );
-
-      if (!category) {
-        showMessage("请选择一个有效分类。");
         return;
       }
 
@@ -287,8 +478,31 @@
         url: websiteUrl
       });
 
+      titleInput.value = "";
+      urlInput.value = "";
+
+      showMessage(
+        "网站已添加到当前分类，请点击“保存全部修改”。",
+        true
+      );
+    }
+
+    async function saveNavigation() {
+      if (!navigationData) {
+        showMessage("请先点击“读取当前导航”。");
+        return;
+      }
+
+      const token =
+        tokenInput.value.trim();
+
+      if (!token) {
+        showMessage("请输入管理员密码。");
+        return;
+      }
+
       saveButton.disabled = true;
-      showMessage("正在保存……");
+      showMessage("正在保存全部修改……");
 
       try {
         const response = await fetch(
@@ -306,9 +520,6 @@
         const result = await response.json();
 
         if (!response.ok) {
-          // 保存失败时撤销刚才添加的项目
-          category.cards.pop();
-
           showMessage(
             "保存失败：" +
             (result.message || response.status)
@@ -317,16 +528,10 @@
         }
 
         showMessage(
-          "保存成功！网站已经添加到导航中。",
+          "保存成功！分类和网站修改已经生效。",
           true
         );
-
-        titleInput.value = "";
-        urlInput.value = "";
       } catch (error) {
-        // 网络失败时撤销刚才添加的项目
-        category.cards.pop();
-
         showMessage(
           "保存失败：" + error.message
         );
@@ -338,6 +543,21 @@
     loadButton.addEventListener(
       "click",
       loadNavigation
+    );
+
+    addCategoryButton.addEventListener(
+      "click",
+      addCategory
+    );
+
+    deleteCategoryButton.addEventListener(
+      "click",
+      deleteCategory
+    );
+
+    addWebsiteButton.addEventListener(
+      "click",
+      addWebsite
     );
 
     saveButton.addEventListener(
