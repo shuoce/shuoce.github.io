@@ -766,18 +766,22 @@ button{
 }
 
 .section-content{
-    display:grid;
-    grid-template-rows:0fr;
-    transition:grid-template-rows .3s ease;
+    display:block;
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:
+        max-height .25s ease,
+        opacity .2s ease;
 }
 
 .section-content.show{
-    grid-template-rows:1fr;
+    max-height:5000px;
+    opacity:1;
 }
 
 .section-inner{
     min-height:0;
-    overflow:hidden;
 }
 
 .grid{
@@ -1639,7 +1643,7 @@ button{
 </div>
 
 <!-- 音乐播放器 -->
-<div class="music-player hidden" id="musicPlayer">
+<div class="music-player" id="musicPlayer">
     <div class="music-top">
         <div class="music-cover">
             <img
@@ -1727,6 +1731,9 @@ const NAVIGATION_API =
     "https://shuoce-navigation.2765414002jin.workers.dev/api/navigation";
 
 
+/*
+ * 只允许 http 和 https 地址
+ */
 function safeUrl(value) {
     try {
         const url = new URL(
@@ -1747,6 +1754,10 @@ function safeUrl(value) {
 }
 
 
+/*
+ * 获取分类名称
+ * 兼容 title、name 两种字段
+ */
 function getCategoryTitle(category) {
     return (
         category.title ||
@@ -1757,6 +1768,10 @@ function getCategoryTitle(category) {
 }
 
 
+/*
+ * 获取分类网站数组
+ * 兼容 cards、sites 两种字段
+ */
 function getCategoryCards(category) {
     if (Array.isArray(category.cards)) {
         return category.cards;
@@ -1770,6 +1785,9 @@ function getCategoryCards(category) {
 }
 
 
+/*
+ * 获取网站名称
+ */
 function getCardTitle(card) {
     return (
         card.title ||
@@ -1779,6 +1797,9 @@ function getCardTitle(card) {
 }
 
 
+/*
+ * 获取网站描述
+ */
 function getCardDescription(card) {
     return (
         card.description ||
@@ -1788,6 +1809,9 @@ function getCardDescription(card) {
 }
 
 
+/*
+ * 创建网站卡片
+ */
 function createNavigationCard(card) {
     const link =
         document.createElement("a");
@@ -1844,6 +1868,13 @@ function createNavigationCard(card) {
 }
 
 
+/*
+ * 生成分类内容区域 ID
+ *
+ * common 固定使用 commonContent
+ * music 固定使用 musicContent
+ * 其他分类使用动态 ID
+ */
 function getCategoryContentId(category, index) {
     const id =
         String(category.id || "").trim();
@@ -1860,6 +1891,9 @@ function getCategoryContentId(category, index) {
 }
 
 
+/*
+ * 创建动态分类
+ */
 function createCategoryElement(category, index) {
     const section =
         document.createElement("section");
@@ -1867,16 +1901,16 @@ function createCategoryElement(category, index) {
     section.className =
         "category";
 
+    section.dataset.kvCategory =
+        "true";
+
     const contentId =
         getCategoryContentId(
             category,
             index
         );
 
-    const arrowId =
-        contentId + "Arrow";
-
-    const isFirst =
+    const isFirstCategory =
         index === 0;
 
     const head =
@@ -1897,7 +1931,7 @@ function createCategoryElement(category, index) {
     iconBox.className =
         "section-icon";
 
-    const icon =
+    const categoryIcon =
         document.createElement("i");
 
     let iconName =
@@ -1909,12 +1943,15 @@ function createCategoryElement(category, index) {
             "bi-" + iconName;
     }
 
-    icon.className =
+    categoryIcon.className =
         `bi ${iconName}`;
 
-    iconBox.appendChild(icon);
+    iconBox.appendChild(
+        categoryIcon
+    );
 
     name.appendChild(iconBox);
+
     name.appendChild(
         document.createTextNode(
             getCategoryTitle(category)
@@ -1924,16 +1961,10 @@ function createCategoryElement(category, index) {
     const arrow =
         document.createElement("i");
 
-    arrow.id =
-        arrowId;
-
     arrow.className =
-        isFirst
+        isFirstCategory
             ? "bi bi-chevron-down arrow open"
             : "bi bi-chevron-down arrow";
-
-    head.appendChild(name);
-    head.appendChild(arrow);
 
     const content =
         document.createElement("div");
@@ -1942,7 +1973,7 @@ function createCategoryElement(category, index) {
         contentId;
 
     content.className =
-        isFirst
+        isFirstCategory
             ? "section-content show"
             : "section-content";
 
@@ -1975,18 +2006,31 @@ function createCategoryElement(category, index) {
     inner.appendChild(grid);
     content.appendChild(inner);
 
+    head.appendChild(name);
+    head.appendChild(arrow);
+
+    /*
+     * 使用 addEventListener，
+     * 兼容微信内置浏览器
+     */
+    head.addEventListener(
+        "click",
+        () => {
+            content.classList.toggle("show");
+            arrow.classList.toggle("open");
+        }
+    );
+
     section.appendChild(head);
     section.appendChild(content);
-
-    head.addEventListener("click", () => {
-        content.classList.toggle("show");
-        arrow.classList.toggle("open");
-    });
 
     return section;
 }
 
 
+/*
+ * 更新顶部快捷导航
+ */
 function updateQuickNavigation(categories) {
     const quickNav =
         document.querySelector(".quick-nav");
@@ -1998,6 +2042,13 @@ function updateQuickNavigation(categories) {
     quickNav.replaceChildren();
 
     categories.forEach((category, index) => {
+        if (
+            !category ||
+            typeof category !== "object"
+        ) {
+            return;
+        }
+
         const link =
             document.createElement("a");
 
@@ -2016,6 +2067,65 @@ function updateQuickNavigation(categories) {
 }
 
 
+/*
+ * 绑定页面中原本写死的分类
+ *
+ * 如果 KV 请求失败，
+ * 常用网站和音乐资源仍然可以展开。
+ */
+function bindStaticCategoryEvents() {
+    const categories =
+        document.querySelectorAll(
+            "main .category"
+        );
+
+    categories.forEach(category => {
+        const head =
+            category.querySelector(
+                ".section-head"
+            );
+
+        const content =
+            category.querySelector(
+                ".section-content"
+            );
+
+        const arrow =
+            category.querySelector(
+                ".arrow"
+            );
+
+        if (
+            !head ||
+            !content ||
+            !arrow ||
+            head.dataset.bound === "true"
+        ) {
+            return;
+        }
+
+        head.dataset.bound =
+            "true";
+
+        head.addEventListener(
+            "click",
+            () => {
+                content.classList.toggle(
+                    "show"
+                );
+
+                arrow.classList.toggle(
+                    "open"
+                );
+            }
+        );
+    });
+}
+
+
+/*
+ * 渲染 KV 中的全部分类
+ */
 function renderNavigation(data) {
     if (
         !data ||
@@ -2031,7 +2141,7 @@ function renderNavigation(data) {
 
     if (!main) {
         throw new Error(
-            "页面中没有 main 元素"
+            "页面中没有找到 main 元素"
         );
     }
 
@@ -2039,11 +2149,18 @@ function renderNavigation(data) {
         main.querySelector(".quote-box");
 
     /*
-     * 只有 KV 读取成功后才删除默认分类。
-     * 如果接口失败，默认分类会继续保留。
+     * 不使用 :scope。
+     * 微信 WebView 对 :scope 支持不稳定。
+     *
+     * 只删除 main 的直接子级分类，
+     * 不会删除搜索框、横幅和每日一言。
      */
-    main
-        .querySelectorAll(":scope > .category")
+    Array.from(main.children)
+        .filter(element => {
+            return element.classList.contains(
+                "category"
+            );
+        })
         .forEach(section => {
             section.remove();
         });
@@ -2051,18 +2168,23 @@ function renderNavigation(data) {
     const fragment =
         document.createDocumentFragment();
 
-    data.categories.forEach((category, index) => {
-        if (!category) {
-            return;
-        }
+    data.categories.forEach(
+        (category, index) => {
+            if (
+                !category ||
+                typeof category !== "object"
+            ) {
+                return;
+            }
 
-        fragment.appendChild(
-            createCategoryElement(
-                category,
-                index
-            )
-        );
-    });
+            fragment.appendChild(
+                createCategoryElement(
+                    category,
+                    index
+                )
+            );
+        }
+    );
 
     if (quoteBox) {
         main.insertBefore(
@@ -2079,6 +2201,12 @@ function renderNavigation(data) {
 }
 
 
+/*
+ * 从 Cloudflare Worker 读取导航
+ *
+ * 微信网络环境可能比较慢，
+ * 给接口最多 8 秒时间。
+ */
 async function loadNavigationFromKV() {
     const controller =
         new AbortController();
@@ -2086,7 +2214,7 @@ async function loadNavigationFromKV() {
     const timeout =
         setTimeout(() => {
             controller.abort();
-        }, 3000);
+        }, 8000);
 
     try {
         const response =
@@ -2112,6 +2240,15 @@ async function loadNavigationFromKV() {
         const data =
             await response.json();
 
+        if (
+            !data ||
+            !Array.isArray(data.categories)
+        ) {
+            throw new Error(
+                "导航数据格式不正确"
+            );
+        }
+
         renderNavigation(data);
 
         console.log(
@@ -2122,7 +2259,7 @@ async function loadNavigationFromKV() {
             error.name === "AbortError"
         ) {
             console.warn(
-                "KV 请求超过 3 秒，保留默认导航"
+                "KV 请求超过 8 秒，保留默认导航"
             );
         } else {
             console.warn(
@@ -2135,6 +2272,13 @@ async function loadNavigationFromKV() {
     }
 }
 
+
+/*
+ * 当前 script 在 body 底部，
+ * 页面元素已经创建完成。
+ */
+bindStaticCategoryEvents();
+loadNavigationFromKV();
 
 /* =========================
    时间与问候
@@ -3028,6 +3172,15 @@ audio.addEventListener(
 
 
 loadSong(currentIndex);
+
+/*
+ * 播放器默认显示，
+ * 但这里只加载歌曲，不调用 playAudio()，
+ * 因此不会自动播放。
+ */
+document.body.classList.add(
+    "player-visible"
+);
 
 
 /* =========================
