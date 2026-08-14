@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -20,7 +19,6 @@ body {
   font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   background:var(--main-bg); color:var(--text-1); line-height:1.6; min-height:100vh;
 }
-/* ── 按钮 ── */
 button {
   display:inline-flex; align-items:center; justify-content:center; gap:5px;
   padding:9px 14px; border-radius:9px; font-size:.83rem; font-weight:500;
@@ -36,7 +34,6 @@ button:disabled { opacity:.45; cursor:not-allowed }
 .btn-danger-soft:hover { background:#fee2e2 }
 .btn-sm { padding:5px 10px; font-size:.75rem; border-radius:7px }
 .btn-block { width:100% }
-/* ── 侧边栏 ── */
 .layout { display:flex; min-height:100vh }
 .sidebar {
   width:250px; flex-shrink:0; background:var(--sidebar-bg); color:var(--sidebar-text);
@@ -54,22 +51,25 @@ button:disabled { opacity:.45; cursor:not-allowed }
 .sidebar-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--sidebar-text); opacity:.7; padding:0 6px }
 .category-list { display:flex; flex-direction:column; gap:4px; flex:1; overflow-y:auto }
 .category-item {
-  display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:9px; cursor:pointer;
-  transition:background .15s; border:1px solid transparent; user-select:none; position:relative;
-  -webkit-user-select:none;
+  display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:9px; cursor:pointer;
+  transition:background .15s; border:1px solid transparent; user-select:none;
 }
 .category-item:hover { background:rgba(255,255,255,.06) }
 .category-item.active { background:var(--sidebar-active-bg); border-color:rgba(99,102,241,.4); color:var(--sidebar-active-text) }
 .category-item .name { flex:1; font-size:.86rem; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 .category-item .count { font-size:.68rem; background:rgba(255,255,255,.12); padding:2px 7px; border-radius:20px; color:var(--sidebar-text) }
 .category-item.active .count { background:rgba(255,255,255,.15); color:#fff }
-.category-item .drag { cursor:grab; opacity:.5; font-size:.85rem; transition:opacity .15s; flex-shrink:0 }
-.category-item:hover .drag { opacity:1 }
+.move-btn {
+  cursor:pointer; background:transparent; border:none; color:var(--sidebar-text); font-size:.85rem;
+  padding:2px 4px; border-radius:4px; line-height:1; opacity:.5; transition:opacity .15s; flex-shrink:0;
+}
+.category-item .move-btn { color:var(--sidebar-text) }
+.category-item.active .move-btn { color:#fff }
+.move-btn:hover { opacity:1; background:rgba(255,255,255,.15) }
 .sidebar-footer { display:flex; gap:8px; border-top:1px solid rgba(255,255,255,.08); padding-top:12px }
 .sidebar-footer button { flex:1; background:rgba(255,255,255,.08); color:var(--sidebar-text); border:1px solid rgba(255,255,255,.1); padding:7px }
 .sidebar-footer button:hover { background:rgba(255,255,255,.15) }
 .sidebar-footer .danger { color:#fecaca }
-/* ── 主区域 ── */
 .main { flex:1; display:flex; flex-direction:column; min-width:0 }
 .topbar {
   display:flex; align-items:center; gap:12px; padding:12px 24px; background:#fff;
@@ -85,13 +85,11 @@ button:disabled { opacity:.45; cursor:not-allowed }
 }
 .search-wrap input:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); background:#fff }
 .topbar-actions { display:flex; gap:8px; margin-left:auto }
-/* ── 内容 ── */
 .content { flex:1; padding:24px; display:flex; flex-direction:column; gap:20px; max-width:1200px; width:100%; margin:0 auto }
 .page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap }
 .page-header h2 { font-size:1.35rem; font-weight:650; color:var(--text-1) }
 .page-header .meta { color:var(--text-3); font-size:.8rem; margin-top:2px }
 .page-actions { display:flex; gap:8px }
-/* ── 卡片网格 ── */
 .website-grid {
   display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; align-content:start;
 }
@@ -102,7 +100,6 @@ button:disabled { opacity:.45; cursor:not-allowed }
 }
 .website-card:hover { transform:translateY(-3px); box-shadow:var(--shadow); border-color:#c7d2fe }
 .website-card.selected { border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-soft) }
-.website-card.dragging { opacity:.5; transform:scale(.95) }
 .card-favicon {
   width:40px; height:40px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center;
   font-size:18px; margin-bottom:2px; border:1px solid var(--card-border);
@@ -119,7 +116,6 @@ button:disabled { opacity:.45; cursor:not-allowed }
 .website-card:hover .check { border-color:var(--primary) }
 .website-card.selected .check { background:var(--primary); border-color:var(--primary); color:#fff }
 .empty-state { grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--text-3); background:#fff; border:2px dashed var(--card-border); border-radius:var(--radius) }
-/* ── 快速添加 ── */
 .quick-add { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow-sm) }
 .quick-add h3 { font-size:.9rem; color:var(--text-2); margin-bottom:10px; font-weight:600 }
 .quick-form { display:flex; gap:8px; flex-wrap:wrap }
@@ -128,7 +124,6 @@ button:disabled { opacity:.45; cursor:not-allowed }
   font-size:.85rem; background:#f8fafc; outline:none; transition:border-color .2s;
 }
 .quick-form input:focus { border-color:var(--primary); background:#fff }
-/* ── 模态框 ── */
 .modal-overlay {
   position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(3px); z-index:1000;
   display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; visibility:hidden; transition:all .25s;
@@ -147,7 +142,6 @@ button:disabled { opacity:.45; cursor:not-allowed }
 }
 .modal input:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft) }
 .modal .btn-row { display:flex; justify-content:flex-end; gap:8px; margin-top:20px }
-/* ── Toast ── */
 #toast-container { position:fixed; top:70px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; max-width:360px }
 .toast {
   background:#fff; border-left:4px solid var(--primary); border-radius:10px; box-shadow:var(--shadow-lg);
@@ -156,14 +150,13 @@ button:disabled { opacity:.45; cursor:not-allowed }
 .toast.success { border-left-color:var(--success) }
 .toast.error { border-left-color:var(--danger) }
 @keyframes slide { from { transform:translateX(30px); opacity:0 } to { transform:translateX(0); opacity:1 } }
-/* ── 响应式 ── */
 @media (max-width:768px) {
   .layout { flex-direction:column }
   .sidebar { width:100%; height:auto; position:static; flex-direction:column; padding:10px 12px }
   .sidebar-title, .sidebar-footer { display:none }
   .category-list { flex-direction:row; overflow-x:auto; padding-bottom:4px }
   .category-item { flex-shrink:0; padding:7px 12px }
-  .category-item .count, .category-item .drag { display:none }
+  .category-item .count { display:none }
   .topbar { padding:10px 14px; flex-wrap:wrap }
   .search-wrap { order:3; flex-basis:100%; max-width:none }
   .content { padding:14px }
@@ -173,12 +166,10 @@ button:disabled { opacity:.45; cursor:not-allowed }
 <body>
 
 <div class="layout">
-  <!-- 侧边栏 -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo">
-        <img class="brand-avatar" src="https://img.baidu.re/i/2026/08/r74wr4.jpg"
-             alt="头像" onerror="this.outerHTML='🧭'">
+        <img class="brand-avatar" src="https://img.baidu.re/i/2026/08/r74wr4.jpg" alt="头像" onerror="this.outerHTML='🧭'">
       </div>
       <div class="brand-text">
         硕策导航
@@ -200,7 +191,6 @@ button:disabled { opacity:.45; cursor:not-allowed }
 
 
 
-  <!-- 主区域 -->
   <main class="main">
     <header class="topbar">
       <div class="search-wrap">
@@ -294,10 +284,8 @@ button:disabled { opacity:.45; cursor:not-allowed }
 (() => {
 'use strict';
 
-/* ══════════ 配置 ══════════ */
 const API_BASE = "https://proxyd.picpi.top/https://shuoce-navigation.2765414002jin.workers.dev";
 
-/* ══════════ 状态 ══════════ */
 const state = {
   data: null,
   currentCategoryId: null,
@@ -305,13 +293,10 @@ const state = {
   editingWebsiteIndex: -1,
   editingCategoryId: null,
   selectedWebsites: new Set(),
-  dragSource: null,
-  dragCategorySource: null,
   searchQuery: '',
   isDirty: false
 };
 
-/* ══════════ DOM ══════════ */
 const $ = id => document.getElementById(id);
 const dom = {
   categoryList: $('categoryList'),
@@ -340,7 +325,6 @@ const dom = {
   confirmAuth: $('confirmAuth'), cancelAuth: $('cancelAuth')
 };
 
-/* ══════════ Toast ══════════ */
 function toast(message, type = 'info', duration = 2500) {
   const el = document.createElement('div');
   el.className = `toast ${type}`;
@@ -350,7 +334,6 @@ function toast(message, type = 'info', duration = 2500) {
   setTimeout(() => el.remove(), duration);
 }
 
-/* ══════════ 工具 ══════════ */
 const debounce = (fn, ms = 250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 const escapeHtml = s => String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const slugify = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || ('cat-'+Date.now());
@@ -367,7 +350,20 @@ function markClean() {
 }
 function beforeUnload(e) { if (state.isDirty) { e.preventDefault(); e.returnValue = ''; } }
 
-/* ══════════ 渲染分类 ══════════ */
+/* ── 分类排序 ── */
+function moveCategory(index, dir) {
+  const cats = state.data?.categories;
+  if (!cats) return;
+  const target = index + dir;
+  if (target < 0 || target >= cats.length) return;
+  const [moved] = cats.splice(index, 1);
+  cats.splice(target, 0, moved);
+  renderCategories();
+  markDirty();
+  toast('分类顺序已调整', 'success');
+}
+
+/* ── 渲染分类 ── */
 function renderCategories() {
   const cats = state.data?.categories || [];
   dom.categoryList.innerHTML = '';
@@ -380,14 +376,37 @@ function renderCategories() {
   cats.forEach((cat, i) => {
     const el = document.createElement('div');
     el.className = `category-item${cat.id === state.currentCategoryId ? ' active' : ''}`;
-    el.dataset.index = i;
-    el.draggable = true;
 
-    el.innerHTML = `
-      <span class="drag">⠿</span>
-      <span class="name">${escapeHtml(cat.title || cat.id)}</span>
-      <span class="count">${(cat.cards || []).length}</span>
-    `;
+    const upBtn = document.createElement('button');
+    upBtn.className = 'move-btn';
+    upBtn.textContent = '▲';
+    upBtn.title = '上移';
+    upBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      moveCategory(i, -1);
+    });
+
+    const name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = cat.title || cat.id;
+
+    const count = document.createElement('span');
+    count.className = 'count';
+    count.textContent = (cat.cards || []).length;
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'move-btn';
+    downBtn.textContent = '▼';
+    downBtn.title = '下移';
+    downBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      moveCategory(i, 1);
+    });
+
+    el.appendChild(upBtn);
+    el.appendChild(name);
+    el.appendChild(count);
+    el.appendChild(downBtn);
 
     el.addEventListener('click', () => {
       state.currentCategoryId = cat.id;
@@ -396,36 +415,28 @@ function renderCategories() {
       renderWebsiteGrid();
     });
 
-    // 拖拽分类排序
-    el.addEventListener('dragstart', e => {
-      state.dragCategorySource = i;
-      el.classList.add('dragging');
-      // 【关键修复】必须设置 data，否则浏览器不启动拖拽
-      e.dataTransfer.setData('text/plain', String(i));
-      e.dataTransfer.effectAllowed = 'move';
-      e.stopPropagation();
-    });
-    el.addEventListener('dragend', () => el.classList.remove('dragging'));
-    el.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-    el.addEventListener('drop', e => {
-      e.preventDefault();
-      const target = +el.dataset.index;
-      if (state.dragCategorySource === null || state.dragCategorySource === target) return;
-      const [moved] = cats.splice(state.dragCategorySource, 1);
-      cats.splice(target, 0, moved);
-      state.dragCategorySource = null;
-      renderCategories();
-      markDirty();
-      toast('分类顺序已调整', 'success');
-    });
-
     dom.categoryList.appendChild(el);
   });
 
   if (!state.currentCategoryId && cats.length) state.currentCategoryId = cats[0].id;
 }
 
-/* ══════════ 渲染网站 ══════════ */
+/* ── 网站排序 ── */
+function moveWebsite(card, dir) {
+  const cat = getCurrentCategory();
+  if (!cat) return;
+  const cards = cat.cards || [];
+  const index = cards.indexOf(card);
+  const target = index + dir;
+  if (index < 0 || target < 0 || target >= cards.length) return;
+  const [moved] = cards.splice(index, 1);
+  cards.splice(target, 0, moved);
+  renderWebsiteGrid();
+  markDirty();
+  toast('网站顺序已调整', 'success');
+}
+
+/* ── 渲染网站 ── */
 function renderWebsiteGrid() {
   const cat = getCurrentCategory();
   dom.websiteGrid.innerHTML = '';
@@ -454,22 +465,25 @@ function renderWebsiteGrid() {
     const key = card.id || card.url || card.title;
     const selected = state.selectedWebsites.has(key);
     const favicon = getFavicon(card.url);
-    el.className = `website-card${selected ? ' selected' : ''}`;
-    el.draggable = !q;
+    const moveBtns = q ? '' : `
+      <button class="btn-outline btn-sm" data-action="move-up" title="上移">↑</button>
+      <button class="btn-outline btn-sm" data-action="move-down" title="下移">↓</button>
+    `;
 
+    el.className = `website-card${selected ? ' selected' : ''}`;
     el.innerHTML = `
       <div class="check">✓</div>
       <div class="card-favicon">${favicon ? `<img src="${favicon}" onerror="this.remove()">` : '🌐'}</div>
       <div class="card-title">${escapeHtml(card.title || '未命名')}</div>
       <div class="card-url" title="${escapeHtml(card.url || '')}">${escapeHtml(card.url || '无地址')}</div>
       <div class="card-actions">
+        ${moveBtns}
         <button class="btn-outline btn-sm" data-action="visit">打开</button>
         <button class="btn-outline btn-sm" data-action="edit">编辑</button>
         <button class="btn-danger-soft btn-sm" data-action="delete">删除</button>
       </div>
     `;
 
-    // 选中
     el.querySelector('.check').addEventListener('click', e => {
       e.stopPropagation();
       if (state.selectedWebsites.has(key)) { state.selectedWebsites.delete(key); el.classList.remove('selected'); }
@@ -477,42 +491,17 @@ function renderWebsiteGrid() {
       updateBatchButton();
     });
 
-    // 卡片点击 / 按钮
     el.addEventListener('click', e => {
       const action = e.target.closest('[data-action]')?.dataset.action;
-      if (action === 'edit') { e.stopPropagation(); openWebsiteModal(card); }
+      if (action === 'move-up') { e.stopPropagation(); moveWebsite(card, -1); }
+      else if (action === 'move-down') { e.stopPropagation(); moveWebsite(card, 1); }
+      else if (action === 'edit') { e.stopPropagation(); openWebsiteModal(card); }
       else if (action === 'delete') { e.stopPropagation(); deleteWebsite(card); }
       else if (action === 'visit') { e.stopPropagation(); card.url && window.open(card.url, '_blank'); }
       else if (e.target === el || e.target.closest('.card-favicon') || e.target.closest('.card-title')) {
         card.url && window.open(card.url, '_blank');
       }
     });
-
-    // 拖拽排序网站
-    if (!q) {
-      const originalIndex = cat.cards.indexOf(card);
-      el.addEventListener('dragstart', e => {
-        state.dragSource = originalIndex;
-        el.classList.add('dragging');
-        // 【关键修复】必须设置 data
-        e.dataTransfer.setData('text/plain', String(originalIndex));
-        e.dataTransfer.effectAllowed = 'move';
-        e.stopPropagation();
-      });
-      el.addEventListener('dragend', () => el.classList.remove('dragging'));
-      el.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-      el.addEventListener('drop', e => {
-        e.preventDefault();
-        const target = cat.cards.indexOf(card);
-        if (state.dragSource === null || state.dragSource === target) return;
-        const [moved] = cat.cards.splice(state.dragSource, 1);
-        cat.cards.splice(target, 0, moved);
-        state.dragSource = null;
-        renderWebsiteGrid();
-        markDirty();
-        toast('网站顺序已调整', 'success');
-      });
-    }
 
     dom.websiteGrid.appendChild(el);
   });
@@ -527,7 +516,7 @@ function updateBatchButton() {
   dom.batchDeleteBtn.textContent = `批量删除 (${state.selectedWebsites.size})`;
 }
 
-/* ══════════ 添加 / 删除 ══════════ */
+/* ── 添加 / 删除 ── */
 function addWebsite() {
   const title = dom.newTitle.value.trim();
   const url = dom.newUrl.value.trim();
@@ -571,7 +560,7 @@ function addCategory() {
   toast('分类已创建', 'success');
 }
 
-/* ══════════ 弹窗 ══════════ */
+/* ── 弹窗 ── */
 const openModal = m => m.classList.add('open');
 const closeModal = m => m.classList.remove('open');
 
@@ -634,7 +623,7 @@ function deleteCategory() {
   toast('分类已删除', 'success');
 }
 
-/* ══════════ API ══════════ */
+/* ── API ── */
 function showAuthModal() {
   if (state.token) readNavigation(state.token);
   else { openModal(dom.authModal); setTimeout(() => dom.authToken.focus(), 100); }
@@ -694,7 +683,7 @@ async function saveData() {
   }
 }
 
-/* ══════════ 导入导出 ══════════ */
+/* ── 导入导出 ── */
 function exportData() {
   if (!state.data) return toast('没有可导出的数据', 'warning');
   const blob = new Blob([JSON.stringify(state.data, null, 2)], { type:'application/json' });
@@ -726,9 +715,8 @@ function importData(file) {
   reader.readAsText(file);
 }
 
-/* ══════════ 事件绑定 ══════════ */
+/* ── 事件绑定 ── */
 function bindEvents() {
-  // 认证弹窗
   dom.confirmAuth.addEventListener('click', () => {
     const token = dom.authToken.value.trim();
     if (!token) return toast('请输入密码', 'warning');
@@ -737,26 +725,21 @@ function bindEvents() {
   dom.cancelAuth.addEventListener('click', () => closeModal(dom.authModal));
   dom.authToken.addEventListener('keydown', e => { if (e.key === 'Enter') dom.confirmAuth.click(); });
 
-  // 添加
   dom.addWebsiteBtn.addEventListener('click', addWebsite);
   dom.newUrl.addEventListener('keydown', e => { if (e.key === 'Enter') addWebsite(); });
   dom.addCategorySidebarBtn.addEventListener('click', addCategory);
 
-  // 分类
   dom.editCategorySidebarBtn.addEventListener('click', openCategoryModal);
   dom.deleteCategorySidebarBtn.addEventListener('click', deleteCategory);
 
-  // 网站弹窗
   dom.saveWebsite.addEventListener('click', saveWebsiteModal);
   dom.cancelWebsite.addEventListener('click', () => closeModal(dom.websiteModal));
   dom.editUrl.addEventListener('keydown', e => { if (e.key === 'Enter') saveWebsiteModal(); });
 
-  // 分类弹窗
   dom.saveCategory.addEventListener('click', saveCategoryModal);
   dom.cancelCategory.addEventListener('click', () => closeModal(dom.categoryModal));
   dom.editCatTitle.addEventListener('keydown', e => { if (e.key === 'Enter') saveCategoryModal(); });
 
-  // 保存 / Token
   dom.saveBtn.addEventListener('click', saveData);
   dom.clearTokenBtn.addEventListener('click', () => {
     state.token = '';
@@ -764,12 +747,10 @@ function bindEvents() {
     toast('已清除管理员密码', 'info');
   });
 
-  // 导入导出
   dom.importBtn.addEventListener('click', () => dom.importFile.click());
   dom.importFile.addEventListener('change', e => e.target.files[0] && importData(e.target.files[0]));
   dom.exportBtn.addEventListener('click', exportData);
 
-  // 搜索
   dom.searchInput.addEventListener('input', debounce(e => {
     state.searchQuery = e.target.value.trim();
     dom.clearSearchBtn.style.display = state.searchQuery ? 'inline-flex' : 'none';
@@ -782,7 +763,6 @@ function bindEvents() {
     renderWebsiteGrid();
   });
 
-  // 批量删除
   dom.batchDeleteBtn.addEventListener('click', () => {
     const cat = getCurrentCategory();
     if (!cat || !state.selectedWebsites.size) return;
@@ -795,12 +775,10 @@ function bindEvents() {
     toast('已删除选中网站', 'success');
   });
 
-  // 遮罩点击关闭
   [dom.websiteModal, dom.categoryModal, dom.authModal].forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) closeModal(m); });
   });
 
-  // 快捷键
   document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); saveData(); }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') { e.preventDefault(); addCategory(); }
@@ -808,7 +786,7 @@ function bindEvents() {
   });
 }
 
-/* ══════════ 初始化 ══════════ */
+/* ── 初始化 ── */
 window.addEventListener('load', () => {
   bindEvents();
   renderCategories();
