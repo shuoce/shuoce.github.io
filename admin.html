@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -51,7 +52,7 @@ button:disabled { opacity:.45; cursor:not-allowed }
 .sidebar-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--sidebar-text); opacity:.7; padding:0 6px }
 .category-list { display:flex; flex-direction:column; gap:4px; flex:1; overflow-y:auto }
 .category-item {
-  display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:9px; cursor:pointer;
+  display:flex; align-items:center; gap:6px; padding:8px 10px; border-radius:9px; cursor:pointer;
   transition:background .15s; border:1px solid transparent; user-select:none;
 }
 .category-item:hover { background:rgba(255,255,255,.06) }
@@ -59,13 +60,14 @@ button:disabled { opacity:.45; cursor:not-allowed }
 .category-item .name { flex:1; font-size:.86rem; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 .category-item .count { font-size:.68rem; background:rgba(255,255,255,.12); padding:2px 7px; border-radius:20px; color:var(--sidebar-text) }
 .category-item.active .count { background:rgba(255,255,255,.15); color:#fff }
+/* 关键修改：移动按钮默认隐藏，悬停才显示 */
 .move-btn {
-  cursor:pointer; background:transparent; border:none; color:var(--sidebar-text); font-size:.85rem;
-  padding:2px 4px; border-radius:4px; line-height:1; opacity:.5; transition:opacity .15s; flex-shrink:0;
+  cursor:pointer; background:transparent; border:none; color:var(--sidebar-text); font-size:.8rem;
+  padding:2px 5px; border-radius:4px; line-height:1; opacity:0; transition:opacity .15s; flex-shrink:0;
 }
-.category-item .move-btn { color:var(--sidebar-text) }
-.category-item.active .move-btn { color:#fff }
-.move-btn:hover { opacity:1; background:rgba(255,255,255,.15) }
+.category-item:hover .move-btn,
+.category-item.active .move-btn { opacity:.7; }
+.move-btn:hover { opacity:1 !important; background:rgba(255,255,255,.2) }
 .sidebar-footer { display:flex; gap:8px; border-top:1px solid rgba(255,255,255,.08); padding-top:12px }
 .sidebar-footer button { flex:1; background:rgba(255,255,255,.08); color:var(--sidebar-text); border:1px solid rgba(255,255,255,.1); padding:7px }
 .sidebar-footer button:hover { background:rgba(255,255,255,.15) }
@@ -155,7 +157,7 @@ button:disabled { opacity:.45; cursor:not-allowed }
   .sidebar { width:100%; height:auto; position:static; flex-direction:column; padding:10px 12px }
   .sidebar-title, .sidebar-footer { display:none }
   .category-list { flex-direction:row; overflow-x:auto; padding-bottom:4px }
-  .category-item { flex-shrink:0; padding:7px 12px }
+  .category-item { flex-shrink:0; padding:7px 10px }
   .category-item .count { display:none }
   .topbar { padding:10px 14px; flex-wrap:wrap }
   .search-wrap { order:3; flex-basis:100%; max-width:none }
@@ -350,7 +352,7 @@ function markClean() {
 }
 function beforeUnload(e) { if (state.isDirty) { e.preventDefault(); e.returnValue = ''; } }
 
-/* ── 分类排序 ── */
+/* ── 分类排序（通过移动按钮） ── */
 function moveCategory(index, dir) {
   const cats = state.data?.categories;
   if (!cats) return;
@@ -377,6 +379,17 @@ function renderCategories() {
     const el = document.createElement('div');
     el.className = `category-item${cat.id === state.currentCategoryId ? ' active' : ''}`;
 
+    // 名称
+    const name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = cat.title || cat.id;
+
+    // 数量
+    const count = document.createElement('span');
+    count.className = 'count';
+    count.textContent = (cat.cards || []).length;
+
+    // 上移按钮（默认隐藏）
     const upBtn = document.createElement('button');
     upBtn.className = 'move-btn';
     upBtn.textContent = '▲';
@@ -386,14 +399,7 @@ function renderCategories() {
       moveCategory(i, -1);
     });
 
-    const name = document.createElement('span');
-    name.className = 'name';
-    name.textContent = cat.title || cat.id;
-
-    const count = document.createElement('span');
-    count.className = 'count';
-    count.textContent = (cat.cards || []).length;
-
+    // 下移按钮（默认隐藏）
     const downBtn = document.createElement('button');
     downBtn.className = 'move-btn';
     downBtn.textContent = '▼';
@@ -403,11 +409,13 @@ function renderCategories() {
       moveCategory(i, 1);
     });
 
-    el.appendChild(upBtn);
+    // 顺序：名称、数量、上移、下移
     el.appendChild(name);
     el.appendChild(count);
+    el.appendChild(upBtn);
     el.appendChild(downBtn);
 
+    // 点击切换分类
     el.addEventListener('click', () => {
       state.currentCategoryId = cat.id;
       state.selectedWebsites.clear();
