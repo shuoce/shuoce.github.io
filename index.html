@@ -2251,14 +2251,19 @@ function loadHitokoto(){
 
         return response.json();
     })
-    .then(data=>{
-        const quote=data.hitokoto||"保持热爱，奔赴山海。";
-        const source=data.from
-            ?`<small>—— ${data.from}</small>`
-            :"";
+    .then(data => {
+    const quote =
+        data.hitokoto || "保持热爱，奔赴山海。";
 
-        hitokoto.innerHTML=`「${quote}」${source}`;
-    })
+    // 使用 textContent，避免外部内容被当作 HTML 执行
+    hitokoto.textContent = `「${quote}」`;
+
+    if (data.from) {
+        const source = document.createElement("small");
+        source.textContent = `—— ${data.from}`;
+        hitokoto.appendChild(source);
+    }
+})
     .catch(error=>{
         console.warn("每日一言接口异常：",error);
         hitokoto.textContent="保持热爱，奔赴山海。";
