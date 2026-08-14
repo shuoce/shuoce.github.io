@@ -1909,6 +1909,320 @@ button{
 <script>
 "use strict";
 
+/* Cloudflare KV 动态导航 */
+
+const NAVIGATION_API =
+  "https://shuoce-navigation.2765414002jin.workers.dev/api/navigation";
+
+
+/*
+ * 安全处理网站地址
+ * 只允许 http:// 和 https://
+ */
+function safeUrl(value) {
+  try {
+    const url = new URL(value);
+
+    if (
+      url.protocol !== "http:" &&
+      url.protocol !== "https:"
+    ) {
+      return "#";
+    }
+
+    return url.href;
+  } catch {
+    return "#";
+  }
+}
+
+
+/*
+ * 创建网站卡片
+ */
+function createNavigationCard(card) {
+  const link = document.createElement("a");
+
+  link.className =
+    `card ${card.className || ""}`.trim();
+
+  link.href = safeUrl(card.url);
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+
+  const icon = document.createElement("i");
+
+  let iconName =
+    card.icon || "bi-link-45deg";
+
+  if (!iconName.startsWith("bi-")) {
+    iconName = "bi-" + iconName;
+  }
+
+  icon.className =
+    `bi ${iconName}`;
+
+  const cardTitle =
+    document.createElement("div");
+
+  cardTitle.className = "card-title";
+  cardTitle.textContent =
+    card.title || "未命名网站";
+
+  const cardDesc =
+    document.createElement("div");
+
+  cardDesc.className = "card-desc";
+  cardDesc.textContent =
+    card.description || "";
+
+  link.appendChild(icon);
+  link.appendChild(cardTitle);
+  link.appendChild(cardDesc);
+
+  return link;
+}
+
+
+/*
+ * 创建分类区域
+ */
+function createCategoryElement(category) {
+  const section =
+    document.createElement("section");
+
+  section.className = "navigation-category";
+
+  section.dataset.categoryId =
+    category.id || "";
+
+  const title =
+    document.createElement("h2");
+
+  title.className = "category-title";
+
+  title.textContent =
+    category.title ||
+    category.name ||
+    category.id ||
+    "未命名分类";
+
+  const grid =
+    document.createElement("div");
+
+  grid.className = "grid";
+
+  if (
+    Array.isArray(category.cards)
+  ) {
+    category.cards.forEach(card => {
+      if (!card) {
+        return;
+      }
+
+      grid.appendChild(
+        createNavigationCard(card)
+      );
+    });
+  }
+
+  section.appendChild(title);
+  section.appendChild(grid);
+
+  return section;
+}
+
+
+/*
+ * 获取动态导航容器
+ *
+ * 优先使用你页面中已有的：
+ * #kvNavigation
+ *
+ * 如果没有，则尝试使用：
+ * #navigation
+ *
+ * 如果还没有，则自动创建一个。
+ */
+function getNavigationContainer() {
+  let container =
+    document.getElementById("kvNavigation");
+
+  if (container) {
+    return container;
+  }
+
+  container =
+    document.getElementById("navigation");
+
+  if (container) {
+    return container;
+  }
+
+  container =
+    document.createElement("main");
+
+  container.id = "kvNavigation";
+  container.className = "kv-navigation";
+
+  document.body.appendChild(container);
+
+  return container;
+}
+
+
+/*
+ * 显示导航数据
+ */
+function renderNavigation(data) {
+  if (
+    !data ||
+    !Array.isArray(data.categories)
+  ) {
+    throw new Error(
+      "导航数据格式不正确"
+    );
+  }
+
+  /*
+   * 如果页面中有 #kvNavigation 或 #navigation，
+   * 就使用动态渲染模式。
+   */
+  const dynamicContainer =
+    document.getElementById("kvNavigation") ||
+    document.getElementById("navigation");
+
+  if (dynamicContainer) {
+    dynamicContainer.replaceChildren();
+
+    data.categories.forEach(category => {
+      if (
+        !category ||
+        !Array.isArray(category.cards)
+      ) {
+        return;
+      }
+
+      dynamicContainer.appendChild(
+        createCategoryElement(category)
+      );
+    });
+
+    return;
+  }
+
+  /*
+   * 兼容你原来固定的 commonContent 和 musicContent
+   */
+  data.categories.forEach(category => {
+    if (
+      !category ||
+      !Array.isArray(category.cards)
+    ) {
+      return;
+    }
+
+    let contentId = "";
+
+    if (category.id === "common") {
+      contentId = "commonContent";
+    }
+
+    if (category.id === "music") {
+      contentId = "musicContent";
+    }
+
+    if (!contentId) {
+      return;
+    }
+
+    const content =
+      document.getElementById(contentId);
+
+    if (!content) {
+      return;
+    }
+
+    const grid =
+      content.querySelector(".grid");
+
+    if (!grid) {
+      return;
+    }
+
+    const fragment =
+      document.createDocumentFragment();
+
+    category.cards.forEach(card => {
+      if (!card) {
+        return;
+      }
+
+      fragment.appendChild(
+        createNavigationCard(card)
+      );
+    });
+
+    grid.replaceChildren(fragment);
+  });
+}
+
+
+/*
+ * 从 Cloudflare Worker 读取 KV 导航数据
+ */
+async function loadNavigationFromKV() {
+  try {
+    const response = await fetch(
+      NAVIGATION_API +
+      "?time=" +
+      Date.now(),
+      {
+        method: "GET",
+        headers: {
+          "Accept": "application/json"
+        },
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `导航接口请求失败：${response.status}`
+      );
+    }
+
+    const data =
+      await response.json();
+
+    renderNavigation(data);
+
+    console.log(
+      "导航数据已从 Cloudflare KV 加载"
+    );
+  } catch (error) {
+    console.warn(
+      "KV 导航加载失败，继续使用原有导航：",
+      error
+    );
+  }
+}
+
+
+/*
+ * 页面加载完成后读取导航
+ */
+if (
+  document.readyState === "loading"
+) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadNavigationFromKV
+  );
+} else {
+  loadNavigationFromKV();
+}
+    
 /* 时间与问候 */
 function updateTime(){
     const now=new Date();
