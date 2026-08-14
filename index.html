@@ -1914,27 +1914,45 @@ button{
 const NAVIGATION_API =
     "https://shuoce-navigation.2765414002jin.workers.dev/api/navigation";
 
-function createNavigationCard(card){
-    const link=document.createElement("a");
+function safeUrl(value) {
+    try {
+        const url = new URL(value);
 
-    link.className=
+        // 只允许 http 和 https 链接
+        if (
+            url.protocol !== "http:" &&
+            url.protocol !== "https:"
+        ) {
+            return "#";
+        }
+
+        return url.href;
+    } catch {
+        return "#";
+    }
+}
+
+function createNavigationCard(card) {
+    const link = document.createElement("a");
+
+    link.className =
         `card ${card.className || ""}`.trim();
 
-    link.href=card.url || "#";
-    link.target="_blank";
-    link.rel="noopener noreferrer";
+    link.href = safeUrl(card.url);
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
 
-    const icon=document.createElement("i");
-    icon.className=
+    const icon = document.createElement("i");
+    icon.className =
         `bi ${card.icon || "bi-link-45deg"}`;
 
-    const cardTitle=document.createElement("div");
-    cardTitle.className="card-title";
-    cardTitle.textContent=card.title || "";
+    const cardTitle = document.createElement("div");
+    cardTitle.className = "card-title";
+    cardTitle.textContent = card.title || "";
 
-    const cardDesc=document.createElement("div");
-    cardDesc.className="card-desc";
-    cardDesc.textContent=card.description || "";
+    const cardDesc = document.createElement("div");
+    cardDesc.className = "card-desc";
+    cardDesc.textContent = card.description || "";
 
     link.appendChild(icon);
     link.appendChild(cardTitle);
