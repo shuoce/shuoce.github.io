@@ -1908,6 +1908,116 @@ button{
 
 <script>
 "use strict";
+    
+/* Cloudflare KV 动态导航 */
+
+const NAVIGATION_API =
+    "https://shuoce-navigation.2765414002jin.workers.dev/api/navigation";
+
+function createNavigationCard(card){
+    const link=document.createElement("a");
+
+    link.className=
+        `card ${card.className || ""}`.trim();
+
+    link.href=card.url || "#";
+    link.target="_blank";
+    link.rel="noopener noreferrer";
+
+    const icon=document.createElement("i");
+    icon.className=
+        `bi ${card.icon || "bi-link-45deg"}`;
+
+    const cardTitle=document.createElement("div");
+    cardTitle.className="card-title";
+    cardTitle.textContent=card.title || "";
+
+    const cardDesc=document.createElement("div");
+    cardDesc.className="card-desc";
+    cardDesc.textContent=card.description || "";
+
+    link.appendChild(icon);
+    link.appendChild(cardTitle);
+    link.appendChild(cardDesc);
+
+    return link;
+}
+
+function renderNavigation(data){
+    if(!data || !Array.isArray(data.categories)){
+        throw new Error("导航数据格式不正确");
+    }
+
+    data.categories.forEach(category=>{
+        let contentId="";
+
+        if(category.id==="common"){
+            contentId="commonContent";
+        }else if(category.id==="music"){
+            contentId="musicContent";
+        }
+
+        if(!contentId || !Array.isArray(category.cards)){
+            return;
+        }
+
+        const content=document.getElementById(contentId);
+
+        if(!content){
+            return;
+        }
+
+        const grid=content.querySelector(".grid");
+
+        if(!grid){
+            return;
+        }
+
+        const fragment=document.createDocumentFragment();
+
+        category.cards.forEach(card=>{
+            fragment.appendChild(
+                createNavigationCard(card)
+            );
+        });
+
+        grid.replaceChildren(fragment);
+    });
+}
+
+async function loadNavigationFromKV(){
+    try{
+        const response=await fetch(
+            NAVIGATION_API,
+            {
+                method:"GET",
+                headers:{
+                    "Accept":"application/json"
+                },
+                cache:"no-cache"
+            }
+        );
+
+        if(!response.ok){
+            throw new Error(
+                `导航接口请求失败：${response.status}`
+            );
+        }
+
+        const data=await response.json();
+
+        renderNavigation(data);
+
+        console.log("导航数据已从 Cloudflare KV 加载");
+    }catch(error){
+        console.warn(
+            "KV 导航加载失败，继续使用原有导航：",
+            error
+        );
+    }
+}
+
+loadNavigationFromKV();
 
 /* 时间与问候 */
 function updateTime(){
