@@ -292,7 +292,7 @@
 
   <script>
     const API_BASE =
-      "https://shuoce-navigation.2765414002jin.workers.dev";
+  "https://proxyd.picpi.top/https://shuoce-navigation.2765414002jin.workers.dev";
 
     let navigationData = null;
 
@@ -550,14 +550,29 @@
           }
         );
 
-        const data =
-          await response.json();
+        const responseText =
+  await response.text();
 
-        if (!response.ok) {
-          throw new Error(
-            data.message || response.status
-          );
-        }
+let data;
+
+try {
+  data = JSON.parse(responseText);
+} catch {
+  throw new Error(
+    "接口未返回 JSON，HTTP " +
+    response.status +
+    "： " +
+    responseText.slice(0, 120)
+  );
+}
+
+if (!response.ok) {
+  throw new Error(
+    data.message ||
+    data.error ||
+    "HTTP " + response.status
+  );
+}
 
         if (
           !data ||
@@ -800,14 +815,29 @@
           }
         );
 
-        const result =
-          await response.json();
+        const responseText =
+  await response.text();
 
-        if (!response.ok) {
-          throw new Error(
-            result.message || response.status
-          );
-        }
+let result;
+
+try {
+  result = JSON.parse(responseText);
+} catch {
+  throw new Error(
+    "接口未返回 JSON，HTTP " +
+    response.status +
+    "： " +
+    responseText.slice(0, 120)
+  );
+}
+
+if (!response.ok) {
+  throw new Error(
+    result.message ||
+    result.error ||
+    "HTTP " + response.status
+  );
+}
 
         showMessage(
           "保存成功！分类和网站修改已经生效。",
