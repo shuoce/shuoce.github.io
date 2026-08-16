@@ -2719,11 +2719,12 @@ runWhenIdle(async () => {
 (function () {
     "use strict";
 
+    const FAVICON_PROXY = "https://proxyd.picpi.top/";
+
     /*
-     * 自动获取网站 favicon。
-     * DuckDuckGo 图标接口通常比 Google 接口更容易显示真实图标。
+     * 生成多个 favicon 候选地址。
      */
-    function getAutomaticFavicon(url) {
+    function getAutomaticFavicons(url) {
         try {
             const target = new URL(url);
 
@@ -2731,107 +2732,169 @@ runWhenIdle(async () => {
                 target.protocol !== "http:" &&
                 target.protocol !== "https:"
             ) {
-                return "";
+                return [];
             }
 
-            return (
-                "https://proxyd.picpi.top/https://icons.duckduckgo.com/ip3/" +
-                encodeURIComponent(target.hostname) +
-                ".ico"
-            );
+            const hostname = target.hostname;
+
+            return [
+                // 方案一：DuckDuckGo 图标库，通过你的反代访问
+                FAVICON_PROXY +
+                "https://icons.duckduckgo.com/ip3/" +
+                encodeURIComponent(hostname) +
+                ".ico",
+
+                // 方案二：目标网站自己的标准 favicon
+                FAVICON_PROXY +
+                target.origin +
+                "/favicon.ico",
+
+                // 方案三：部分网站使用 favicon.png
+                FAVICON_PROXY +
+                target.origin +
+                "/favicon.png"
+            ];
         } catch {
-            return "";
+            return [];
         }
     }
 
+    /*
+     * 将网站卡片中的 Bootstrap 图标替换为真实 favicon。
+     */
     function createFaviconBox(card, oldIcon) {
-        if (!card || card.querySelector(":scope > .card-favicon")) {
+        if (!card) {
             return;
         }
 
-        if (!oldIcon) {
-            oldIcon = document.createElement("i");
-            oldIcon.className = "bi bi-globe";
+        // 已经处理过的卡片不重复处理
+        if (card.querySelector(":scope > .card-favicon")) {
+            return;
         }
+
+        /*
+         * 保存原来的 Bootstrap 图标，
+         * 当所有 favicon 都加载失败时使用它。
+         */
+        const fallbackIcon = oldIcon
+            ? oldIcon.cloneNode(true)
+            : (() => {
+                const icon = document.createElement("i");
+                icon.className = "bi bi-globe";
+                return icon;
+            })();
 
         const faviconBox = document.createElement("span");
         faviconBox.className = "card-favicon";
 
-        const faviconUrl = getAutomaticFavicon(card.href);
+        const cardUrl =
+            card.getAttribute("href") ||
+            card.href ||
+            "";
 
-        if (!faviconUrl) {
-            faviconBox.appendChild(oldIcon.cloneNode(true));
-            oldIcon.replaceWith(faviconBox);
+        const faviconUrls = getAutomaticFavicons(cardUrl);
+
+        /*
+         * 没有有效网址，直接使用默认图标。
+         */
+        if (!faviconUrls.length) {
+            faviconBox.appendChild(fallbackIcon);
+            if (oldIcon && oldIcon.parentNode) {
+                oldIcon.replaceWith(faviconBox);
+            } else {
+                card.prepend(faviconBox);
+            }
             return;
         }
 
         const image = document.createElement("img");
 
-        image.src = faviconUrl;
         image.alt = "网站图标";
         image.loading = "lazy";
         image.decoding = "async";
         image.referrerPolicy = "no-referrer";
 
+        let currentIndex = 0;
+
         /*
-         * 图标加载失败时，恢复原来的 Bootstrap 图标。
+         * 当前地址加载失败后，继续尝试下一个地址。
          */
-        image.addEventListener("error", function () {
-            faviconBox.replaceChildren(oldIcon.cloneNode(true));
-        }, {once: true});
+        function tryNextFavicon() {
+            if (currentIndex >= faviconUrls.length) {
+                faviconBox.replaceChildren(fallbackIcon);
+                return;
+            }
+
+            image.src = faviconUrls[currentIndex];
+            currentIndex++;
+        }
+
+        image.addEventListener("error", tryNextFavicon);
 
         faviconBox.appendChild(image);
 
-        if (oldIcon.parentNode) {
+        if (oldIcon && oldIcon.parentNode) {
             oldIcon.replaceWith(faviconBox);
         } else {
             card.prepend(faviconBox);
         }
+
+        tryNextFavicon();
     }
 
+    /*
+     * 处理网站卡片。
+     */
     function upgradeWebsiteCards(root = document) {
-        root.querySelectorAll("main .card").forEach(card => {
+        /*
+         * 如果 root 本身就是卡片，也一起处理。
+         */
+        if (
+            root.nodeType === Node.ELEMENT_NODE &&
+            root.matches?.("main .card")
+        ) {
+            const icon = root.querySelector(":scope > i");
+
+            if (icon) {
+                createFaviconBox(root, icon);
+            }
+        }
+
+        /*
+         * 处理 root 内部的所有卡片。
+         */
+        root.querySelectorAll?.("main .card, .card").forEach(card => {
             const icon = card.querySelector(":scope > i");
 
-            if (!icon) {
-                return;
+            if (icon) {
+                createFaviconBox(card, icon);
             }
-
-            createFaviconBox(card, icon);
         });
     }
 
     /*
-     * 处理页面初始自带的默认导航。
+     * 处理页面初始加载的卡片。
      */
     upgradeWebsiteCards();
 
     /*
-     * 处理 Cloudflare KV 动态加载出来的网站卡片。
+     * 处理 Cloudflare KV 动态加载出来的卡片。
      */
-    const observer = new MutationObserver(function (mutations) {
-        for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
-                if (node.nodeType !== Node.ELEMENT_NODE) {
-                    continue;
-                }
-
-                if (node.matches?.("main .card")) {
-                    const icon = node.querySelector(":scope > i");
-
-                    if (icon) {
-                        createFaviconBox(node, icon);
-                    }
-                }
-
-                upgradeWebsiteCards(node);
-            }
-        }
-    });
-
     const main = document.querySelector("main");
 
     if (main) {
+        const observer = new MutationObserver(function (mutations) {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType !== Node.ELEMENT_NODE) {
+                        continue;
+                    }
+
+                    upgradeWebsiteCards(node);
+                }
+            }
+        });
+
         observer.observe(main, {
             childList: true,
             subtree: true
@@ -2839,6 +2902,6 @@ runWhenIdle(async () => {
     }
 })();
 </script>
-    
+
 </body>
 </html>
