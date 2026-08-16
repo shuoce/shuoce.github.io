@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -8,25 +9,61 @@
 <meta name="description" content="硕策导航 · 个人智能导航首页">
 <title>硕策 · 智能导航</title>
 
-<link rel="icon" href="https://img.baidu.re/i/2026/08/swgwn4.jpg?v=2">
+<link rel="icon" type="image/jpeg" href="https://img.baidu.re/i/2026/08/swgwn4.jpg?v=2">
 <link rel="apple-touch-icon" href="https://img.baidu.re/i/2026/08/swgwn4.jpg?v=2">
+    
+<!-- 头像与播放器封面优先下载 -->
+<link
+    rel="preload"
+    as="image"
+    href="https://img.baidu.re/i/2026/08/swgwn4.jpg"
+    fetchpriority="high">
 
-<link rel="preload" as="image"
-      href="https://img.baidu.re/i/2026/08/swgwn4.jpg"
-      fetchpriority="high">
+<link
+    rel="preload"
+    as="image"
+    href="Personalization/avatar.png"
+    fetchpriority="high">
 
-<link rel="preload" as="image"
-      href="Personalization/avatar.png"
-      fetchpriority="high">
+<link
+    rel="preload"
+    as="image"
+    href="Personalization/player-icon.png"
+    fetchpriority="high">
 
-<link rel="preload" as="image"
-      href="Personalization/player-icon.png"
-      fetchpriority="high">
+<!-- 装饰 GIF 降低优先级，避免影响首屏 -->
+<link
+    rel="preload"
+    as="image"
+    href="Personalization/gif.gif"
+    fetchpriority="low">
 
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- Bootstrap Icons 非阻塞加载 -->
+<link
+    rel="preload"
+    as="style"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+
+<noscript>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</noscript>
+
+<!-- 音乐只预加载，不自动播放 -->
+<link
+    rel="preload"
+    as="audio"
+    href="Personalization/Music/Music/cheese.mp3"
+    type="audio/mpeg">
 
 <style>
+/* =========================
+   关键首屏 CSS
+   这部分内联，确保 HTML 到达后可以立即绘制页面
+========================= */
+
 :root{
     --bg:#07111f;
     --panel:rgba(12,27,45,.88);
@@ -41,9 +78,9 @@
 }
 
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
 html{
@@ -64,7 +101,12 @@ body::before{
     inset:0;
     z-index:-5;
     background:
-        linear-gradient(125deg,rgba(3,12,25,.96),rgba(5,21,39,.88),rgba(18,10,50,.94)),
+        linear-gradient(
+            125deg,
+            rgba(3,12,25,.96),
+            rgba(5,21,39,.88),
+            rgba(18,10,50,.94)
+        ),
         url("background.jpg") center/cover no-repeat;
 }
 
@@ -75,8 +117,16 @@ body::after{
     z-index:-4;
     pointer-events:none;
     background:
-        radial-gradient(circle at 15% 20%,rgba(61,214,255,.12),transparent 26%),
-        radial-gradient(circle at 82% 15%,rgba(141,124,255,.12),transparent 28%);
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(61,214,255,.12),
+            transparent 26%
+        ),
+        radial-gradient(
+            circle at 82% 15%,
+            rgba(141,124,255,.12),
+            transparent 28%
+        );
 }
 
 body.player-visible{
@@ -93,22 +143,31 @@ button{
     cursor:pointer;
 }
 
-a{
-    color:inherit;
-}
-
 :focus-visible{
     outline:3px solid rgba(86,214,255,.75);
     outline-offset:3px;
 }
 
+::selection{
+    color:#07111f;
+    background:var(--primary);
+}
+
 ::-webkit-scrollbar{
-    width:8px;
+    width:9px;
+}
+
+::-webkit-scrollbar-track{
+    background:rgba(255,255,255,.035);
 }
 
 ::-webkit-scrollbar-thumb{
+    border:2px solid var(--bg);
     border-radius:999px;
-    background:linear-gradient(var(--primary),var(--secondary));
+    background:linear-gradient(
+        var(--primary),
+        var(--secondary)
+    );
 }
 
 .container{
@@ -117,7 +176,8 @@ a{
     padding:24px 0 110px;
 }
 
-/* 顶部 */
+/* 顶部导航 */
+
 .topbar{
     position:sticky;
     top:18px;
@@ -133,7 +193,6 @@ a{
     border-radius:20px;
     background:rgba(7,17,31,.88);
     box-shadow:0 12px 40px rgba(0,0,0,.2);
-    backdrop-filter:blur(16px);
 }
 
 .brand{
@@ -155,6 +214,7 @@ a{
     overflow:hidden;
     border:1px solid rgba(255,255,255,.25);
     border-radius:50%;
+    background:none;
     box-shadow:0 0 25px rgba(86,214,255,.4);
 }
 
@@ -187,6 +247,7 @@ a{
 }
 
 .quick-nav a{
+    flex:none;
     max-width:110px;
     overflow:hidden;
     padding:8px 12px;
@@ -204,6 +265,7 @@ a{
 }
 
 .icon-btn{
+    position:relative;
     display:grid;
     place-items:center;
     flex:none;
@@ -222,9 +284,29 @@ a{
     transform:translateY(-2px);
 }
 
+.admin-link{
+    display:grid;
+    place-items:center;
+    flex:none;
+    color:var(--primary);
+    text-decoration:none;
+}
+
 .appearance-wrap{
     position:relative;
     z-index:1000;
+}
+
+.appearance-btn::after{
+    content:"";
+    position:absolute;
+    right:6px;
+    bottom:6px;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--primary);
+    box-shadow:0 0 8px var(--primary);
 }
 
 .appearance-panel{
@@ -253,10 +335,26 @@ a{
     transform:translateY(0) scale(1);
 }
 
+.appearance-panel::before{
+    content:"";
+    position:absolute;
+    top:-6px;
+    right:17px;
+    width:11px;
+    height:11px;
+    border-top:1px solid var(--border);
+    border-left:1px solid var(--border);
+    background:rgba(8,20,35,.98);
+    transform:rotate(45deg);
+}
+
 .appearance-title{
     display:flex;
+    align-items:flex-end;
     justify-content:space-between;
     padding:3px 5px 12px;
+    color:var(--text);
+    font-size:14px;
     font-weight:800;
 }
 
@@ -264,6 +362,7 @@ a{
     color:var(--muted);
     font-size:10px;
     font-weight:400;
+    letter-spacing:1px;
 }
 
 .theme-options{
@@ -283,12 +382,18 @@ a{
     color:var(--text);
     background:transparent;
     text-align:left;
+    transition:.2s;
 }
 
-.theme-option:hover,
+.theme-option:hover{
+    border-color:rgba(86,214,255,.25);
+    background:rgba(255,255,255,.08);
+    transform:translateX(3px);
+}
+
 .theme-option.active{
-    border-color:rgba(86,214,255,.35);
-    background:rgba(86,214,255,.1);
+    border-color:rgba(86,214,255,.4);
+    background:rgba(86,214,255,.11);
 }
 
 .theme-option-icon{
@@ -303,9 +408,13 @@ a{
 
 .theme-option-text{
     display:flex;
-    flex:1;
     flex-direction:column;
     gap:2px;
+    flex:1;
+}
+
+.theme-option-text strong{
+    font-size:13px;
 }
 
 .theme-option-text small{
@@ -316,6 +425,7 @@ a{
 .theme-check{
     display:none;
     color:var(--primary);
+    font-size:17px;
 }
 
 .theme-option.active .theme-check{
@@ -323,6 +433,7 @@ a{
 }
 
 /* 首屏 */
+
 .hero{
     display:grid;
     grid-template-columns:1.4fr .8fr;
@@ -338,6 +449,18 @@ a{
     border:1px solid var(--border);
     background:var(--panel);
     box-shadow:var(--shadow);
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+}
+
+.hero-main:hover,
+.info-card:hover{
+    border-color:rgba(86,214,255,.32);
+    box-shadow:
+        0 24px 70px rgba(0,0,0,.38),
+        0 0 35px rgba(86,214,255,.06);
 }
 
 .hero-main{
@@ -364,12 +487,17 @@ a{
     top:24px;
     right:28px;
     z-index:3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     width:clamp(82px,12vw,145px);
     aspect-ratio:1;
     pointer-events:none;
+    user-select:none;
 }
 
 .hero-gif img{
+    display:block;
     width:100%;
     height:100%;
     object-fit:contain;
@@ -407,7 +535,12 @@ a{
 
 .gradient-text{
     color:transparent;
-    background:linear-gradient(100deg,var(--primary),#fff,var(--secondary));
+    background:linear-gradient(
+        100deg,
+        var(--primary),
+        #fff,
+        var(--secondary)
+    );
     -webkit-background-clip:text;
     background-clip:text;
 }
@@ -436,6 +569,7 @@ a{
     border:2px solid rgba(255,255,255,.3);
     border-radius:50%;
     object-fit:cover;
+    box-shadow:0 0 25px rgba(86,214,255,.35);
     cursor:pointer;
 }
 
@@ -445,11 +579,24 @@ a{
 }
 
 .info-card{
+    position:relative;
+    overflow:hidden;
     display:flex;
     flex-direction:column;
     justify-content:center;
     padding:30px;
     border-radius:32px;
+}
+
+.info-card::after{
+    content:"";
+    position:absolute;
+    right:-50px;
+    bottom:-60px;
+    width:180px;
+    height:180px;
+    border:1px solid rgba(86,214,255,.25);
+    border-radius:50%;
 }
 
 .info-label{
@@ -477,6 +624,7 @@ a{
     width:max-content;
     margin-top:26px;
     padding:10px 13px;
+    border:1px solid rgba(86,214,255,.1);
     border-radius:14px;
     color:#c9f5ff;
     background:rgba(86,214,255,.09);
@@ -492,7 +640,18 @@ a{
     font-size:11px;
 }
 
+.time-extra span::before{
+    content:"";
+    display:inline-block;
+    width:5px;
+    height:5px;
+    margin-right:7px;
+    border-radius:50%;
+    background:var(--primary);
+}
+
 /* 搜索 */
+
 .search-panel{
     display:flex;
     align-items:center;
@@ -539,6 +698,7 @@ a{
     border:1px solid rgba(255,255,255,.1);
     border-radius:7px;
     color:var(--muted);
+    background:rgba(255,255,255,.05);
     font-size:11px;
 }
 
@@ -549,12 +709,19 @@ a{
     padding:15px 22px;
     border-radius:14px;
     color:#07111f;
-    background:linear-gradient(135deg,var(--primary),#85e6ff);
     font-weight:800;
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        #85e6ff
+    );
 }
 
 /* 横幅 */
+
 .banner{
+    position:relative;
+    overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -565,20 +732,29 @@ a{
     border-radius:24px;
     color:#fff;
     text-decoration:none;
-    background:linear-gradient(120deg,rgba(86,214,255,.16),rgba(141,124,255,.18));
-}
-
-.banner-content{
-    flex:1;
+    background:linear-gradient(
+        120deg,
+        rgba(86,214,255,.16),
+        rgba(141,124,255,.18)
+    );
 }
 
 .banner-label{
-    align-self:flex-start;
+    position:absolute;
+    top:14px;
+    right:18px;
+    z-index:2;
     padding:4px 8px;
     border-radius:6px;
+    color:#fff;
     background:#ff6688;
     font-size:10px;
     font-weight:bold;
+}
+
+.banner-content{
+    position:relative;
+    z-index:1;
 }
 
 .banner-title{
@@ -593,6 +769,9 @@ a{
 }
 
 .banner-btn{
+    position:relative;
+    z-index:1;
+    white-space:nowrap;
     padding:12px 20px;
     border-radius:999px;
     color:#07111f;
@@ -602,6 +781,7 @@ a{
 }
 
 /* 分类 */
+
 .category{
     padding:26px;
     margin-top:22px;
@@ -630,17 +810,9 @@ a{
     place-items:center;
     width:34px;
     height:34px;
-    overflow:hidden;
     border-radius:11px;
     color:var(--primary);
     background:rgba(86,214,255,.1);
-}
-
-.section-icon img{
-    width:22px;
-    height:22px;
-    object-fit:contain;
-    border-radius:5px;
 }
 
 .arrow{
@@ -657,7 +829,9 @@ a{
     max-height:0;
     overflow:hidden;
     opacity:0;
-    transition:max-height .25s ease,opacity .2s ease;
+    transition:
+        max-height .25s ease,
+        opacity .2s ease;
 }
 
 .section-content.show{
@@ -682,7 +856,10 @@ a{
     color:var(--text);
     text-decoration:none;
     background:var(--card);
-    transition:.2s ease;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease;
 }
 
 .card:hover{
@@ -691,33 +868,7 @@ a{
     background:var(--card-hover);
 }
 
-.card > i:not(.card-site-icon-fallback){
-    display:inline-grid;
-    place-items:center;
-    width:45px;
-    height:45px;
-    margin-bottom:20px;
-    border-radius:14px;
-    color:var(--primary);
-    background:rgba(86,214,255,.1);
-    font-size:23px;
-}
-
-/* 真实网站图片图标 */
-.card-site-icon{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:45px;
-    height:45px;
-    margin-bottom:20px;
-    padding:8px;
-    border-radius:14px;
-    background:rgba(86,214,255,.1);
-    object-fit:contain;
-}
-
-.card-site-icon-fallback{
+.card i{
     display:inline-grid;
     place-items:center;
     width:45px;
@@ -740,6 +891,14 @@ a{
     font-size:13px;
 }
 
+.card-chatgpt i{color:#8dffcf}
+.card-youtube i{color:#ff637b}
+.card-bilibili i{color:#ff8bd1}
+.card-douyin i{color:#fff}
+.card-x i{color:#d5e7ff}
+
+/* 每日一言与页脚 */
+
 .quote-box{
     min-height:70px;
     padding:25px;
@@ -757,6 +916,12 @@ a{
     font-size:24px;
 }
 
+.quote-box small{
+    display:block;
+    margin-top:5px;
+    color:var(--muted);
+}
+
 .footer{
     padding:30px 0 0;
     color:#71859d;
@@ -771,6 +936,7 @@ a{
 }
 
 /* 播放器 */
+
 .music-player{
     position:fixed;
     right:24px;
@@ -782,6 +948,7 @@ a{
     border-radius:25px;
     background:rgba(8,20,35,.94);
     box-shadow:0 20px 60px rgba(0,0,0,.4);
+    transition:.3s;
 }
 
 .music-player.hidden{
@@ -818,8 +985,8 @@ a{
 .music-title,
 .music-artist{
     overflow:hidden;
-    text-overflow:ellipsis;
     white-space:nowrap;
+    text-overflow:ellipsis;
 }
 
 .music-title{
@@ -836,6 +1003,7 @@ a{
 .music-close{
     display:grid;
     place-items:center;
+    flex:none;
     width:28px;
     height:28px;
     border:0;
@@ -885,6 +1053,7 @@ a{
 }
 
 /* 主题 */
+
 .light-mode{
     --bg:#e9f1f8;
     --panel:rgba(255,255,255,.9);
@@ -897,7 +1066,11 @@ a{
 
 .light-mode::before{
     background:
-        linear-gradient(125deg,rgba(225,241,250,.9),rgba(239,236,255,.94)),
+        linear-gradient(
+            125deg,
+            rgba(225,241,250,.9),
+            rgba(239,236,255,.94)
+        ),
         url("background.jpg") center/cover no-repeat;
 }
 
@@ -911,7 +1084,8 @@ a{
     --panel:rgba(255,255,255,.05);
 }
 
-/* 手机端 */
+/* 响应式 */
+
 @media(max-width:760px){
     body.player-visible{
         padding-bottom:120px;
@@ -1062,8 +1236,8 @@ a{
     .card-title,
     .card-desc{
         overflow:hidden;
-        text-overflow:ellipsis;
         white-space:nowrap;
+        text-overflow:ellipsis;
     }
 
     .card-title{
@@ -1072,6 +1246,16 @@ a{
 
     .card-desc{
         font-size:11px;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+        animation:none!important;
+        transition:none!important;
+        scroll-behavior:auto!important;
     }
 }
 </style>
@@ -1083,20 +1267,17 @@ a{
 <header class="topbar">
     <a href="#" class="brand">
         <span class="brand-mark">
-            <img
-                src="https://img.baidu.re/i/2026/08/swgwn4.jpg"
-                alt="硕策头像"
-                decoding="async">
-        </span>
-<!---->
+    <img
+        src="https://img.baidu.re/i/2026/08/swgwn4.jpg"
+        alt="硕策头像"
+        fetchpriority="high"
+        decoding="async">
+</span>
         <span>
             硕策导航
             <small>SHUOCE · PERSONAL STARTPAGE</small>
         </span>
-    
-</a>
-<!---->
-
+    </a>
 <!---->
     <div class="nav-actions">
         <nav class="quick-nav" aria-label="分类导航">
@@ -1108,21 +1289,26 @@ a{
             type="button"
             class="icon-btn"
             id="playerToggleButton"
-            title="显示或隐藏播放器">
+            title="显示或隐藏播放器"
+            aria-label="显示或隐藏播放器">
             <i class="bi bi-music-note-beamed"></i>
         </button>
 <!---->
         <div class="appearance-wrap">
             <button
                 type="button"
-                class="icon-btn"
+                class="icon-btn appearance-btn"
                 id="appearanceBtn"
                 title="外观设置"
+                aria-label="外观设置"
                 aria-expanded="false">
                 <i class="bi bi-palette2"></i>
             </button>
 <!---->
-            <div class="appearance-panel" id="appearancePanel">
+            <div
+                class="appearance-panel"
+                id="appearancePanel"
+                aria-hidden="true">
                 <div class="appearance-title">
                     <span>外观设置</span>
                     <small>APPEARANCE</small>
@@ -1194,11 +1380,12 @@ a{
         </div>
 
         <a
-            class="icon-btn"
+            class="icon-btn admin-link"
             href="https://shuoce.eu.cc/admin.html"
             target="_blank"
             rel="noopener noreferrer"
-            title="网站管理">
+            title="网站管理"
+            aria-label="网站管理">
             <i class="bi bi-gear-fill"></i>
         </a>
 
@@ -1206,7 +1393,8 @@ a{
             type="button"
             class="icon-btn"
             id="topButton"
-            title="回到顶部">
+            title="回到顶部"
+            aria-label="回到顶部">
             <i class="bi bi-arrow-up"></i>
         </button>
     </div>
@@ -1219,7 +1407,8 @@ a{
                 <img
                     src="Personalization/gif.gif"
                     alt="装饰动图"
-                    loading="lazy">
+                    loading="lazy"
+                    decoding="async">
             </div>
 <!---->
             <div class="eyebrow">
@@ -1243,7 +1432,8 @@ a{
                     id="avatar"
                     src="Personalization/avatar.png"
                     alt="头像"
-                    title="点击显示或隐藏音乐播放器">
+                    title="点击显示或隐藏音乐播放器"
+                    decoding="async">
 <!---->
                 <div class="welcome" id="welcome">
                     正在加载问候语...
@@ -1255,9 +1445,17 @@ a{
         </div>
 <!---->
         <div class="info-card">
-            <div class="info-label">LOCAL TIME · 本地时间</div>
-            <div class="time" id="time">00:00:00</div>
-            <div class="date" id="date">加载中...</div>
+            <div class="info-label">
+                LOCAL TIME · 本地时间
+            </div>
+<!---->
+            <div class="time" id="time">
+                00:00:00
+            </div>
+<!---->
+            <div class="date" id="date">
+                加载中...
+            </div>
 <!---->
             <div class="weather" id="weather">
                 <span>🌤️</span>
@@ -1285,6 +1483,7 @@ a{
             type="text"
             autocomplete="off"
             placeholder="搜索网页、图片、问题或灵感..."
+            aria-label="搜索关键词"
             required>
 <!---->
         <span class="search-shortcut">按 /</span>
@@ -1322,7 +1521,7 @@ a{
 <!---->
 
 <!---->
-    <!-- 默认导航，接口失败时保留 -->
+    <!-- KV 请求失败时保留的默认导航 -->
     <section class="category">
         <div class="section-head">
             <div class="section-name">
@@ -1331,43 +1530,68 @@ a{
                 </span>
                 常用网站
             </div>
-<!---->
             <i class="bi bi-chevron-down arrow open"></i>
         </div>
 <!---->
-        <div class="section-content show" id="commonContent">
+        <div
+            class="section-content show"
+            id="commonContent">
             <div class="grid">
-                <a class="card" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card card-chatgpt"
+                    href="https://chatgpt.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-robot"></i>
                     <div class="card-title">ChatGPT</div>
                     <div class="card-desc">AI 智能助手</div>
                 </a>
 <!---->
-                <a class="card" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card card-youtube"
+                    href="https://www.youtube.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-youtube"></i>
                     <div class="card-title">YouTube</div>
                     <div class="card-desc">全球视频平台</div>
                 </a>
 <!---->
-                <a class="card" href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card card-bilibili"
+                    href="https://www.bilibili.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-play-btn-fill"></i>
                     <div class="card-title">哔哩哔哩</div>
                     <div class="card-desc">年轻人的潮流文化</div>
                 </a>
 <!---->
-                <a class="card" href="https://www.douyin.com" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card card-douyin"
+                    href="https://www.douyin.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-music-note-beamed"></i>
                     <div class="card-title">抖音</div>
                     <div class="card-desc">记录美好生活</div>
                 </a>
 <!---->
-                <a class="card" href="https://x.com" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card card-x"
+                    href="https://x.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-twitter-x"></i>
                     <div class="card-title">X</div>
                     <div class="card-desc">全球社交平台</div>
                 </a>
 <!---->
-                <a class="card" href="https://www.idaohang123.com/" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card"
+                    href="https://www.idaohang123.com/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-cloud-arrow-down-fill"></i>
                     <div class="card-title">短视频解析</div>
                     <div class="card-desc">短视频下载解析</div>
@@ -1384,25 +1608,38 @@ a{
                 </span>
                 音乐资源
             </div>
-<!---->
             <i class="bi bi-chevron-down arrow"></i>
         </div>
 <!---->
-        <div class="section-content" id="musicContent">
+        <div
+            class="section-content"
+            id="musicContent">
             <div class="grid">
-                <a class="card" href="https://www.gequbao.com/" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card"
+                    href="https://www.gequbao.com/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-cloud-download-fill"></i>
                     <div class="card-title">歌曲宝</div>
                     <div class="card-desc">在线试听 / 下载</div>
                 </a>
 <!---->
-                <a class="card" href="https://zz123.com/" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card"
+                    href="https://zz123.com/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-music-note-list"></i>
                     <div class="card-title">种子音乐</div>
                     <div class="card-desc">在线听歌</div>
                 </a>
 <!---->
-                <a class="card" href="https://www.qqmp3.vip/" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card"
+                    href="https://www.qqmp3.vip/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-headphones"></i>
                     <div class="card-title">米兔音乐</div>
                     <div class="card-desc">免费音乐资源</div>
@@ -1432,9 +1669,19 @@ a{
 
     <br>
 
-    👀 <span id="busuanzi_value_site_pv"></span> 次访问
+    <span>
+        👀
+        <span id="busuanzi_value_site_pv"></span>
+        次访问
+    </span>
+
     &nbsp; · &nbsp;
-    🌍 <span id="busuanzi_value_site_uv"></span> 位访客
+
+    <span>
+        🌍
+        <span id="busuanzi_value_site_uv"></span>
+        位访客
+    </span>
 </footer>
 
 </div>
@@ -1443,7 +1690,10 @@ a{
 <div class="music-player" id="musicPlayer">
     <div class="music-top">
         <div class="music-cover">
-            <img src="Personalization/player-icon.png" alt="音乐封面">
+            <img
+                src="Personalization/player-icon.png"
+                alt="音乐封面"
+                decoding="async">
         </div>
 
         <div class="music-meta">
@@ -1457,12 +1707,19 @@ a{
             type="button"
             class="music-close"
             id="musicClose"
-            title="隐藏播放器">
+            title="隐藏播放器"
+            aria-label="隐藏播放器">
             <i class="bi bi-x-lg"></i>
         </button>
     </div>
 
-    <input type="range" id="progress" min="0" max="100" value="0">
+    <input
+        type="range"
+        id="progress"
+        min="0"
+        max="100"
+        value="0"
+        aria-label="播放进度">
 
     <div class="music-time">
         <span id="currentTime">00:00</span>
@@ -1470,15 +1727,27 @@ a{
     </div>
 
     <div class="music-controls">
-        <button type="button" id="prevBtn" title="上一首">
+        <button
+            type="button"
+            id="prevBtn"
+            title="上一首"
+            aria-label="上一首">
             <i class="bi bi-skip-backward-fill"></i>
         </button>
 <!---->
-        <button type="button" id="playBtn" title="播放或暂停">
+        <button
+            type="button"
+            id="playBtn"
+            title="播放或暂停"
+            aria-label="播放或暂停">
             <i class="bi bi-play-fill"></i>
         </button>
 <!---->
-        <button type="button" id="nextBtn" title="下一首">
+        <button
+            type="button"
+            id="nextBtn"
+            title="下一首"
+            aria-label="下一首">
             <i class="bi bi-skip-forward-fill"></i>
         </button>
     
@@ -1486,14 +1755,28 @@ a{
 
 
 
-    <audio id="audio" preload="auto" playsinline></audio>
+    <audio
+        id="audio"
+        preload="auto"
+        playsinline></audio>
 </div>
 
 <script>
 "use strict";
 
-/* 基础工具 */
+/* =========================
+   通用工具
+========================= */
+
 const $ = selector => document.querySelector(selector);
+
+function runWhenIdle(callback, timeout = 2500) {
+    if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(callback, {timeout});
+    } else {
+        window.setTimeout(callback, 80);
+    }
+}
 
 function withTimeout(url, options = {}, timeout = 8000) {
     const controller = new AbortController();
@@ -1502,14 +1785,19 @@ function withTimeout(url, options = {}, timeout = 8000) {
     return fetch(url, {
         ...options,
         signal: controller.signal
-    }).finally(() => clearTimeout(timer));
+    }).finally(() => {
+        clearTimeout(timer);
+    });
 }
 
 function safeUrl(value) {
     try {
         const url = new URL(String(value || ""));
 
-        if (!["http:", "https:"].includes(url.protocol)) {
+        if (
+            url.protocol !== "http:" &&
+            url.protocol !== "https:"
+        ) {
             return "#";
         }
 
@@ -1519,30 +1807,29 @@ function safeUrl(value) {
     }
 }
 
-function runWhenIdle(callback, timeout = 2500) {
-    if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(callback, {timeout});
-    } else {
-        setTimeout(callback, 80);
-    }
-}
+/* =========================
+   时间与问候
+   属于本地同步逻辑，不依赖网络
+========================= */
 
-/* 时间 */
 function updateTime() {
     const now = new Date();
 
-    $("#time").textContent = now.toLocaleTimeString("zh-CN", {
-        hour12: false
-    });
+    $("#time").textContent =
+        now.toLocaleTimeString("zh-CN", {
+            hour12: false
+        });
 
-    $("#date").textContent = now.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        weekday: "long"
-    });
+    $("#date").textContent =
+        now.toLocaleDateString("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long"
+        });
 
     const hour = now.getHours();
+
     let welcome = "🌆 晚上好，愿你保持好心情";
 
     if (hour < 6) {
@@ -1559,14 +1846,18 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
-/* 搜索 */
+/* =========================
+   搜索
+========================= */
+
 $("#searchForm").addEventListener("submit", event => {
     event.preventDefault();
 
-    const keyword = $("#keyword").value.trim();
+    const input = $("#keyword");
+    const value = input.value.trim();
 
-    if (!keyword) {
-        $("#keyword").focus();
+    if (!value) {
+        input.focus();
         return;
     }
 
@@ -1577,29 +1868,62 @@ $("#searchForm").addEventListener("submit", event => {
 
     const url =
         (engines[$("#engine").value] || engines.bing) +
-        encodeURIComponent(keyword);
+        encodeURIComponent(value);
 
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
 });
 
-/* 静态分类折叠 */
-document.querySelectorAll("main > .category").forEach(category => {
-    const head = category.querySelector(".section-head");
-    const content = category.querySelector(".section-content");
-    const arrow = category.querySelector(".arrow");
+/* =========================
+   默认分类折叠
+========================= */
 
-    head.addEventListener("click", () => {
-        content.classList.toggle("show");
-        arrow.classList.toggle("open");
-    });
-});
+function bindStaticCategoryEvents() {
+    document
+        .querySelectorAll("main .category")
+        .forEach(category => {
+            const head = category.querySelector(".section-head");
+            const content = category.querySelector(".section-content");
+            const arrow = category.querySelector(".arrow");
 
-/* 动态导航 */
+            if (
+                !head ||
+                !content ||
+                !arrow ||
+                head.dataset.bound === "true"
+            ) {
+                return;
+            }
+
+            head.dataset.bound = "true";
+
+            head.addEventListener("click", () => {
+                content.classList.toggle("show");
+                arrow.classList.toggle("open");
+            });
+        });
+}
+
+bindStaticCategoryEvents();
+
+/* =========================
+   Cloudflare KV 动态导航
+   在首屏稳定后后台加载
+========================= */
+
 const NAVIGATION_API =
     "https://proxyd.picpi.top/https://shuoce-navigation.2765414002jin.workers.dev/api/navigation";
 
 function getCategoryTitle(category) {
-    return category.title || category.name || category.id || "未命名分类";
+    return (
+        category.title ||
+        category.name ||
+        category.id ||
+        "未命名分类"
+    );
 }
 
 function getCategoryCards(category) {
@@ -1622,40 +1946,22 @@ function getCardDescription(card) {
     return card.description || card.desc || "";
 }
 
-/*
- * 判断一个值是否为图片地址。
- */
-function isImageIcon(value) {
-    return /^https?:\/\//i.test(String(value || "").trim());
-}
+function getCategoryContentId(category, index) {
+    const id = String(category.id || "").trim();
 
-/*
- * 优先读取 iconUrl，再读取 icon。
- */
-function getCardIconUrl(card) {
-    const iconUrl = String(card?.iconUrl || "").trim();
-    const icon = String(card?.icon || "").trim();
-
-    if (isImageIcon(iconUrl)) {
-        return iconUrl;
+    if (id === "common") {
+        return "commonContent";
     }
 
-    if (isImageIcon(icon)) {
-        return icon;
+    if (id === "music") {
+        return "musicContent";
     }
 
-    return "";
+    return "kvCategoryContent" + index;
 }
 
-/*
- * 兼容 Bootstrap Icons 类名。
- */
 function normaliseIcon(icon, fallback) {
-    let name = String(icon || fallback).trim();
-
-    if (!name) {
-        name = fallback;
-    }
+    let name = icon || fallback;
 
     if (!name.startsWith("bi-")) {
         name = "bi-" + name;
@@ -1664,61 +1970,19 @@ function normaliseIcon(icon, fallback) {
     return name;
 }
 
-function getCategoryContentId(category, index) {
-    const id = String(category.id || "").trim();
-
-    if (id === "common") return "commonContent";
-    if (id === "music") return "musicContent";
-
-    return "kvCategoryContent" + index;
-}
-
-/*
- * 创建网站卡片。
- *
- * 关键修改：
- * 1. iconUrl 是图片地址时，使用 img 显示真实图标；
- * 2. icon 是图片地址时，也使用 img；
- * 3. icon 仍为 bi-xxx 时，继续使用 Bootstrap 图标；
- * 4. 图片加载失败时显示默认图标。
- */
 function createNavigationCard(card) {
     const link = document.createElement("a");
 
-    link.className = `card ${card.className || ""}`.trim();
+    link.className =
+        `card ${card.className || ""}`.trim();
+
     link.href = safeUrl(card.url);
     link.target = "_blank";
     link.rel = "noopener noreferrer";
 
-    const iconUrl = getCardIconUrl(card);
-
-    if (iconUrl) {
-        const image = document.createElement("img");
-
-        image.className = "card-site-icon";
-        image.src = iconUrl;
-        image.alt = `${getCardTitle(card)} 网站图标`;
-        image.loading = "lazy";
-        image.decoding = "async";
-
-        image.addEventListener("error", () => {
-            const fallback = document.createElement("i");
-
-            fallback.className =
-                "bi bi-link-45deg card-site-icon-fallback";
-
-            image.replaceWith(fallback);
-        });
-
-        link.appendChild(image);
-    } else {
-        const icon = document.createElement("i");
-
-        icon.className =
-            `bi ${normaliseIcon(card.icon, "bi-link-45deg")}`;
-
-        link.appendChild(icon);
-    }
+    const icon = document.createElement("i");
+    icon.className =
+        `bi ${normaliseIcon(card.icon, "bi-link-45deg")}`;
 
     const title = document.createElement("div");
     title.className = "card-title";
@@ -1728,7 +1992,7 @@ function createNavigationCard(card) {
     description.className = "card-desc";
     description.textContent = getCardDescription(card);
 
-    link.append(title, description);
+    link.append(icon, title, description);
 
     return link;
 }
@@ -1738,7 +2002,8 @@ function createCategoryElement(category, index) {
     section.className = "category";
     section.dataset.kvCategory = "true";
 
-    const contentId = getCategoryContentId(category, index);
+    const contentId =
+        getCategoryContentId(category, index);
 
     const head = document.createElement("div");
     head.className = "section-head";
@@ -1749,37 +2014,14 @@ function createCategoryElement(category, index) {
     const iconBox = document.createElement("span");
     iconBox.className = "section-icon";
 
-    const categoryIconUrl =
-        String(category.iconUrl || "").trim();
+    const icon = document.createElement("i");
+    icon.className =
+        `bi ${normaliseIcon(
+            category.icon,
+            "bi-folder2-open"
+        )}`;
 
-    if (isImageIcon(categoryIconUrl)) {
-        const image = document.createElement("img");
-
-        image.src = categoryIconUrl;
-        image.alt = `${getCategoryTitle(category)} 分类图标`;
-        image.loading = "lazy";
-
-        image.addEventListener("error", () => {
-            image.replaceWith(
-                Object.assign(document.createElement("i"), {
-                    className: "bi bi-folder2-open"
-                })
-            );
-        });
-
-        iconBox.appendChild(image);
-    } else {
-        const icon = document.createElement("i");
-
-        icon.className =
-            `bi ${normaliseIcon(
-                category.icon,
-                "bi-folder2-open"
-            )}`;
-
-        iconBox.appendChild(icon);
-    }
-
+    iconBox.appendChild(icon);
     name.append(iconBox);
     name.appendChild(
         document.createTextNode(getCategoryTitle(category))
@@ -1808,6 +2050,7 @@ function createCategoryElement(category, index) {
     });
 
     content.appendChild(grid);
+
     head.append(name, arrow);
 
     head.addEventListener("click", () => {
@@ -1823,14 +2066,22 @@ function createCategoryElement(category, index) {
 function updateQuickNavigation(categories) {
     const quickNav = $(".quick-nav");
 
-    if (!quickNav) return;
+    if (!quickNav) {
+        return;
+    }
 
     quickNav.replaceChildren();
 
     categories.forEach((category, index) => {
+        if (!category || typeof category !== "object") {
+            return;
+        }
+
         const link = document.createElement("a");
 
-        link.href = "#" + getCategoryContentId(category, index);
+        link.href =
+            "#" + getCategoryContentId(category, index);
+
         link.textContent = getCategoryTitle(category);
 
         quickNav.appendChild(link);
@@ -1838,20 +2089,29 @@ function updateQuickNavigation(categories) {
 }
 
 function renderNavigation(data) {
-    if (!data || !Array.isArray(data.categories)) {
+    if (
+        !data ||
+        !Array.isArray(data.categories)
+    ) {
         throw new Error("导航数据格式不正确");
     }
 
     const main = $("main");
     const quoteBox = main.querySelector(".quote-box");
 
-    Array.from(main.querySelectorAll(".category[data-kv-category]"))
+    Array.from(main.children)
+        .filter(element => {
+            return element.classList.contains("category");
+        })
         .forEach(section => section.remove());
 
     const fragment = document.createDocumentFragment();
 
     data.categories.forEach((category, index) => {
-        if (category && typeof category === "object") {
+        if (
+            category &&
+            typeof category === "object"
+        ) {
             fragment.appendChild(
                 createCategoryElement(category, index)
             );
@@ -1876,7 +2136,7 @@ async function loadNavigationFromKV() {
                 headers: {
                     Accept: "application/json"
                 },
-                cache: "no-store"
+                cache: "default"
             },
             8000
         );
@@ -1886,21 +2146,35 @@ async function loadNavigationFromKV() {
         }
 
         const data = await response.json();
-
         renderNavigation(data);
+
         console.log("Cloudflare KV 导航加载成功");
     } catch (error) {
-        console.warn("KV 导航加载失败，保留默认导航：", error);
+        console.warn(
+            "KV 导航加载失败，保留默认导航：",
+            error
+        );
     }
 }
 
-/* 音乐播放器 */
+/* =========================
+   播放器
+   页面显示后立即初始化，音乐不自动播放
+========================= */
+
 const player = $("#musicPlayer");
 const audio = $("#audio");
 const progress = $("#progress");
 const playBtn = $("#playBtn");
 const prevBtn = $("#prevBtn");
 const nextBtn = $("#nextBtn");
+const musicClose = $("#musicClose");
+const playerToggleButton = $("#playerToggleButton");
+const avatar = $("#avatar");
+const musicTitle = $("#musicTitle");
+const musicArtist = $("#musicArtist");
+const currentTime = $("#currentTime");
+const duration = $("#duration");
 
 const playlist = [
     {
@@ -1915,10 +2189,13 @@ let currentIndex = 0;
 function formatTime(seconds) {
     seconds = Math.floor(seconds || 0);
 
+    const minutes = Math.floor(seconds / 60);
+    const secondsText = String(seconds % 60).padStart(2, "0");
+
     return (
-        String(Math.floor(seconds / 60)).padStart(2, "0") +
+        String(minutes).padStart(2, "0") +
         ":" +
-        String(seconds % 60).padStart(2, "0")
+        secondsText
     );
 }
 
@@ -1926,37 +2203,51 @@ function loadSong(index) {
     const song = playlist[index];
 
     audio.src = song.src;
-    $("#musicTitle").textContent = song.title;
-    $("#musicArtist").textContent =
+    audio.preload = "auto";
+
+    musicTitle.textContent = song.title;
+    musicArtist.textContent =
         `${song.artist} · Personal Music`;
 
     progress.value = 0;
-    $("#currentTime").textContent = "00:00";
-    $("#duration").textContent = "00:00";
+    currentTime.textContent = "00:00";
+    duration.textContent = "00:00";
 
+    /*
+     * load() 会触发音乐预加载，
+     * 但不会调用 play()，因此不会自动播放。
+     */
     audio.load();
 }
 
-function updatePlayButton(playing) {
-    playBtn.innerHTML = playing
+function updatePlayButton(isPlaying) {
+    playBtn.innerHTML = isPlaying
         ? '<i class="bi bi-pause-fill"></i>'
         : '<i class="bi bi-play-fill"></i>';
+
+    playBtn.setAttribute(
+        "aria-label",
+        isPlaying ? "暂停音乐" : "播放音乐"
+    );
 }
 
 function playAudio() {
     const promise = audio.play();
 
     if (promise) {
-        promise.catch(() => updatePlayButton(false));
+        promise.catch(error => {
+            console.warn("音乐播放失败：", error);
+            updatePlayButton(false);
+        });
     }
 }
 
 function togglePlayer() {
-    const hidden = player.classList.toggle("hidden");
+    const isHidden = player.classList.toggle("hidden");
 
     document.body.classList.toggle(
         "player-visible",
-        !hidden
+        !isHidden
     );
 }
 
@@ -1968,13 +2259,14 @@ playBtn.addEventListener("click", () => {
     }
 });
 
-$("#playerToggleButton").addEventListener("click", togglePlayer);
-$("#musicClose").addEventListener("click", togglePlayer);
-$("#avatar").addEventListener("click", togglePlayer);
+playerToggleButton.addEventListener("click", togglePlayer);
+musicClose.addEventListener("click", togglePlayer);
+avatar.addEventListener("click", togglePlayer);
 
 prevBtn.addEventListener("click", () => {
     currentIndex =
-        (currentIndex - 1 + playlist.length) % playlist.length;
+        (currentIndex - 1 + playlist.length) %
+        playlist.length;
 
     loadSong(currentIndex);
     playAudio();
@@ -1982,43 +2274,64 @@ prevBtn.addEventListener("click", () => {
 
 nextBtn.addEventListener("click", () => {
     currentIndex =
-        (currentIndex + 1) % playlist.length;
+        (currentIndex + 1) %
+        playlist.length;
 
     loadSong(currentIndex);
     playAudio();
 });
 
-audio.addEventListener("play", () => updatePlayButton(true));
-audio.addEventListener("pause", () => updatePlayButton(false));
+audio.addEventListener("play", () => {
+    updatePlayButton(true);
+});
+
+audio.addEventListener("pause", () => {
+    updatePlayButton(false);
+});
 
 audio.addEventListener("timeupdate", () => {
-    if (audio.duration > 0) {
+    if (
+        Number.isFinite(audio.duration) &&
+        audio.duration > 0
+    ) {
         progress.value =
-            audio.currentTime / audio.duration * 100;
+            audio.currentTime /
+            audio.duration *
+            100;
     }
 
-    $("#currentTime").textContent =
+    currentTime.textContent =
         formatTime(audio.currentTime);
 });
 
 audio.addEventListener("loadedmetadata", () => {
-    $("#duration").textContent =
+    duration.textContent =
         formatTime(audio.duration);
 });
 
 progress.addEventListener("input", () => {
-    if (audio.duration > 0) {
+    if (
+        Number.isFinite(audio.duration) &&
+        audio.duration > 0
+    ) {
         audio.currentTime =
-            progress.value / 100 * audio.duration;
+            progress.value /
+            100 *
+            audio.duration;
     }
 });
 
-audio.addEventListener("ended", () => nextBtn.click());
+audio.addEventListener("ended", () => {
+    nextBtn.click();
+});
 
 loadSong(currentIndex);
 document.body.classList.add("player-visible");
 
-/* 主题 */
+/* =========================
+   主题切换
+========================= */
+
 const appearanceBtn = $("#appearanceBtn");
 const appearancePanel = $("#appearancePanel");
 const themeOptions = document.querySelectorAll(".theme-option");
@@ -2035,7 +2348,8 @@ function applyTheme(theme) {
     let actualTheme = theme;
 
     if (theme === "system") {
-        actualTheme = systemTheme.matches ? "light" : "dark";
+        actualTheme =
+            systemTheme.matches ? "light" : "dark";
     }
 
     if (actualTheme === "light") {
@@ -2059,23 +2373,34 @@ function applyTheme(theme) {
 function closeAppearancePanel() {
     appearancePanel.classList.remove("show");
     appearanceBtn.setAttribute("aria-expanded", "false");
+    appearancePanel.setAttribute("aria-hidden", "true");
 }
 
 appearanceBtn.addEventListener("click", event => {
     event.stopPropagation();
 
-    const open = appearancePanel.classList.toggle("show");
+    const isOpen =
+        appearancePanel.classList.toggle("show");
 
     appearanceBtn.setAttribute(
         "aria-expanded",
-        String(open)
+        String(isOpen)
+    );
+
+    appearancePanel.setAttribute(
+        "aria-hidden",
+        String(!isOpen)
     );
 });
 
 themeOptions.forEach(option => {
     option.addEventListener("click", event => {
         event.stopPropagation();
-        applyTheme(event.currentTarget.dataset.theme);
+
+        applyTheme(
+            event.currentTarget.dataset.theme
+        );
+
         closeAppearancePanel();
     });
 });
@@ -2086,6 +2411,12 @@ appearancePanel.addEventListener("click", event => {
 
 document.addEventListener("click", closeAppearancePanel);
 
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeAppearancePanel();
+    }
+});
+
 systemTheme.addEventListener("change", () => {
     if (localStorage.getItem("theme") === "system") {
         applyTheme("system");
@@ -2094,7 +2425,10 @@ systemTheme.addEventListener("change", () => {
 
 applyTheme(localStorage.getItem("theme") || "glass");
 
-/* 运行时间 */
+/* =========================
+   运行时间
+========================= */
+
 const startDate = new Date("2025-06-25T00:00:00");
 
 function updateRuntime() {
@@ -2108,13 +2442,17 @@ function updateRuntime() {
     const minutes = Math.floor(diff / 60000) % 60;
 
     $("#runtime").textContent =
-        `🚀 已运行 ${days} 天 ${hours} 小时 ${minutes} 分钟`;
+        `🚀 已运行 ${days} 天 ` +
+        `${hours} 小时 ${minutes} 分钟`;
 }
 
 updateRuntime();
 setInterval(updateRuntime, 60000);
 
-/* 快捷键 */
+/* =========================
+   快捷键与返回顶部
+========================= */
+
 $("#topButton").addEventListener("click", () => {
     window.scrollTo({
         top: 0,
@@ -2123,75 +2461,100 @@ $("#topButton").addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", event => {
-    const tag = document.activeElement?.tagName;
-    const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(tag);
+    const activeTag =
+        document.activeElement?.tagName;
 
-    if (event.key === "/" && !typing) {
+    const isTyping =
+        activeTag === "INPUT" ||
+        activeTag === "TEXTAREA" ||
+        activeTag === "SELECT";
+
+    if (event.key === "/" && !isTyping) {
         event.preventDefault();
         $("#keyword").focus();
     }
 
-    if (event.code === "Space" && !typing) {
+    if (event.code === "Space" && !isTyping) {
         event.preventDefault();
         playBtn.click();
     }
-
-    if (event.key === "Escape") {
-        closeAppearancePanel();
-    }
 });
 
-/* 天气 */
+/* =========================
+   后台任务调度
+   执行顺序：
+   KV → 天气 → 每日一言 → 统计脚本
+========================= */
+
 const weatherTextMap = {
-    0:"晴朗",
-    1:"大致晴朗",
-    2:"局部多云",
-    3:"阴天",
-    45:"雾",
-    48:"雾凇",
-    51:"小毛毛雨",
-    53:"毛毛雨",
-    55:"较强毛毛雨",
-    61:"小雨",
-    63:"中雨",
-    65:"大雨",
-    71:"小雪",
-    73:"中雪",
-    75:"大雪",
-    80:"小阵雨",
-    81:"中阵雨",
-    82:"强阵雨",
-    95:"雷雨",
-    96:"雷雨伴冰雹",
-    99:"强雷雨伴冰雹"
+    0: "晴朗",
+    1: "大致晴朗",
+    2: "局部多云",
+    3: "阴天",
+    45: "雾",
+    48: "雾凇",
+    51: "小毛毛雨",
+    53: "毛毛雨",
+    55: "较强毛毛雨",
+    61: "小雨",
+    63: "中雨",
+    65: "大雨",
+    71: "小雪",
+    73: "中雪",
+    75: "大雪",
+    80: "小阵雨",
+    81: "中阵雨",
+    82: "强阵雨",
+    95: "雷雨",
+    96: "雷雨伴冰雹",
+    99: "强雷雨伴冰雹"
 };
 
-function weatherIcon(code) {
+function getWeatherIcon(code) {
     if (code === 0) return "☀️";
-    if ([1,2].includes(code)) return "🌤️";
-    if ([3,45,48].includes(code)) return "☁️";
-    if ([51,53,55,61,63,65,80,81,82].includes(code)) return "🌧️";
-    if ([71,73,75].includes(code)) return "❄️";
-    if ([95,96,99].includes(code)) return "⛈️";
+    if ([1, 2].includes(code)) return "🌤️";
+    if ([3, 45, 48].includes(code)) return "☁️";
+    if (
+        [
+            51, 53, 55, 61,
+            63, 65, 80, 81, 82
+        ].includes(code)
+    ) {
+        return "🌧️";
+    }
+    if ([71, 73, 75].includes(code)) return "❄️";
+    if ([95, 96, 99].includes(code)) return "⛈️";
+
     return "🌤️";
 }
 
-async function loadWeather() {
-    const latitude = 39.9042;
-    const longitude = 116.4074;
+function showWeatherError() {
+    $("#weather").textContent =
+        "🌤️ 天气暂时不可用";
+}
 
-    try {
+async function loadWeather() {
+    const defaultLocation = {
+        latitude: 39.9042,
+        longitude: 116.4074
+    };
+
+    const fetchWeather = async (latitude, longitude) => {
         const url =
             "https://api.open-meteo.com/v1/forecast" +
-            `?latitude=${latitude}` +
-            `&longitude=${longitude}` +
+            `?latitude=${encodeURIComponent(latitude)}` +
+            `&longitude=${encodeURIComponent(longitude)}` +
             "&current=temperature_2m,weather_code" +
             "&temperature_unit=celsius" +
             "&timezone=auto";
 
         const response = await withTimeout(
             url,
-            {headers:{Accept:"application/json"}},
+            {
+                headers: {
+                    Accept: "application/json"
+                }
+            },
             5000
         );
 
@@ -2200,28 +2563,75 @@ async function loadWeather() {
         }
 
         const data = await response.json();
-        const current = data.current;
 
+        if (!data?.current) {
+            throw new Error("天气数据无效");
+        }
+
+        const current = data.current;
         const temperature =
             Math.round(current.temperature_2m);
 
         const code = current.weather_code;
+        const description =
+            weatherTextMap[code] || "天气未知";
 
         $("#weather").innerHTML =
-            `<span>${weatherIcon(code)}</span> ` +
-            `${temperature}°C · ` +
-            `${weatherTextMap[code] || "天气未知"}`;
-    } catch {
-        $("#weather").textContent = "🌤️ 天气暂时不可用";
+            `<span>${getWeatherIcon(code)}</span> ` +
+            `${temperature}°C · ${description}`;
+    };
+
+    try {
+        if ("geolocation" in navigator) {
+            await new Promise(resolve => {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        fetchWeather(
+                            position.coords.latitude,
+                            position.coords.longitude
+                        )
+                            .catch(() => {
+                                return fetchWeather(
+                                    defaultLocation.latitude,
+                                    defaultLocation.longitude
+                                );
+                            })
+                            .finally(resolve);
+                    },
+                    () => {
+                        fetchWeather(
+                            defaultLocation.latitude,
+                            defaultLocation.longitude
+                        ).finally(resolve);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 3000,
+                        maximumAge: 1800000
+                    }
+                );
+            });
+        } else {
+            await fetchWeather(
+                defaultLocation.latitude,
+                defaultLocation.longitude
+            );
+        }
+    } catch (error) {
+        console.warn("天气接口异常：", error);
+        showWeatherError();
     }
 }
 
-/* 每日一言 */
 async function loadHitokoto() {
     try {
         const response = await withTimeout(
             "https://v1.hitokoto.cn/",
-            {headers:{Accept:"application/json"}},
+            {
+                headers: {
+                    Accept: "application/json"
+                }
+            },
             4000
         );
 
@@ -2233,17 +2643,23 @@ async function loadHitokoto() {
 
         $("#hitokoto").textContent =
             `「${data.hitokoto || "保持热爱，奔赴山海。"}」`;
-    } catch {
+    } catch (error) {
+        console.warn("每日一言接口异常：", error);
+
         $("#hitokoto").textContent =
             "保持热爱，奔赴山海。";
     }
 }
 
-/* 统计 */
 function loadStatisticsScript() {
-    if (document.querySelector(
-        'script[data-statistics="busuanzi"]'
-    )) {
+    /*
+     * 统计脚本最后加载，避免阻塞页面和业务接口。
+     */
+    if (
+        document.querySelector(
+            'script[data-statistics="busuanzi"]'
+        )
+    ) {
         return;
     }
 
@@ -2257,13 +2673,24 @@ function loadStatisticsScript() {
     document.body.appendChild(script);
 }
 
-/* 后台任务 */
+/*
+ * 使用 async/await 明确控制后台任务顺序。
+ * 页面本身无需等待这些任务完成。
+ */
 runWhenIdle(async () => {
+    // 第一后台任务：KV 导航
     await loadNavigationFromKV();
+
+    // 第二后台任务：天气
     await loadWeather();
+
+    // 第三后台任务：每日一言
     await loadHitokoto();
+
+    // 最后一项：统计脚本
     loadStatisticsScript();
 }, 2500);
 </script>
+
 </body>
 </html>
