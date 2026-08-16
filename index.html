@@ -2692,5 +2692,153 @@ runWhenIdle(async () => {
 }, 2500);
 </script>
 
+<style>
+/* 自动网站图标 */
+.card-favicon{
+    display:inline-grid;
+    place-items:center;
+    width:45px;
+    height:45px;
+    margin-bottom:20px;
+    overflow:hidden;
+    border-radius:14px;
+    color:var(--primary);
+    background:rgba(86,214,255,.1);
+    font-size:23px;
+}
+
+.card-favicon img{
+    display:block;
+    width:30px;
+    height:30px;
+    object-fit:contain;
+}
+</style>
+
+<script>
+(function () {
+    "use strict";
+
+    /*
+     * 自动获取网站 favicon。
+     * DuckDuckGo 图标接口通常比 Google 接口更容易显示真实图标。
+     */
+    function getAutomaticFavicon(url) {
+        try {
+            const target = new URL(url);
+
+            if (
+                target.protocol !== "http:" &&
+                target.protocol !== "https:"
+            ) {
+                return "";
+            }
+
+            return (
+                "https://icons.duckduckgo.com/ip3/" +
+                encodeURIComponent(target.hostname) +
+                ".ico"
+            );
+        } catch {
+            return "";
+        }
+    }
+
+    function createFaviconBox(card, oldIcon) {
+        if (!card || card.querySelector(":scope > .card-favicon")) {
+            return;
+        }
+
+        if (!oldIcon) {
+            oldIcon = document.createElement("i");
+            oldIcon.className = "bi bi-globe";
+        }
+
+        const faviconBox = document.createElement("span");
+        faviconBox.className = "card-favicon";
+
+        const faviconUrl = getAutomaticFavicon(card.href);
+
+        if (!faviconUrl) {
+            faviconBox.appendChild(oldIcon.cloneNode(true));
+            oldIcon.replaceWith(faviconBox);
+            return;
+        }
+
+        const image = document.createElement("img");
+
+        image.src = faviconUrl;
+        image.alt = "网站图标";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.referrerPolicy = "no-referrer";
+
+        /*
+         * 图标加载失败时，恢复原来的 Bootstrap 图标。
+         */
+        image.addEventListener("error", function () {
+            faviconBox.replaceChildren(oldIcon.cloneNode(true));
+        }, {once: true});
+
+        faviconBox.appendChild(image);
+
+        if (oldIcon.parentNode) {
+            oldIcon.replaceWith(faviconBox);
+        } else {
+            card.prepend(faviconBox);
+        }
+    }
+
+    function upgradeWebsiteCards(root = document) {
+        root.querySelectorAll("main .card").forEach(card => {
+            const icon = card.querySelector(":scope > i");
+
+            if (!icon) {
+                return;
+            }
+
+            createFaviconBox(card, icon);
+        });
+    }
+
+    /*
+     * 处理页面初始自带的默认导航。
+     */
+    upgradeWebsiteCards();
+
+    /*
+     * 处理 Cloudflare KV 动态加载出来的网站卡片。
+     */
+    const observer = new MutationObserver(function (mutations) {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (node.nodeType !== Node.ELEMENT_NODE) {
+                    continue;
+                }
+
+                if (node.matches?.("main .card")) {
+                    const icon = node.querySelector(":scope > i");
+
+                    if (icon) {
+                        createFaviconBox(node, icon);
+                    }
+                }
+
+                upgradeWebsiteCards(node);
+            }
+        }
+    });
+
+    const main = document.querySelector("main");
+
+    if (main) {
+        observer.observe(main, {
+            childList: true,
+            subtree: true
+        });
+    }
+})();
+</script>
+    
 </body>
 </html>
