@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -51,7 +50,6 @@
             flex-direction: column;
         }
 
-        /* 背景流光光斑 */
         body::before {
             content: "";
             position: fixed;
@@ -63,16 +61,14 @@
             pointer-events: none;
         }
 
-        /* 通用滚动条 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 99px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(86, 214, 255, 0.35); }
 
-        /* 布局容器 */
         .app-layout {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 290px 1fr;
             min-height: 100vh;
         }
 
@@ -142,15 +138,15 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
             padding-right: 4px;
         }
 
         .cat-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
+            gap: 8px;
+            padding: 8px 10px;
             border-radius: var(--radius-md);
             border: 1px solid transparent;
             background: transparent;
@@ -178,6 +174,7 @@
         .cat-item .cat-icon {
             font-size: 15px;
             color: var(--primary);
+            flex-shrink: 0;
         }
 
         .cat-item .cat-name {
@@ -189,10 +186,11 @@
 
         .cat-item .cat-badge {
             font-size: 11px;
-            padding: 2px 8px;
+            padding: 2px 7px;
             border-radius: 99px;
             background: rgba(255, 255, 255, 0.08);
             color: var(--text-muted);
+            flex-shrink: 0;
         }
 
         .cat-item.active .cat-badge {
@@ -200,12 +198,46 @@
             color: #fff;
         }
 
+        /* 分类移动按钮组 */
+        .cat-item-actions {
+            display: flex;
+            gap: 2px;
+            opacity: 0;
+            transition: var(--trans);
+            flex-shrink: 0;
+        }
+
+        .cat-item:hover .cat-item-actions,
+        .cat-item.active .cat-item-actions {
+            opacity: 1;
+        }
+
+        .cat-move-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            display: grid;
+            place-items: center;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0;
+            transition: var(--trans);
+        }
+
+        .cat-move-btn:hover {
+            color: #fff;
+            background: var(--primary);
+            color: #07111f;
+        }
+
         .cat-item.dragging {
             opacity: 0.3;
             transform: scale(0.96);
         }
 
-        /* 侧边栏底部 */
         .sidebar-footer {
             padding-top: 14px;
             border-top: 1px solid var(--border);
@@ -214,13 +246,13 @@
             gap: 8px;
         }
 
-        /* ===== 按钮控件 ===== */
+        /* ===== 按钮通用 ===== */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
-            padding: 9px 16px;
+            gap: 6px;
+            padding: 8px 14px;
             border-radius: var(--radius-md);
             font-size: 13px;
             font-weight: 600;
@@ -271,16 +303,16 @@
         }
 
         .btn-sm {
-            padding: 6px 12px;
+            padding: 5px 10px;
             font-size: 12px;
             border-radius: var(--radius-sm);
         }
 
         .btn-icon {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             padding: 0;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         /* ===== 主内容区 ===== */
@@ -292,7 +324,6 @@
             overflow-y: auto;
         }
 
-        /* 顶部导航 */
         .topbar {
             position: sticky;
             top: 0;
@@ -346,7 +377,6 @@
             gap: 10px;
         }
 
-        /* 状态指示胶囊 */
         .status-pill {
             display: inline-flex;
             align-items: center;
@@ -382,24 +412,22 @@
             box-shadow: 0 0 8px #ffb84d;
         }
 
-        /* 内容主体 */
         .workspace {
             flex: 1;
-            padding: 28px;
+            padding: 24px 28px;
             max-width: 1380px;
             width: 100%;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 20px;
         }
 
-        /* 分类主控横幅 */
         .category-header {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 20px 24px;
+            padding: 18px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -414,19 +442,19 @@
         }
 
         .cat-hero-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             background: rgba(86, 214, 255, 0.12);
             color: var(--primary);
             display: grid;
             place-items: center;
-            font-size: 22px;
+            font-size: 20px;
             border: 1px solid rgba(86, 214, 255, 0.2);
         }
 
         .cat-hero-text h2 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
         }
 
@@ -442,7 +470,6 @@
             gap: 8px;
         }
 
-        /* 批量操作浮动条 */
         .batch-bar {
             display: none;
             align-items: center;
@@ -460,7 +487,7 @@
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: 16px;
+            gap: 14px;
         }
 
         .site-card {
@@ -468,13 +495,14 @@
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 18px 16px;
+            padding: 16px 14px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             transition: var(--trans);
             cursor: pointer;
             overflow: hidden;
+            user-select: none;
         }
 
         .site-card::after {
@@ -513,8 +541,8 @@
         }
 
         .card-avatar {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.06);
             display: grid;
@@ -552,11 +580,11 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            min-height: 48px;
+            min-height: 44px;
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             color: #fff;
             overflow: hidden;
@@ -587,11 +615,12 @@
             margin-top: 4px;
         }
 
+        /* 悬浮操作栏（带位移与管理） */
         .card-hover-actions {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 6px;
+            gap: 4px;
             padding-top: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.06);
             opacity: 0;
@@ -600,7 +629,6 @@
 
         .site-card:hover .card-hover-actions { opacity: 1; }
 
-        /* 空状态 */
         .empty-box {
             grid-column: 1 / -1;
             padding: 60px 20px;
@@ -618,7 +646,6 @@
             display: block;
         }
 
-        /* 底部智能快捷录入栏 */
         .quick-dock {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -661,7 +688,7 @@
             box-shadow: 0 0 0 3px rgba(86, 214, 255, 0.15);
         }
 
-        /* ===== 模态弹窗系统 ===== */
+        /* 弹窗系统 */
         .modal-mask {
             position: fixed;
             inset: 0;
@@ -684,8 +711,8 @@
 
         .modal-window {
             width: 100%;
-            max-width: 440px;
-            background: rgba(13, 29, 49, 0.95);
+            max-width: 450px;
+            background: rgba(13, 29, 49, 0.96);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
@@ -736,7 +763,7 @@
             margin-top: 22px;
         }
 
-        /* ===== Toast 提示条 ===== */
+        /* Toast 消息提示 */
         #toast-box {
             position: fixed;
             top: 24px;
@@ -775,7 +802,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* 移动端响应式 */
         @media (max-width: 900px) {
             .app-layout { grid-template-columns: 1fr; }
             .sidebar {
@@ -790,6 +816,8 @@
                 padding-bottom: 8px;
             }
             .cat-item { flex-shrink: 0; }
+            .cat-item-actions { opacity: 1; }
+            .card-hover-actions { opacity: 1; }
             .sidebar-footer { flex-direction: row; }
             .workspace { padding: 16px; }
             .quick-dock-form { grid-template-columns: 1fr; }
@@ -799,7 +827,7 @@
 <body>
 
     <div class="app-layout">
-        <!-- 左侧功能栏 -->
+        <!-- 左侧分类与快捷操作 -->
         <aside class="sidebar">
             <div class="brand-box">
                 <img class="brand-avatar" src="https://img.baidu.re/i/2026/08/swgwn4.jpg" alt="Logo">
@@ -814,17 +842,17 @@
             </button>
 
             <div class="sidebar-section-title">
-                <span>网站分类</span>
+                <span>分类管理 (可拖拽/可按键)</span>
                 <span id="categoryCount" style="color: var(--primary);">0</span>
             </div>
 
             <div id="categoryList" class="category-list"></div>
 
             <div class="sidebar-footer">
-                <button id="restoreBtn" class="btn btn-glass btn-sm" title="恢复本地缓存">
+                <button id="restoreBtn" class="btn btn-glass btn-sm" title="从本地缓存恢复">
                     <i class="bi bi-arrow-counterclockwise"></i> 恢复备份
                 </button>
-                <button id="backupBtn" class="btn btn-glass btn-sm" title="备份到本地">
+                <button id="backupBtn" class="btn btn-glass btn-sm" title="备份到浏览器本地">
                     <i class="bi bi-cloud-arrow-down"></i> 本地备份
                 </button>
             </div>
@@ -832,11 +860,11 @@
 
         <!-- 右侧主控制区 -->
         <main class="main-wrapper">
-            <!-- 顶部工具栏 -->
+            <!-- 顶部工具条 -->
             <header class="topbar">
                 <div class="search-container">
                     <i class="bi bi-search"></i>
-                    <input id="searchInput" type="text" placeholder="全局搜索网站、网址、描述..." autocomplete="off">
+                    <input id="searchInput" type="text" placeholder="全局检索网站标题、网址、描述..." autocomplete="off">
                 </div>
 
                 <div class="topbar-actions">
@@ -845,7 +873,7 @@
                         <span id="statusText">正在检查...</span>
                     </div>
 
-                    <a href="index.html" target="_blank" class="btn btn-glass btn-sm" title="在新标签页预览前台">
+                    <a href="index.html" target="_blank" class="btn btn-glass btn-sm" title="打开前台页面预览">
                         <i class="bi bi-box-arrow-up-right"></i> 前台
                     </a>
 
@@ -883,7 +911,7 @@
 
                     <div class="cat-hero-actions">
                         <button id="editCatBtn" class="btn btn-glass btn-sm">
-                            <i class="bi bi-pencil-square"></i> 重命名
+                            <i class="bi bi-pencil-square"></i> 编辑分类属性
                         </button>
                         <button id="deleteCatBtn" class="btn btn-danger-glass btn-sm">
                             <i class="bi bi-trash3"></i> 删除分类
@@ -896,7 +924,7 @@
                     <span>已选择 <strong id="selectedCount" style="color:var(--primary)">0</strong> 个网站卡片</span>
                     <div style="display:flex; gap:8px;">
                         <button id="batchMoveBtn" class="btn btn-glass btn-sm">
-                            <i class="bi bi-folder-symlink"></i> 移动到分类
+                            <i class="bi bi-folder-symlink"></i> 移动到其他分类
                         </button>
                         <button id="batchDeleteBtn" class="btn btn-danger-glass btn-sm">
                             <i class="bi bi-trash3"></i> 批量删除
@@ -908,15 +936,15 @@
                 <!-- 网站卡片瀑布流网格 -->
                 <div id="cardsGrid" class="cards-grid"></div>
 
-                <!-- 智能快速录入栏 -->
+                <!-- 快速录入栏 -->
                 <div class="quick-dock">
                     <div class="quick-dock-title">
                         <i class="bi bi-lightning-charge-fill" style="color: var(--primary);"></i>
-                        快速添加网站到当前分类
+                        快速录入网站到当前分类
                     </div>
                     <form id="quickAddForm" class="quick-dock-form">
-                        <input id="quickTitle" class="form-input" placeholder="网站名称（留空则自动解析域名）">
-                        <input id="quickUrl" class="form-input" placeholder="网址（例如: bilibili.com，自动补全 https://）" required>
+                        <input id="quickTitle" class="form-input" placeholder="网站名称（留空则自动提取域名）">
+                        <input id="quickUrl" class="form-input" placeholder="网址（例如: qq.com，自动补充 https://）" required>
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> 添加网站
                         </button>
@@ -926,7 +954,7 @@
         </main>
     </div>
 
-    <!-- 弹窗：编辑网站 -->
+    <!-- 弹窗：编辑网站（支持换分类） -->
     <div id="websiteModal" class="modal-mask">
         <div class="modal-window">
             <div class="modal-header">
@@ -934,6 +962,10 @@
                 <button class="btn btn-icon btn-glass btn-sm close-modal"><i class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body">
+                <div class="form-group">
+                    <label>所属分类</label>
+                    <select id="modalSiteCategory" class="form-input" style="background:var(--panel-solid)"></select>
+                </div>
                 <div class="form-group">
                     <label>网站名称</label>
                     <input id="modalSiteTitle" class="form-input" placeholder="例如: 哔哩哔哩">
@@ -990,7 +1022,7 @@
                 <button class="btn btn-icon btn-glass btn-sm close-modal"><i class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body">
-                <p style="font-size: 13px; color: var(--text-muted);">请输入 Workers 环境变量中配置的 <strong>ADMIN_TOKEN</strong> 密码：</p>
+                <p style="font-size: 13px; color: var(--text-muted);">请输入 Workers 环境变量中设置的 <strong>ADMIN_TOKEN</strong> 密码：</p>
                 <div class="form-group">
                     <input id="modalTokenInput" type="password" class="form-input" placeholder="管理员密码" autocomplete="current-password">
                 </div>
@@ -1023,19 +1055,16 @@
         </div>
     </div>
 
-    <!-- Toast 容器 -->
     <div id="toast-box"></div>
 
     <script>
         (() => {
             'use strict';
 
-            // ====== 基础配置 ======
             const API_BASE = "https://proxyd.picpi.top/https://shuoce-navigation.2765414002jin.workers.dev";
             const STORAGE_KEY = 'shuoce_admin_token';
             const BACKUP_KEY = 'shuoce_navigation_backup';
 
-            // ====== 状态中心 ======
             const state = {
                 data: null,
                 currentCatId: null,
@@ -1047,7 +1076,6 @@
                 dragNode: null
             };
 
-            // ====== DOM 引用 ======
             const $ = sel => document.querySelector(sel);
             const dom = {
                 categoryList: $('#categoryList'),
@@ -1066,7 +1094,6 @@
                 searchInput: $('#searchInput')
             };
 
-            // ====== 辅助通知组件 ======
             function notify(msg, type = 'info', timeout = 2500) {
                 const box = $('#toast-box');
                 const el = document.createElement('div');
@@ -1104,7 +1131,7 @@
             function normalizeUrl(url) {
                 url = String(url || '').trim();
                 if (!url) return '';
-                if (!/^https?:\/\//i.test(url)) return 'https://' + url;
+                if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
                 return url;
             }
 
@@ -1119,7 +1146,6 @@
 
             const getCurrentCategory = () => state.data?.categories?.find(c => c.id === state.currentCatId) || null;
 
-            // ====== 本地备份机制 ======
             function saveLocalBackup() {
                 if (!state.data) return;
                 try {
@@ -1127,7 +1153,22 @@
                 } catch {}
             }
 
-            // ====== 渲染：分类列表 ======
+            /* ==========================================================
+               分类位置调整逻辑（支持按键移动与拖拽）
+               ========================================================== */
+            function moveCategory(index, delta) {
+                const cats = state.data?.categories;
+                if (!cats) return;
+                const target = index + delta;
+                if (target < 0 || target >= cats.length) return;
+
+                const [moved] = cats.splice(index, 1);
+                cats.splice(target, 0, moved);
+                renderCategories();
+                setDirty(true);
+                notify('分类顺序已调整', 'success');
+            }
+
             function renderCategories() {
                 const cats = state.data?.categories || [];
                 dom.categoryList.innerHTML = '';
@@ -1144,8 +1185,24 @@
                         <i class="bi ${iconCls} cat-icon"></i>
                         <span class="cat-name">${cat.title || cat.name || cat.id}</span>
                         <span class="cat-badge">${(cat.cards || []).length}</span>
+                        <div class="cat-item-actions">
+                            <button type="button" class="cat-move-btn move-up" title="上移分类"><i class="bi bi-chevron-up"></i></button>
+                            <button type="button" class="cat-move-btn move-down" title="下移分类"><i class="bi bi-chevron-down"></i></button>
+                        </div>
                     `;
 
+                    // 上下移动按键响应
+                    item.querySelector('.move-up').addEventListener('click', e => {
+                        e.stopPropagation();
+                        moveCategory(index, -1);
+                    });
+
+                    item.querySelector('.move-down').addEventListener('click', e => {
+                        e.stopPropagation();
+                        moveCategory(index, 1);
+                    });
+
+                    // 点击切换当前分类
                     item.addEventListener('click', () => {
                         state.currentCatId = cat.id;
                         state.selectedCards.clear();
@@ -1153,7 +1210,7 @@
                         renderCards();
                     });
 
-                    // 拖拽重排分类
+                    // 拖拽
                     item.addEventListener('dragstart', e => {
                         state.dragNode = item;
                         item.classList.add('dragging');
@@ -1196,7 +1253,24 @@
                 });
             }
 
-            // ====== 渲染：网站卡片网格 ======
+            /* ==========================================================
+               卡片位置调整逻辑（支持按键前移/后移与拖拽）
+               ========================================================== */
+            function moveCard(card, delta) {
+                const cat = getCurrentCategory();
+                if (!cat) return;
+                const index = (cat.cards || []).indexOf(card);
+                if (index < 0) return;
+                const target = index + delta;
+                if (target < 0 || target >= cat.cards.length) return;
+
+                const [moved] = cat.cards.splice(index, 1);
+                cat.cards.splice(target, 0, moved);
+                renderCards();
+                setDirty(true);
+                notify('卡片顺序已调整', 'success');
+            }
+
             function renderCards() {
                 const cat = getCurrentCategory();
                 dom.cardsGrid.innerHTML = '';
@@ -1208,7 +1282,7 @@
                     dom.cardsGrid.innerHTML = `
                         <div class="empty-box">
                             <i class="bi bi-shield-lock"></i>
-                            <p>尚未加载导航配置，请点击右上角「Token」进行云端载入</p>
+                            <p>尚未载入导航配置，请点击右上角「Token」从云端拉取</p>
                         </div>
                     `;
                     return;
@@ -1238,13 +1312,13 @@
                     (c.description || '').toLowerCase().includes(q)
                 );
 
-                dom.catHeroMeta.textContent = `共 ${cat.cards.length} 个网站` + (q ? ` · 筛选出 ${cards.length} 个结果` : '');
+                dom.catHeroMeta.textContent = `共 ${cat.cards.length} 个网站` + (q ? ` · 检索出 ${cards.length} 项` : '');
 
                 if (!cards.length) {
                     dom.cardsGrid.innerHTML = `
                         <div class="empty-box">
                             <i class="bi bi-inbox"></i>
-                            <p>${q ? `未匹配到与「${state.searchKey}」相关的内容` : '当前分类空空如也，可在下方快速录入网站'}</p>
+                            <p>${q ? `未匹配到与「${state.searchKey}」相关的网站` : '该分类暂无网站，可在下方快速录入'}</p>
                         </div>
                     `;
                     return;
@@ -1257,7 +1331,7 @@
 
                     const el = document.createElement('div');
                     el.className = `site-card ${isSelected ? 'selected' : ''}`;
-                    el.draggable = !q; // 搜索模式下禁用拖拽
+                    el.draggable = !q;
                     el.dataset.key = cardKey;
 
                     el.innerHTML = `
@@ -1275,20 +1349,32 @@
                         </div>
 
                         <div class="card-hover-actions">
+                            <button class="btn btn-icon btn-glass btn-sm action-prev" title="向左前移"><i class="bi bi-arrow-left-short"></i></button>
+                            <button class="btn btn-icon btn-glass btn-sm action-next" title="向右后移"><i class="bi bi-arrow-right-short"></i></button>
                             <button class="btn btn-icon btn-glass btn-sm action-visit" title="打开网址"><i class="bi bi-arrow-up-right"></i></button>
                             <button class="btn btn-icon btn-glass btn-sm action-copy" title="复制链接"><i class="bi bi-copy"></i></button>
-                            <button class="btn btn-icon btn-glass btn-sm action-edit" title="编辑"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-icon btn-glass btn-sm action-edit" title="编辑与换分类"><i class="bi bi-pencil"></i></button>
                             <button class="btn btn-icon btn-danger-glass btn-sm action-delete" title="删除"><i class="bi bi-trash"></i></button>
                         </div>
                     `;
 
-                    // 点击勾选多选框
+                    // 移动前置/后置
+                    el.querySelector('.action-prev').addEventListener('click', e => {
+                        e.stopPropagation();
+                        moveCard(card, -1);
+                    });
+
+                    el.querySelector('.action-next').addEventListener('click', e => {
+                        e.stopPropagation();
+                        moveCard(card, 1);
+                    });
+
+                    // 选中
                     el.querySelector('.card-checkbox').addEventListener('click', e => {
                         e.stopPropagation();
                         toggleSelectCard(cardKey, el);
                     });
 
-                    // 悬浮按钮响应
                     el.querySelector('.action-visit').addEventListener('click', e => {
                         e.stopPropagation();
                         card.url && window.open(card.url, '_blank');
@@ -1311,12 +1397,11 @@
                         deleteSingleCard(card);
                     });
 
-                    // 点击卡片直接打开网站
                     el.addEventListener('click', () => {
                         card.url && window.open(card.url, '_blank');
                     });
 
-                    // 卡片网格拖拽重排
+                    // 拖拽排序
                     el.addEventListener('dragstart', e => {
                         state.dragNode = el;
                         el.classList.add('dragging');
@@ -1333,7 +1418,6 @@
                         el.classList.remove('dragging');
                         state.dragNode = null;
                         
-                        // 重建顺序
                         const currentElements = Array.from(dom.cardsGrid.querySelectorAll('.site-card'));
                         const keyMap = new Map((cat.cards || []).map(c => [c.id || c.url || c.title, c]));
                         cat.cards = currentElements.map(node => keyMap.get(node.dataset.key)).filter(Boolean);
@@ -1345,7 +1429,7 @@
                 });
             }
 
-            // ====== 多选与批量操作 ======
+            // 多选批量操作
             function toggleSelectCard(key, el) {
                 if (state.selectedCards.has(key)) {
                     state.selectedCards.delete(key);
@@ -1371,7 +1455,7 @@
             $('#batchDeleteBtn').addEventListener('click', () => {
                 const cat = getCurrentCategory();
                 if (!cat || !state.selectedCards.size) return;
-                if (!confirm(`确定要删除选中的 ${state.selectedCards.size} 个网站吗？`)) return;
+                if (!confirm(`确定彻底删除选中的 ${state.selectedCards.size} 个网站吗？`)) return;
 
                 cat.cards = cat.cards.filter(c => !state.selectedCards.has(c.id || c.url || c.title));
                 state.selectedCards.clear();
@@ -1394,7 +1478,7 @@
                     select.appendChild(opt);
                 });
 
-                if (!select.children.length) return notify('没有可供迁移的其他分类', 'warning');
+                if (!select.children.length) return notify('没有可供迁入的其他分类', 'warning');
                 openModal('#moveModal');
             });
 
@@ -1415,10 +1499,10 @@
                 renderCategories();
                 renderCards();
                 setDirty(true);
-                notify(`成功将 ${movingCards.length} 个网站移动到「${targetCat.title}」`, 'success');
+                notify(`已将 ${movingCards.length} 个网站转移至「${targetCat.title}」`, 'success');
             });
 
-            // ====== 增删改操作 ======
+            // 网站单项操作与单卡片跨分类转移
             function deleteSingleCard(card) {
                 const cat = getCurrentCategory();
                 if (!cat) return;
@@ -1438,16 +1522,30 @@
                 $('#modalSiteUrl').value = card.url || '';
                 $('#modalSiteDesc').value = card.description || '';
                 $('#modalSiteIcon').value = card.icon || '';
+
+                // 填充分类下拉框
+                const catSelect = $('#modalSiteCategory');
+                catSelect.innerHTML = '';
+                (state.data?.categories || []).forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.title || c.id;
+                    if (c.id === state.currentCatId) opt.selected = true;
+                    catSelect.appendChild(opt);
+                });
+
                 openModal('#websiteModal');
             }
 
             $('#saveWebsiteBtn').addEventListener('click', () => {
-                const cat = getCurrentCategory();
-                const card = cat?.cards?.find(c => (c.id || c.url || c.title) === state.editingCardId);
+                const currentCat = getCurrentCategory();
+                const card = currentCat?.cards?.find(c => (c.id || c.url || c.title) === state.editingCardId);
                 if (!card) return closeModal('#websiteModal');
 
                 const title = $('#modalSiteTitle').value.trim();
                 const url = normalizeUrl($('#modalSiteUrl').value);
+                const targetCatId = $('#modalSiteCategory').value;
+
                 if (!title) return notify('请填写网站名称', 'warning');
                 if (!url) return notify('请填写有效网址', 'warning');
 
@@ -1456,13 +1554,26 @@
                 card.description = $('#modalSiteDesc').value.trim();
                 card.icon = $('#modalSiteIcon').value.trim() || 'bi-globe';
 
+                // 判断是否切换了分类
+                if (targetCatId && targetCatId !== state.currentCatId) {
+                    const targetCat = state.data?.categories?.find(c => c.id === targetCatId);
+                    if (targetCat) {
+                        currentCat.cards = currentCat.cards.filter(c => c !== card);
+                        targetCat.cards = targetCat.cards || [];
+                        targetCat.cards.push(card);
+                        notify(`已更新并转移至分类「${targetCat.title}」`, 'success');
+                    }
+                } else {
+                    notify('网站信息已更新', 'success');
+                }
+
                 closeModal('#websiteModal');
+                renderCategories();
                 renderCards();
                 setDirty(true);
-                notify('网站信息已更新', 'success');
             });
 
-            // 快捷录入栏提交
+            // 快捷添加
             $('#quickAddForm').addEventListener('submit', e => {
                 e.preventDefault();
                 const cat = getCurrentCategory();
@@ -1498,7 +1609,7 @@
                 notify('网站已添加', 'success');
             });
 
-            // 分类新建与编辑
+            // 分类增改删
             $('#addCategoryBtn').addEventListener('click', () => {
                 if (!state.data) return notify('请先完成鉴权加载数据', 'warning');
                 const title = prompt('请输入新分类名称：');
@@ -1557,14 +1668,9 @@
                 notify('分类已删除', 'success');
             });
 
-            // ====== 模态窗控制 ======
-            function openModal(sel) {
-                $(sel).classList.add('open');
-            }
-
-            function closeModal(sel) {
-                $(sel).classList.remove('open');
-            }
+            // 模态弹窗系统
+            function openModal(sel) { $(sel).classList.add('open'); }
+            function closeModal(sel) { $(sel).classList.remove('open'); }
 
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', e => {
@@ -1579,7 +1685,7 @@
                 });
             });
 
-            // ====== API 网络请求与持久化 ======
+            // 云端请求与同步
             async function fetchCloudData(token) {
                 try {
                     notify('正在同步云端数据...', 'info', 1000);
@@ -1632,7 +1738,7 @@
 
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     setDirty(false);
-                    notify('🎉 保存成功！所有修改已即时生效并同步到KV', 'success');
+                    notify('🎉 保存成功！所有修改已即时同步至KV', 'success');
                 } catch (err) {
                     notify(`保存失败: ${err.message}`, 'error', 4000);
                     if (err.message.includes('401')) openModal('#authModal');
@@ -1644,7 +1750,6 @@
 
             dom.saveBtn.addEventListener('click', saveToCloudKV);
 
-            // Token 鉴权按钮
             dom.authBtn.addEventListener('click', () => {
                 $('#modalTokenInput').value = state.token || '';
                 openModal('#authModal');
@@ -1667,7 +1772,6 @@
                 notify('已清除会话密码', 'info');
             });
 
-            // 导入 / 导出
             dom.searchInput.addEventListener('input', e => {
                 state.searchKey = e.target.value.trim();
                 renderCards();
@@ -1692,8 +1796,8 @@
                 reader.onload = evt => {
                     try {
                         const json = JSON.parse(evt.target.result);
-                        if (!json.categories) throw new Error('缺少 categories 分类字段');
-                        if (!confirm('导入将覆盖当前未保存的工作区内容，是否继续？')) return;
+                        if (!json.categories) throw new Error('缺少 categories 字段');
+                        if (!confirm('导入将覆盖当前未保存的内容，是否继续？')) return;
                         state.data = json;
                         state.currentCatId = json.categories[0]?.id || null;
                         renderCategories();
@@ -1708,7 +1812,6 @@
                 e.target.value = '';
             });
 
-            // 备份与恢复
             $('#backupBtn').addEventListener('click', () => {
                 if (!state.data) return notify('没有数据可备份', 'warning');
                 saveLocalBackup();
@@ -1732,7 +1835,6 @@
                 }
             });
 
-            // ====== 初始化引导 ======
             function init() {
                 if (state.token) {
                     dom.authBtnText.textContent = 'Token已存';
@@ -1748,7 +1850,7 @@
                             renderCards();
                             dom.statusPill.className = 'status-pill dirty';
                             dom.statusText.textContent = '本地暂存模式';
-                            notify('已载入本地暂存数据，点击右上角Token可登录同步', 'info', 3500);
+                            notify('已载入本地暂存，点击右上角Token可登录同步', 'info', 3500);
                             return;
                         } catch {}
                     }
