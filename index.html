@@ -1651,9 +1651,7 @@ button{
     </section>
 
     <div class="quote-box">
-    <span class="quote-mark">“</span>
-    <span id="hitokoto">每日一言将在后台加载...</span>
-    <span class="quote-mark">”</span>
+        <span id="hitokoto">每日一言将在后台加载...</span>
     </div>
 </main>
 
@@ -1925,22 +1923,12 @@ function getCategoryContentId(category, index) {
     return "kvCategoryContent" + index;
 }
 
-function normaliseIcon(icon, fallback = "bi-link-45deg") {
-    const raw = String(icon || "").trim();
-
-    const matched = raw.match(/(?:^|\s)(bi-[a-z0-9-]+)/i);
-
-    if (matched) {
-        return matched[1];
+function normaliseIcon(icon, fallback) {
+    let name = icon || fallback;
+    if (!name.startsWith("bi-")) {
+        name = "bi-" + name;
     }
-
-    const cleaned = raw
-        .replace(/^bi-/, "")
-        .replace(/[^a-z0-9-]/gi, "");
-
-    return cleaned
-        ? `bi-${cleaned}`
-        : fallback;
+    return name;
 }
 
 function createNavigationCard(card) {
@@ -2454,11 +2442,10 @@ async function loadHitokoto() {
         if (!response.ok) throw new Error("一言请求失败");
 
         const data = await response.json();
-        $("#hitokoto").textContent =
-    data.hitokoto || "保持热爱，奔赴山海。";
+        $("#hitokoto").textContent = `「${data.hitokoto || "保持热爱，奔赴山海。"}」`;
     } catch (error) {
         console.warn("每日一言接口异常：", error);
-        $("#hitokoto").textContent = "保持热爱，奔赴山海。";
+        $("#hitokoto").textContent = "「保持热爱，奔赴山海。」";
     }
 }
 
@@ -2501,22 +2488,10 @@ runWhenIdle(async () => {
             }
             const hostname = target.hostname;
             return [
-    "https://www.google.com/s2/favicons?domain=" +
-        encodeURIComponent(hostname) +
-        "&sz=64",
-
-    "https://icons.duckduckgo.com/ip3/" +
-        encodeURIComponent(hostname) +
-        ".ico",
-
-    FAVICON_PROXY +
-        "https://icons.duckduckgo.com/ip3/" +
-        encodeURIComponent(hostname) +
-        ".ico",
-
-    FAVICON_PROXY + target.origin + "/favicon.ico",
-    FAVICON_PROXY + target.origin + "/favicon.png"
-];
+                FAVICON_PROXY + "https://icons.duckduckgo.com/ip3/" + encodeURIComponent(hostname) + ".ico",
+                FAVICON_PROXY + target.origin + "/favicon.ico",
+                FAVICON_PROXY + target.origin + "/favicon.png"
+            ];
         } catch {
             return [];
         }
