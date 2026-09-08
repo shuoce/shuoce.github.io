@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1923,12 +1924,22 @@ function getCategoryContentId(category, index) {
     return "kvCategoryContent" + index;
 }
 
-function normaliseIcon(icon, fallback) {
-    let name = icon || fallback;
-    if (!name.startsWith("bi-")) {
-        name = "bi-" + name;
+function normaliseIcon(icon, fallback = "bi-link-45deg") {
+    const raw = String(icon || "").trim();
+
+    const matched = raw.match(/(?:^|\s)(bi-[a-z0-9-]+)/i);
+
+    if (matched) {
+        return matched[1];
     }
-    return name;
+
+    const cleaned = raw
+        .replace(/^bi-/, "")
+        .replace(/[^a-z0-9-]/gi, "");
+
+    return cleaned
+        ? `bi-${cleaned}`
+        : fallback;
 }
 
 function createNavigationCard(card) {
@@ -2488,10 +2499,22 @@ runWhenIdle(async () => {
             }
             const hostname = target.hostname;
             return [
-                FAVICON_PROXY + "https://icons.duckduckgo.com/ip3/" + encodeURIComponent(hostname) + ".ico",
-                FAVICON_PROXY + target.origin + "/favicon.ico",
-                FAVICON_PROXY + target.origin + "/favicon.png"
-            ];
+    "https://www.google.com/s2/favicons?domain=" +
+        encodeURIComponent(hostname) +
+        "&sz=64",
+
+    "https://icons.duckduckgo.com/ip3/" +
+        encodeURIComponent(hostname) +
+        ".ico",
+
+    FAVICON_PROXY +
+        "https://icons.duckduckgo.com/ip3/" +
+        encodeURIComponent(hostname) +
+        ".ico",
+
+    FAVICON_PROXY + target.origin + "/favicon.ico",
+    FAVICON_PROXY + target.origin + "/favicon.png"
+];
         } catch {
             return [];
         }
