@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1135,14 +1136,34 @@
                 return url;
             }
 
+            function normalizeIconClass(icon, fallback = 'bi-globe') {
+    const raw = String(icon || '').trim();
+
+    // 支持 bi-robot、robot、bi bi-robot 等写法
+    const matched = raw.match(/(?:^|\s)(bi-[a-z0-9-]+)/i);
+
+    if (matched) {
+        return `bi ${matched[1]}`;
+    }
+
+    const cleaned = raw
+        .replace(/^bi-/, '')
+        .replace(/[^a-z0-9-]/gi, '');
+
+    return cleaned
+        ? `bi bi-${cleaned}`
+        : `bi ${fallback}`;
+}
+
             function getFavicon(url) {
-                try {
-                    const host = new URL(normalizeUrl(url)).hostname;
-                    return `https://proxyd.picpi.top/https://icons.duckduckgo.com/ip3/${encodeURIComponent(host)}.ico`;
-                } catch {
-                    return null;
-                }
-            }
+    try {
+        const target = new URL(normalizeUrl(url));
+
+        return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(target.hostname)}&sz=64`;
+    } catch {
+        return null;
+    }
+}
 
             const getCurrentCategory = () => state.data?.categories?.find(c => c.id === state.currentCatId) || null;
 
@@ -1180,9 +1201,9 @@
                     item.draggable = true;
                     item.dataset.id = cat.id;
 
-                    const iconCls = cat.icon ? (cat.icon.startsWith('bi-') ? cat.icon : 'bi-' + cat.icon) : 'bi-folder2';
+                    const iconCls = normalizeIconClass(cat.icon, 'bi-folder2');
                     item.innerHTML = `
-                        <i class="bi ${iconCls} cat-icon"></i>
+                        <i class="${iconCls} cat-icon"></i>
                         <span class="cat-name">${cat.title || cat.name || cat.id}</span>
                         <span class="cat-badge">${(cat.cards || []).length}</span>
                         <div class="cat-item-actions">
@@ -1328,17 +1349,16 @@
                     const cardKey = card.id || card.url || card.title;
                     const isSelected = state.selectedCards.has(cardKey);
                     const faviconUrl = getFavicon(card.url);
+const fallbackIconClass = normalizeIconClass(card.icon, 'bi-globe');
 
-                    const el = document.createElement('div');
+const el = document.createElement('div');
                     el.className = `site-card ${isSelected ? 'selected' : ''}`;
                     el.draggable = !q;
                     el.dataset.key = cardKey;
 
                     el.innerHTML = `
                         <div class="card-top">
-                            <div class="card-avatar">
-                                ${faviconUrl ? `<img src="${faviconUrl}" onerror="this.outerHTML='<i class=\\\'bi ${card.icon || 'bi-globe'}\\\'></i>'">` : `<i class="bi ${card.icon || 'bi-globe'}"></i>`}
-                            </div>
+                            <div class="card-avatar"></div>
                             <div class="card-checkbox"><i class="bi bi-check-lg"></i></div>
                         </div>
 
@@ -1357,6 +1377,32 @@
                             <button class="btn btn-icon btn-danger-glass btn-sm action-delete" title="删除"><i class="bi bi-trash"></i></button>
                         </div>
                     `;
+
+const avatar = el.querySelector('.card-avatar');
+
+function renderFallbackIcon() {
+    const icon = document.createElement('i');
+    icon.className = fallbackIconClass;
+    avatar.replaceChildren(icon);
+}
+
+if (faviconUrl) {
+    const image = document.createElement('img');
+
+    image.src = faviconUrl;
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.referrerPolicy = 'no-referrer';
+
+    image.addEventListener('error', () => {
+        renderFallbackIcon();
+    }, { once: true });
+
+    avatar.appendChild(image);
+} else {
+    renderFallbackIcon();
+}
 
                     // 移动前置/后置
                     el.querySelector('.action-prev').addEventListener('click', e => {
