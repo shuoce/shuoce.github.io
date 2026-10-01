@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -617,7 +614,7 @@
             margin-top: 4px;
         }
 
-        /* 悬浮操作栏（带位移与管理） */
+        /* 悬浮操作栏 */
         .card-hover-actions {
             display: flex;
             align-items: center;
@@ -891,7 +888,7 @@
                         <i class="bi bi-key"></i> <span id="authBtnText">Token</span>
                     </button>
 
-                    <button id="saveBtn" class="btn btn-primary btn-sm">
+                    <button id="saveBtn" class="btn btn-primary btn-sm" title="快捷键: Ctrl + S / Cmd + S">
                         <i class="bi bi-cloud-check-fill"></i> 同步到KV
                     </button>
                 </div>
@@ -1066,6 +1063,7 @@
             const API_BASE = "https://proxyd.picpi.top/https://shuoce-navigation.shuoce.workers.dev";
             const STORAGE_KEY = 'shuoce_admin_token';
             const BACKUP_KEY = 'shuoce_navigation_backup';
+            const FAVICON_PROXY = "https://proxyd.picpi.top/";
 
             const state = {
                 data: null,
@@ -1122,7 +1120,10 @@
                     dom.statusPill.className = 'status-pill dirty';
                     dom.statusText.textContent = '有未同步改动';
                     saveLocalBackup();
-                    window.onbeforeunload = () => true;
+                    window.onbeforeunload = (e) => {
+                        e.preventDefault();
+                        return (e.returnValue = '你有尚未保存同步的改动，确定要离开吗？');
+                    };
                 } else {
                     dom.statusPill.className = 'status-pill online';
                     dom.statusText.textContent = '已同步至KV';
@@ -1138,33 +1139,41 @@
             }
 
             function normalizeIconClass(icon, fallback = 'bi-globe') {
-    const raw = String(icon || '').trim();
+                const raw = String(icon || '').trim();
+                const matched = raw.match(/(?:^|\s)(bi-[a-z0-9-]+)/i);
+                if (matched) return `bi ${matched[1]}`;
 
-    // 支持 bi-robot、robot、bi bi-robot 等写法
-    const matched = raw.match(/(?:^|\s)(bi-[a-z0-9-]+)/i);
+                const cleaned = raw.replace(/^bi-/, '').replace(/[^a-z0-9-]/gi, '');
+                return cleaned ? `bi bi-${cleaned}` : `bi ${fallback}`;
+            }
 
-    if (matched) {
-        return `bi ${matched[1]}`;
-    }
+            // 补齐唯一 ID，确保排序、批量和编辑不因同名/同 URL 发生状态冲突
+            function ensureUniqueIds(data) {
+                if (!data || !Array.isArray(data.categories)) return;
+                data.categories.forEach((cat, cIdx) => {
+                    if (!cat.id) cat.id = 'cat-' + Date.now() + '-' + cIdx;
+                    cat.cards = Array.isArray(cat.cards) ? cat.cards : (Array.isArray(cat.sites) ? cat.sites : []);
+                    cat.cards.forEach((card, sIdx) => {
+                        if (!card.id) {
+                            card.id = 'card-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '-' + sIdx;
+                        }
+                    });
+                });
+            }
 
-    const cleaned = raw
-        .replace(/^bi-/, '')
-        .replace(/[^a-z0-9-]/gi, '');
-
-    return cleaned
-        ? `bi bi-${cleaned}`
-        : `bi ${fallback}`;
-}
-
-            function getFavicon(url) {
-    try {
-        const target = new URL(normalizeUrl(url));
-
-        return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(target.hostname)}&sz=64`;
-    } catch {
-        return null;
-    }
-}
+            // 升级高可用 Favicon 链式获取（兼容国内访问）
+            function getAutomaticFaviconUrls(url) {
+                try {
+                    const target = new URL(normalizeUrl(url));
+                    return [
+                        FAVICON_PROXY + "https://icons.duckduckgo.com/ip3/" + encodeURIComponent(target.hostname) + ".ico",
+                        FAVICON_PROXY + target.origin + "/favicon.ico",
+                        `https://api.iowen.cn/favicon/${encodeURIComponent(target.hostname)}.png`
+                    ];
+                } catch {
+                    return [];
+                }
+            }
 
             const getCurrentCategory = () => state.data?.categories?.find(c => c.id === state.currentCatId) || null;
 
@@ -1176,7 +1185,7 @@
             }
 
             /* ==========================================================
-               分类位置调整逻辑（支持按键移动与拖拽）
+               分类位置调整逻辑（按键与拖拽）
                ========================================================== */
             function moveCategory(index, delta) {
                 const cats = state.data?.categories;
@@ -1213,7 +1222,6 @@
                         </div>
                     `;
 
-                    // 上下移动按键响应
                     item.querySelector('.move-up').addEventListener('click', e => {
                         e.stopPropagation();
                         moveCategory(index, -1);
@@ -1224,7 +1232,6 @@
                         moveCategory(index, 1);
                     });
 
-                    // 点击切换当前分类
                     item.addEventListener('click', () => {
                         state.currentCatId = cat.id;
                         state.selectedCards.clear();
@@ -1232,7 +1239,6 @@
                         renderCards();
                     });
 
-                    // 拖拽
                     item.addEventListener('dragstart', e => {
                         state.dragNode = item;
                         item.classList.add('dragging');
@@ -1276,7 +1282,7 @@
             }
 
             /* ==========================================================
-               卡片位置调整逻辑（支持按键前移/后移与拖拽）
+               卡片位置调整与安全渲染（防搜索状态数据丢失）
                ========================================================== */
             function moveCard(card, delta) {
                 const cat = getCurrentCategory();
@@ -1322,19 +1328,20 @@
                     return;
                 }
 
-                const catIconCls = cat.icon ? (cat.icon.startsWith('bi-') ? cat.icon : 'bi-' + cat.icon) : 'bi-folder2-open';
-                dom.catHeroIcon.innerHTML = `<i class="bi ${catIconCls}"></i>`;
+                const catIconCls = normalizeIconClass(cat.icon, 'bi-folder2-open');
+                dom.catHeroIcon.innerHTML = `<i class="${catIconCls}"></i>`;
                 dom.catHeroTitle.textContent = cat.title || cat.name || cat.id;
 
                 const q = state.searchKey.toLowerCase();
-                const cards = (cat.cards || []).filter(c =>
+                const allCards = cat.cards || [];
+                const cards = allCards.filter(c =>
                     !q ||
                     (c.title || '').toLowerCase().includes(q) ||
                     (c.url || '').toLowerCase().includes(q) ||
                     (c.description || '').toLowerCase().includes(q)
                 );
 
-                dom.catHeroMeta.textContent = `共 ${cat.cards.length} 个网站` + (q ? ` · 检索出 ${cards.length} 项` : '');
+                dom.catHeroMeta.textContent = `共 ${allCards.length} 个网站` + (q ? ` · 检索出 ${cards.length} 项（搜索状态下禁用拖拽排序以防误删）` : '');
 
                 if (!cards.length) {
                     dom.cardsGrid.innerHTML = `
@@ -1347,15 +1354,15 @@
                 }
 
                 cards.forEach(card => {
-                    const cardKey = card.id || card.url || card.title;
-                    const isSelected = state.selectedCards.has(cardKey);
-                    const faviconUrl = getFavicon(card.url);
-const fallbackIconClass = normalizeIconClass(card.icon, 'bi-globe');
+                    const cardId = card.id;
+                    const isSelected = state.selectedCards.has(cardId);
+                    const fallbackIconClass = normalizeIconClass(card.icon, 'bi-globe');
 
-const el = document.createElement('div');
+                    const el = document.createElement('div');
                     el.className = `site-card ${isSelected ? 'selected' : ''}`;
+                    // 安全机制：只有在未搜索状态下才允许拖拽排版
                     el.draggable = !q;
-                    el.dataset.key = cardKey;
+                    el.dataset.id = cardId;
 
                     el.innerHTML = `
                         <div class="card-top">
@@ -1379,33 +1386,40 @@ const el = document.createElement('div');
                         </div>
                     `;
 
-const avatar = el.querySelector('.card-avatar');
+                    // 链式容错加载 Favicon
+                    const avatar = el.querySelector('.card-avatar');
+                    const faviconUrls = getAutomaticFaviconUrls(card.url);
 
-function renderFallbackIcon() {
-    const icon = document.createElement('i');
-    icon.className = fallbackIconClass;
-    avatar.replaceChildren(icon);
-}
+                    const renderFallback = () => {
+                        const icon = document.createElement('i');
+                        icon.className = fallbackIconClass;
+                        avatar.replaceChildren(icon);
+                    };
 
-if (faviconUrl) {
-    const image = document.createElement('img');
+                    if (faviconUrls.length > 0) {
+                        const img = document.createElement('img');
+                        img.alt = '';
+                        img.loading = 'lazy';
+                        img.decoding = 'async';
+                        img.referrerPolicy = 'no-referrer';
+                        let fIdx = 0;
 
-    image.src = faviconUrl;
-    image.alt = '';
-    image.loading = 'lazy';
-    image.decoding = 'async';
-    image.referrerPolicy = 'no-referrer';
+                        const tryNext = () => {
+                            if (fIdx >= faviconUrls.length) {
+                                renderFallback();
+                                return;
+                            }
+                            img.src = faviconUrls[fIdx++];
+                        };
 
-    image.addEventListener('error', () => {
-        renderFallbackIcon();
-    }, { once: true });
+                        img.addEventListener('error', tryNext);
+                        avatar.appendChild(img);
+                        tryNext();
+                    } else {
+                        renderFallback();
+                    }
 
-    avatar.appendChild(image);
-} else {
-    renderFallbackIcon();
-}
-
-                    // 移动前置/后置
+                    // 排序按键
                     el.querySelector('.action-prev').addEventListener('click', e => {
                         e.stopPropagation();
                         moveCard(card, -1);
@@ -1416,15 +1430,15 @@ if (faviconUrl) {
                         moveCard(card, 1);
                     });
 
-                    // 选中
+                    // 勾选批量
                     el.querySelector('.card-checkbox').addEventListener('click', e => {
                         e.stopPropagation();
-                        toggleSelectCard(cardKey, el);
+                        toggleSelectCard(cardId, el);
                     });
 
                     el.querySelector('.action-visit').addEventListener('click', e => {
                         e.stopPropagation();
-                        card.url && window.open(card.url, '_blank');
+                        card.url && window.open(card.url, '_blank', 'noopener,noreferrer');
                     });
 
                     el.querySelector('.action-copy').addEventListener('click', async e => {
@@ -1445,44 +1459,49 @@ if (faviconUrl) {
                     });
 
                     el.addEventListener('click', () => {
-                        card.url && window.open(card.url, '_blank');
+                        card.url && window.open(card.url, '_blank', 'noopener,noreferrer');
                     });
 
-                    // 拖拽排序
-                    el.addEventListener('dragstart', e => {
-                        state.dragNode = el;
-                        el.classList.add('dragging');
-                        e.dataTransfer.setData('text/plain', cardKey);
-                    });
+                    // 拖拽排序（带绝对防御逻辑）
+                    if (!q) {
+                        el.addEventListener('dragstart', e => {
+                            state.dragNode = el;
+                            el.classList.add('dragging');
+                            e.dataTransfer.setData('text/plain', cardId);
+                        });
 
-                    el.addEventListener('dragover', e => {
-                        e.preventDefault();
-                        if (state.dragNode === el) return;
-                        dom.cardsGrid.insertBefore(state.dragNode, el);
-                    });
+                        el.addEventListener('dragover', e => {
+                            e.preventDefault();
+                            if (state.dragNode === el) return;
+                            dom.cardsGrid.insertBefore(state.dragNode, el);
+                        });
 
-                    el.addEventListener('dragend', () => {
-                        el.classList.remove('dragging');
-                        state.dragNode = null;
-                        
-                        const currentElements = Array.from(dom.cardsGrid.querySelectorAll('.site-card'));
-                        const keyMap = new Map((cat.cards || []).map(c => [c.id || c.url || c.title, c]));
-                        cat.cards = currentElements.map(node => keyMap.get(node.dataset.key)).filter(Boolean);
-                        setDirty(true);
-                        notify('网站卡片排序已同步', 'success');
-                    });
+                        el.addEventListener('dragend', () => {
+                            el.classList.remove('dragging');
+                            state.dragNode = null;
+                            
+                            // 关键保护：只有在没有执行搜索时才允许全量同步 DOM 顺序，杜绝误删数据
+                            if (!state.searchKey.trim()) {
+                                const currentElements = Array.from(dom.cardsGrid.querySelectorAll('.site-card'));
+                                const keyMap = new Map((cat.cards || []).map(c => [c.id, c]));
+                                cat.cards = currentElements.map(node => keyMap.get(node.dataset.id)).filter(Boolean);
+                                setDirty(true);
+                                notify('网站卡片排序已同步', 'success');
+                            }
+                        });
+                    }
 
                     dom.cardsGrid.appendChild(el);
                 });
             }
 
             // 多选批量操作
-            function toggleSelectCard(key, el) {
-                if (state.selectedCards.has(key)) {
-                    state.selectedCards.delete(key);
+            function toggleSelectCard(id, el) {
+                if (state.selectedCards.has(id)) {
+                    state.selectedCards.delete(id);
                     el.classList.remove('selected');
                 } else {
-                    state.selectedCards.add(key);
+                    state.selectedCards.add(id);
                     el.classList.add('selected');
                 }
                 updateBatchBar();
@@ -1504,7 +1523,7 @@ if (faviconUrl) {
                 if (!cat || !state.selectedCards.size) return;
                 if (!confirm(`确定彻底删除选中的 ${state.selectedCards.size} 个网站吗？`)) return;
 
-                cat.cards = cat.cards.filter(c => !state.selectedCards.has(c.id || c.url || c.title));
+                cat.cards = cat.cards.filter(c => !state.selectedCards.has(c.id));
                 state.selectedCards.clear();
                 renderCategories();
                 renderCards();
@@ -1536,8 +1555,8 @@ if (faviconUrl) {
 
                 if (!cat || !targetCat) return closeModal('#moveModal');
 
-                const movingCards = cat.cards.filter(c => state.selectedCards.has(c.id || c.url || c.title));
-                cat.cards = cat.cards.filter(c => !state.selectedCards.has(c.id || c.url || c.title));
+                const movingCards = cat.cards.filter(c => state.selectedCards.has(c.id));
+                cat.cards = cat.cards.filter(c => !state.selectedCards.has(c.id));
                 targetCat.cards = targetCat.cards || [];
                 targetCat.cards.push(...movingCards);
 
@@ -1555,8 +1574,8 @@ if (faviconUrl) {
                 if (!cat) return;
                 if (!confirm(`确定删除网站「${card.title}」吗？`)) return;
 
-                cat.cards = cat.cards.filter(c => c !== card);
-                state.selectedCards.delete(card.id || card.url || card.title);
+                cat.cards = cat.cards.filter(c => c.id !== card.id);
+                state.selectedCards.delete(card.id);
                 renderCategories();
                 renderCards();
                 setDirty(true);
@@ -1564,13 +1583,12 @@ if (faviconUrl) {
             }
 
             function openEditSiteModal(card) {
-                state.editingCardId = card.id || card.url || card.title;
+                state.editingCardId = card.id;
                 $('#modalSiteTitle').value = card.title || '';
                 $('#modalSiteUrl').value = card.url || '';
                 $('#modalSiteDesc').value = card.description || '';
                 $('#modalSiteIcon').value = card.icon || '';
 
-                // 填充分类下拉框
                 const catSelect = $('#modalSiteCategory');
                 catSelect.innerHTML = '';
                 (state.data?.categories || []).forEach(c => {
@@ -1586,7 +1604,7 @@ if (faviconUrl) {
 
             $('#saveWebsiteBtn').addEventListener('click', () => {
                 const currentCat = getCurrentCategory();
-                const card = currentCat?.cards?.find(c => (c.id || c.url || c.title) === state.editingCardId);
+                const card = currentCat?.cards?.find(c => c.id === state.editingCardId);
                 if (!card) return closeModal('#websiteModal');
 
                 const title = $('#modalSiteTitle').value.trim();
@@ -1601,11 +1619,10 @@ if (faviconUrl) {
                 card.description = $('#modalSiteDesc').value.trim();
                 card.icon = $('#modalSiteIcon').value.trim() || 'bi-globe';
 
-                // 判断是否切换了分类
                 if (targetCatId && targetCatId !== state.currentCatId) {
                     const targetCat = state.data?.categories?.find(c => c.id === targetCatId);
                     if (targetCat) {
-                        currentCat.cards = currentCat.cards.filter(c => c !== card);
+                        currentCat.cards = currentCat.cards.filter(c => c.id !== card.id);
                         targetCat.cards = targetCat.cards || [];
                         targetCat.cards.push(card);
                         notify(`已更新并转移至分类「${targetCat.title}」`, 'success');
@@ -1641,7 +1658,7 @@ if (faviconUrl) {
 
                 cat.cards = cat.cards || [];
                 cat.cards.push({
-                    id: 'card-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                    id: 'card-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
                     title,
                     url,
                     description: '',
@@ -1715,7 +1732,7 @@ if (faviconUrl) {
                 notify('分类已删除', 'success');
             });
 
-            // 模态弹窗系统
+            // 弹窗控制
             function openModal(sel) { $(sel).classList.add('open'); }
             function closeModal(sel) { $(sel).classList.remove('open'); }
 
@@ -1749,6 +1766,7 @@ if (faviconUrl) {
                     const data = await res.json();
                     if (!data?.categories) throw new Error('数据结构异常');
 
+                    ensureUniqueIds(data);
                     state.data = data;
                     state.currentCatId = data.categories[0]?.id || null;
                     setDirty(false);
@@ -1811,6 +1829,11 @@ if (faviconUrl) {
                 fetchCloudData(token);
             });
 
+            // 密码框按回车直接提交
+            $('#modalTokenInput').addEventListener('keydown', e => {
+                if (e.key === 'Enter') $('#confirmAuthBtn').click();
+            });
+
             $('#clearSavedTokenBtn').addEventListener('click', () => {
                 state.token = '';
                 sessionStorage.removeItem(STORAGE_KEY);
@@ -1845,6 +1868,7 @@ if (faviconUrl) {
                         const json = JSON.parse(evt.target.result);
                         if (!json.categories) throw new Error('缺少 categories 字段');
                         if (!confirm('导入将覆盖当前未保存的内容，是否继续？')) return;
+                        ensureUniqueIds(json);
                         state.data = json;
                         state.currentCatId = json.categories[0]?.id || null;
                         renderCategories();
@@ -1871,6 +1895,7 @@ if (faviconUrl) {
                 try {
                     const backup = JSON.parse(raw);
                     if (!confirm(`确定载入本地备份吗？\n时间: ${new Date(backup.time).toLocaleString()}`)) return;
+                    ensureUniqueIds(backup.data);
                     state.data = backup.data;
                     state.currentCatId = backup.data.categories[0]?.id || null;
                     renderCategories();
@@ -1879,6 +1904,14 @@ if (faviconUrl) {
                     notify('已从本地缓存恢复', 'success');
                 } catch {
                     notify('备份解析失败', 'error');
+                }
+            });
+
+            // 快捷键支持：Ctrl + S / Cmd + S 快速同步至 KV
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                    e.preventDefault();
+                    saveToCloudKV();
                 }
             });
 
@@ -1891,6 +1924,7 @@ if (faviconUrl) {
                     if (raw) {
                         try {
                             const b = JSON.parse(raw);
+                            ensureUniqueIds(b.data);
                             state.data = b.data;
                             state.currentCatId = b.data.categories[0]?.id || null;
                             renderCategories();
