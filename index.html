@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -110,23 +108,19 @@ body::before{
         url("background.jpg") center/cover no-repeat;
 }
 
+/* 原静态大径向渐变已由高性能 Canvas 粒子动效层替代 */
 body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    z-index:-4;
-    pointer-events:none;
-    background:
-        radial-gradient(
-            circle at 15% 20%,
-            rgba(61,214,255,.12),
-            transparent 26%
-        ),
-        radial-gradient(
-            circle at 82% 15%,
-            rgba(141,124,255,.12),
-            transparent 28%
-        );
+    display: none;
+}
+
+/* Canvas 动效层：置于背景(-5)之上、内容(0)之下，穿透鼠标事件保证点击不受干扰 */
+#bgCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -3;
+    pointer-events: none;
 }
 
 body.player-visible{
@@ -1284,6 +1278,9 @@ button{
 </head>
 
 <body>
+<!-- 高性能全屏动效画布：层级置于页面内容下方，完全穿透鼠标事件 -->
+<canvas id="bgCanvas"></canvas>
+
 <div class="container">
 <header class="topbar">
     <a href="#" class="brand">
@@ -2086,7 +2083,7 @@ async function loadNavigationFromKV() {
 }
 
 /* =========================
-   播放器
+   播放器（带拖拽防抖优化）
 ========================= */
 
 const player = $("#musicPlayer");
@@ -2112,6 +2109,7 @@ const playlist = [
 ];
 
 let currentIndex = 0;
+let isSeeking = false; // 拖动进度条状态锁
 
 function formatTime(seconds) {
     seconds = Math.floor(seconds || 0);
@@ -2193,21 +2191,37 @@ audio.addEventListener("play", () => updatePlayButton(true));
 audio.addEventListener("pause", () => updatePlayButton(false));
 
 audio.addEventListener("timeupdate", () => {
-    if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
         progress.value = (audio.currentTime / audio.duration) * 100;
+        currentTime.textContent = formatTime(audio.currentTime);
     }
-    currentTime.textContent = formatTime(audio.currentTime);
 });
 
 audio.addEventListener("loadedmetadata", () => {
     duration.textContent = formatTime(audio.duration);
 });
 
+// 监听拖动：拖拽中更新时间预览，松手后才 seek，彻底避免进度条抖动
+progress.addEventListener("mousedown", () => { isSeeking = true; });
+progress.addEventListener("touchstart", () => { isSeeking = true; }, { passive: true });
+
 progress.addEventListener("input", () => {
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
-        audio.currentTime = (progress.value / 100) * audio.duration;
+        const previewTime = (progress.value / 100) * audio.duration;
+        currentTime.textContent = formatTime(previewTime);
     }
 });
+
+const finishSeeking = () => {
+    if (isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
+        audio.currentTime = (progress.value / 100) * audio.duration;
+        isSeeking = false;
+    }
+};
+
+progress.addEventListener("change", finishSeeking);
+progress.addEventListener("mouseup", finishSeeking);
+progress.addEventListener("touchend", finishSeeking);
 
 audio.addEventListener("ended", () => {
     nextBtn.click();
@@ -2324,7 +2338,6 @@ document.addEventListener("keydown", event => {
     const activeEl = document.activeElement;
     const activeTag = activeEl?.tagName;
 
-    // 排除所有输入框以及按钮、超链接等可交互聚焦元素
     const isInteractive =
         activeTag === "INPUT" ||
         activeTag === "TEXTAREA" ||
@@ -2417,7 +2430,7 @@ async function loadWeather() {
                     },
                     {
                         enableHighAccuracy: false,
-                        timeout: 3000,
+                        timeout: 5000,
                         maximumAge: 1800000
                     }
                 );
@@ -2461,7 +2474,6 @@ function loadStatisticsScript() {
     document.body.appendChild(script);
 }
 
-// 调度后台任务：并行并发执行，互不阻塞
 runWhenIdle(async () => {
     await Promise.allSettled([
         loadNavigationFromKV(),
@@ -2469,7 +2481,6 @@ runWhenIdle(async () => {
         loadHitokoto()
     ]);
 
-    // 统计脚本放置最后加载
     loadStatisticsScript();
 }, 2500);
 
@@ -2586,6 +2597,136 @@ runWhenIdle(async () => {
             subtree: true
         });
     }
+})();
+
+/* ========================================================
+   Canvas 高性能星空粒子引擎（轻量、低功耗、切后台休眠）
+======================================================== */
+(function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+    }
+
+    const canvas = document.getElementById("bgCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: true });
+
+    let width = 0, height = 0;
+    let particles = [];
+    let animationFrameId = null;
+    let isRunning = true;
+
+    // 限制最大 DPR 为 2，防止视网膜 4K 屏过度绘制发热
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+    }
+
+    function getParticleCount() {
+        return window.innerWidth < 768 ? 20 : 38;
+    }
+
+    class Particle {
+        constructor() {
+            this.reset(true);
+        }
+
+        reset(isInitial = false) {
+            this.x = Math.random() * width;
+            this.y = isInitial ? Math.random() * height : (Math.random() > 0.5 ? 0 : height);
+            this.size = Math.random() * 1.6 + 0.6;
+            this.speedX = (Math.random() - 0.5) * 0.35;
+            this.speedY = (Math.random() - 0.5) * 0.35;
+            this.opacity = Math.random() * 0.45 + 0.15;
+            this.color = Math.random() > 0.4 ? "86, 214, 255" : "141, 124, 255";
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        resize();
+        particles = Array.from({ length: getParticleCount() }, () => new Particle());
+        loop();
+    }
+
+    function loop() {
+        if (!isRunning) return;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const maxDist = 115;
+        const maxDistSq = maxDist * maxDist;
+
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distSq = dx * dx + dy * dy;
+
+                if (distSq < maxDistSq) {
+                    const alpha = (1 - Math.sqrt(distSq) / maxDist) * 0.12;
+                    ctx.strokeStyle = `rgba(86, 214, 255, ${alpha})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+        }
+
+        animationFrameId = requestAnimationFrame(loop);
+    }
+
+    let resizeTimer = null;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            resize();
+            particles = Array.from({ length: getParticleCount() }, () => new Particle());
+        }, 200);
+    });
+
+    // 切到后台或者最小化时完全停用动画，零 CPU 占用
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            isRunning = false;
+            cancelAnimationFrame(animationFrameId);
+        } else {
+            if (!isRunning) {
+                isRunning = true;
+                loop();
+            }
+        }
+    });
+
+    init();
 })();
 </script>
 </body>
