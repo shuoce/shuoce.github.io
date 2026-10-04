@@ -1,188 +1,166 @@
 <p align="center">
-  <img
-    src="https://img.baidu.re/i/2026/10/n5mccf.jpg"
-    width="96"
-    height="96"
-    alt="Shuoce Avatar"
-  />
+  <img src="https://img.baidu.re/i/2026/10/n5mccf.jpg" width="88" height="88" alt="Shuoce">
 </p><h1 align="center">硕策导航</h1><p align="center">
   <strong>SHUOCE NAVIGATION</strong>
 </p><p align="center">
   简洁 · 实用 · 持续维护
 </p><p align="center">
-  一个由个人维护、供本人及朋友小范围使用的轻量级网络导航项目。
+  由个人维护，主要供本人及朋友小范围使用。
 </p><p align="center">
-  <a href="https://shuoce.github.io/">在线访问</a>
-  ·
-  <a href="https://github.com/shuoce/shuoce.github.io/releases">版本发布</a>
-  ·
-  <a href="https://github.com/shuoce/shuoce.github.io/issues">问题反馈</a>
+  <a href="https://shuoce.github.io/">🌐 在线访问</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/shuoce/shuoce.github.io/releases">📦 版本</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/shuoce/shuoce.github.io/issues">💬 反馈</a>
 </p><p align="center">
-  <img src="https://img.shields.io/badge/version-v1.0.0-1683ff?style=flat-square" alt="Version">
-  <img src="https://img.shields.io/badge/status-maintained-22c55e?style=flat-square" alt="Status">
-  <img src="https://img.shields.io/badge/HTML-100%25-e34f26?style=flat-square" alt="HTML">
+  <img src="https://img.shields.io/badge/v1.0.0-1683ff?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/维护中-22c55e?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/GitHub%20Pages-181717?style=flat-square&logo=github" alt="GitHub Pages">
 </p>---
 
-📖 关于
+关于
 
-硕策导航 是一个轻量级个人网络导航项目。
+硕策导航 是一个轻量级的个人网络导航项目。
 
-项目主要服务于本人及朋友等小范围用户，用于整理常用网站、工具和网络资源，提供一个简洁、统一的访问入口。
+它没有复杂的商业定位，也没有庞大的用户体系。
 
-项目会根据实际使用情况持续维护和优化。
+只是把自己和朋友经常使用的网站、工具与资源整理到一个简单的入口中，并在日常使用过程中持续进行维护。
 
 «让上网，更简单。»
 
 ---
 
-✦ 项目特点
+✦ 主要功能
 
-功能| 说明
-🌐 导航| 常用网站与网络资源快速访问
-🔎 搜索| 快速查找需要的内容
-📱 移动端| 针对手机设备进行适配
-🎵 音乐| 内置轻量级音乐播放功能
-🎨 个性化| 支持页面外观与部分显示效果调整
-⚡ 优化| 持续进行体验与性能优化
+🌐 网络导航
+
+整理常用网站与网络资源，减少重复查找。
+
+🔎 快速搜索
+
+提供便捷的搜索入口，快速找到需要的内容。
+
+📱 移动端适配
+
+针对手机屏幕进行优化，日常使用更加方便。
+
+🖥️ PC 端支持
+
+兼顾桌面浏览器使用体验，在大屏幕设备上保持清晰的内容层级。
+
+🎵 音乐播放
+
+提供轻量级音乐播放功能，让导航页面不仅仅是一个链接集合。
+
+🎨 个性化
+
+支持部分页面外观与显示效果调整。
 
 ---
 
-🖥️ 在线使用
+🌐 在线访问
 
 硕策导航
 
-https://shuoce.github.io/
-
-无需安装，使用浏览器即可访问。
+<a href="https://shuoce.github.io/">
+  <strong>https://shuoce.github.io/</strong>
+</a>支持手机、平板以及桌面浏览器访问。
 
 ---
 
 📦 当前版本
 
-v1.0.0 · 首个正式版本
+v1.0.0
 
-当前版本为首个正式版本。
+首个正式版本。
 
-主要包含：
+当前版本主要包含：
 
-- 基础导航功能
-- 常用网站与资源入口
+- 基础导航
+- 网站与资源入口
 - 搜索功能
 - 移动端适配
-- 音乐播放功能
-- 页面个性化功能
+- 音乐播放
+- 个性化功能
 
-查看完整版本记录：
+<a href="https://github.com/shuoce/shuoce.github.io/releases">
+  查看所有版本 →
+</a>---
 
-https://github.com/shuoce/shuoce.github.io/releases
-
----
-
-🛠️ 技术栈
+🛠️ 技术
 
 项目采用轻量级前端技术构建：
 
-HTML
-CSS
-JavaScript
-GitHub Pages
+HTML · CSS · JavaScript
 
-无需复杂运行环境即可部署。
+部署于 GitHub Pages。
 
----
-
-📁 项目结构
-
-shuoce.github.io/
-│
-├── index.html
-│   └── 硕策导航首页
-│
-├── admin.html
-│   └── 管理页面
-│
-├── background.jpg
-│   └── 网站背景资源
-│
-├── Personalization/
-│   └── 个性化相关资源
-│
-└── README.md
-    └── 项目说明
+无需安装额外运行环境，打开浏览器即可使用。
 
 ---
 
-🔄 项目维护
+📱 设备支持
 
-项目采用 Git 进行版本管理。
+硕策导航主要面向日常浏览场景设计。
 
-日常维护主要包括：
+手机
 
-- 导航内容更新
+适合移动端快速访问、搜索和使用常用服务。
+
+平板
+
+兼顾触控操作与更大的显示区域。
+
+PC
+
+针对桌面浏览器提供更宽阔的导航与内容布局。
+
+---
+
+🔄 持续维护
+
+这是一个会持续使用和更新的个人项目。
+
+后续可能会根据实际使用情况进行：
+
+- 导航内容调整
 - 页面视觉优化
+- 新功能加入
 - 移动端体验优化
-- 功能改进
+- PC 端体验优化
 - Bug 修复
 - 性能优化
 
-较大的更新会通过 GitHub Releases 发布正式版本。
+重要版本会通过 GitHub Releases 发布。
 
 ---
 
-👤 维护者
+👤 Shuoce
 
-<p align="left">
-  <img
-    src="https://img.baidu.re/i/2026/10/n5mccf.jpg"
-    width="64"
-    height="64"
-    alt="Shuoce"
-  />
-</p>Shuoce
-
-个人独立维护。
-
-本项目主要供本人及朋友等小范围用户使用。
+<p align="center">
+  <strong>硕策 · Shuoce</strong>
+</p><p align="center">
+  Personal Project · Independently Maintained
+</p>本项目由个人独立维护，主要供本人及朋友等小范围用户使用。
 
 ---
 
-🔒 使用说明
+📄 使用说明
 
 本项目属于个人项目。
 
 未经许可，请勿直接复制、重新发布或将完整项目用于商业用途。
 
-项目中使用的第三方资源及内容，其版权归原作者或相关权利人所有。
-
----
-
-🔗 项目链接
-
-项目| 地址
-🌐 在线网站| https://shuoce.github.io/
-💻 GitHub| https://github.com/shuoce/shuoce.github.io
-📦 Releases| https://github.com/shuoce/shuoce.github.io/releases
-💬 Issues| https://github.com/shuoce/shuoce.github.io/issues
-
----
-
-📊 项目状态
-
-状态： 🟢 正常维护
-
-当前版本： "v1.0.0"
-
-维护方式： 个人独立维护
-
-部署平台： GitHub Pages
+项目中涉及的第三方资源及内容，其版权归原作者或相关权利人所有。
 
 ---
 
 <p align="center">
-  <strong>SHUOCE</strong>
+  <a href="https://shuoce.github.io/">🌐 在线网站</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/shuoce/shuoce.github.io/releases">📦 Releases</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/shuoce/shuoce.github.io/issues">💬 Issues</a>
 </p><p align="center">
-  简洁 · 实用 · 持续维护
-</p><p align="center">
-  <sub>© 2026 Shuoce · All rights reserved.</sub>
+  <sub>© 2026 Shuoce · SHUOCE NAVIGATION</sub>
 </p>
