@@ -11,12 +11,30 @@
 <link rel="apple-touch-icon" href="https://img.baidu.re/i/2026/08/swgwn4.jpg?v=2">
     
 <!-- 头像与播放器封面优先下载 -->
-<link rel="preload" as="image" href="https://img.baidu.re/i/2026/08/swgwn4.jpg" fetchpriority="high">
-<link rel="preload" as="image" href="Personalization/avatar.png" fetchpriority="high">
-<link rel="preload" as="image" href="Personalization/player-icon.png" fetchpriority="high">
+<link
+    rel="preload"
+    as="image"
+    href="https://img.baidu.re/i/2026/08/swgwn4.jpg"
+    fetchpriority="high">
 
-<!-- 装饰 GIF 降低优先级 -->
-<link rel="preload" as="image" href="Personalization/gif.gif" fetchpriority="low">
+<link
+    rel="preload"
+    as="image"
+    href="Personalization/avatar.png"
+    fetchpriority="high">
+
+<link
+    rel="preload"
+    as="image"
+    href="Personalization/player-icon.png"
+    fetchpriority="high">
+
+<!-- 装饰 GIF 降低优先级，避免影响首屏 -->
+<link
+    rel="preload"
+    as="image"
+    href="Personalization/gif.gif"
+    fetchpriority="low">
 
 <!-- Bootstrap Icons 非阻塞加载 -->
 <link
@@ -26,13 +44,23 @@
     onload="this.onload=null;this.rel='stylesheet'">
 
 <noscript>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </noscript>
+
+<!-- 音乐预加载 -->
+<link
+    rel="preload"
+    as="audio"
+    href="Personalization/Music/Music/cheese.mp3"
+    type="audio/mpeg">
 
 <style>
 /* =========================
    全局样式与变量
 ========================= */
+
 :root{
     --bg:#07111f;
     --panel:rgba(12,27,45,.88);
@@ -79,10 +107,12 @@ body::before{
         url("background.jpg") center/cover no-repeat;
 }
 
+/* 原静态大径向渐变已由高性能 Canvas 粒子动效层替代 */
 body::after{
     display: none;
 }
 
+/* Canvas 动效层：置于背景(-5)之上、内容(0)之下，穿透鼠标事件保证点击不受干扰 */
 #bgCanvas {
     position: fixed;
     inset: 0;
@@ -96,7 +126,9 @@ body.player-visible{
     padding-bottom:110px;
 }
 
-button, input, select{
+button,
+input,
+select{
     font:inherit;
 }
 
@@ -125,7 +157,10 @@ button{
 ::-webkit-scrollbar-thumb{
     border:2px solid var(--bg);
     border-radius:999px;
-    background:linear-gradient(var(--primary), var(--secondary));
+    background:linear-gradient(
+        var(--primary),
+        var(--secondary)
+    );
 }
 
 .container{
@@ -135,6 +170,7 @@ button{
 }
 
 /* 顶部导航 */
+
 .topbar{
     position:sticky;
     top:18px;
@@ -390,6 +426,7 @@ button{
 }
 
 /* 首屏 Hero */
+
 .hero{
     display:grid;
     grid-template-columns:1.4fr .8fr;
@@ -491,7 +528,12 @@ button{
 
 .gradient-text{
     color:transparent;
-    background:linear-gradient(100deg, var(--primary), #fff, var(--secondary));
+    background:linear-gradient(
+        100deg,
+        var(--primary),
+        #fff,
+        var(--secondary)
+    );
     -webkit-background-clip:text;
     background-clip:text;
 }
@@ -602,6 +644,7 @@ button{
 }
 
 /* 搜索栏 */
+
 .search-panel{
     display:flex;
     align-items:center;
@@ -660,10 +703,15 @@ button{
     border-radius:14px;
     color:#07111f;
     font-weight:800;
-    background:linear-gradient(135deg, var(--primary), #85e6ff);
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        #85e6ff
+    );
 }
 
 /* 横幅 */
+
 .banner{
     position:relative;
     overflow:hidden;
@@ -677,7 +725,11 @@ button{
     border-radius:24px;
     color:#fff;
     text-decoration:none;
-    background:linear-gradient(120deg, rgba(86,214,255,.16), rgba(141,124,255,.18));
+    background:linear-gradient(
+        120deg,
+        rgba(86,214,255,.16),
+        rgba(141,124,255,.18)
+    );
 }
 
 .banner-label{
@@ -722,6 +774,7 @@ button{
 }
 
 /* 分类与卡片 */
+
 .category{
     padding:26px;
     margin-top:22px;
@@ -860,6 +913,7 @@ button{
 }
 
 /* 每日一言与页脚 */
+
 .quote-box{
     min-height:70px;
     padding:25px;
@@ -869,6 +923,12 @@ button{
     text-align:center;
     line-height:1.8;
     font-size:14px;
+}
+
+.quote-mark{
+    margin-right:6px;
+    color:var(--primary);
+    font-size:24px;
 }
 
 .quote-box small{
@@ -891,6 +951,7 @@ button{
 }
 
 /* 播放器 */
+
 .music-player{
     position:fixed;
     right:24px;
@@ -1007,6 +1068,7 @@ button{
 }
 
 /* 主题与明暗模式 */
+
 .light-mode{
     --bg:#e9f1f8;
     --panel:rgba(255,255,255,.9);
@@ -1019,7 +1081,11 @@ button{
 
 .light-mode::before{
     background:
-        linear-gradient(125deg, rgba(225,241,250,.9), rgba(239,236,255,.94)),
+        linear-gradient(
+            125deg,
+            rgba(225,241,250,.9),
+            rgba(239,236,255,.94)
+        ),
         url("background.jpg") center/cover no-repeat;
 }
 
@@ -1033,44 +1099,175 @@ button{
     --panel:rgba(255,255,255,.05);
 }
 
+/* 响应式媒体查询 */
+
 @media(max-width:760px){
-    body.player-visible{ padding-bottom:120px; }
-    body::after{ display:none; }
-    .container{ width:min(100% - 24px,600px); padding-top:12px; padding-bottom:70px; }
-    .topbar{ top:10px; margin-bottom:28px; }
-    .brand small, .quick-nav{ display:none; }
-    .hero{ grid-template-columns:1fr; }
-    .hero-main{ min-height:320px; padding:30px 24px 30px 24px; padding-right:125px; }
-    .hero-gif{ top:20px; right:18px; width:clamp(68px,24vw,100px); }
-    .search-panel{ align-items:stretch; flex-direction:column; padding:10px; }
-    .search-panel select, .search-panel button{ width:100%; }
-    .search-shortcut{ display:none; }
-    .banner{ align-items:flex-start; flex-direction:column; padding:22px; }
-    .banner-btn{ width:100%; text-align:center; }
-    .category{ padding:20px 15px; }
-    .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .card{ min-height:135px; padding:16px; }
-    .music-player{ left:12px; right:12px; bottom:12px; width:auto; padding:12px; border-radius:19px; }
-    .music-cover{ width:48px; height:48px; }
-    .music-controls{ gap:8px; margin-top:10px; }
+    body.player-visible{
+        padding-bottom:120px;
+    }
+
+    body::after{
+        display:none;
+    }
+
+    .container{
+        width:min(100% - 24px,600px);
+        padding-top:12px;
+        padding-bottom:70px;
+    }
+
+    .topbar{
+        top:10px;
+        margin-bottom:28px;
+    }
+
+    .brand small,
+    .quick-nav{
+        display:none;
+    }
+
+    .hero{
+        grid-template-columns:1fr;
+    }
+
+    .hero-main{
+        min-height:320px;
+        padding:30px 24px;
+        padding-right:125px;
+    }
+
+    .hero-gif{
+        top:20px;
+        right:18px;
+        width:clamp(68px,24vw,100px);
+    }
+
+    .search-panel{
+        align-items:stretch;
+        flex-direction:column;
+        padding:10px;
+    }
+
+    .search-panel select,
+    .search-panel button{
+        width:100%;
+    }
+
+    .search-shortcut{
+        display:none;
+    }
+
+    .banner{
+        align-items:flex-start;
+        flex-direction:column;
+        padding:22px;
+    }
+
+    .banner-btn{
+        width:100%;
+        text-align:center;
+    }
+
+    .category{
+        padding:20px 15px;
+    }
+
+    .grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+
+    .card{
+        min-height:135px;
+        padding:16px;
+    }
+
+    .music-player{
+        left:12px;
+        right:12px;
+        bottom:12px;
+        width:auto;
+        padding:12px;
+        border-radius:19px;
+    }
+
+    .music-cover{
+        width:48px;
+        height:48px;
+    }
+
+    .music-controls{
+        gap:8px;
+        margin-top:10px;
+    }
 }
 
 @media(max-width:500px){
-    .hero-main{ min-height:300px; padding:28px 20px 28px 20px; padding-right:92px; }
-    .hero-gif{ top:18px; right:12px; width:70px; }
-    .music-player{ display:flex; align-items:center; gap:9px; min-height:66px; }
-    .music-top{ min-width:0; flex:1; }
-    .music-player #progress, .music-player .music-time{ display:none; }
-    .music-controls{ flex:none; gap:5px; margin:0; }
-    .music-controls button{ width:30px; height:30px; }
-    #playBtn{ width:38px; height:38px; }
-    .card-title, .card-desc{ overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-    .card-title{ font-size:14px; }
-    .card-desc{ font-size:11px; }
+    .hero-main{
+        min-height:300px;
+        padding:28px 20px;
+        padding-right:92px;
+    }
+
+    .hero-gif{
+        top:18px;
+        right:12px;
+        width:70px;
+    }
+
+    .music-player{
+        display:flex;
+        align-items:center;
+        gap:9px;
+        min-height:66px;
+    }
+
+    .music-top{
+        min-width:0;
+        flex:1;
+    }
+
+    .music-player #progress,
+    .music-player .music-time{
+        display:none;
+    }
+
+    .music-controls{
+        flex:none;
+        gap:5px;
+        margin:0;
+    }
+
+    .music-controls button{
+        width:30px;
+        height:30px;
+    }
+
+    #playBtn{
+        width:38px;
+        height:38px;
+    }
+
+    .card-title,
+    .card-desc{
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+    }
+
+    .card-title{
+        font-size:14px;
+    }
+
+    .card-desc{
+        font-size:11px;
+    }
 }
 
 @media(prefers-reduced-motion:reduce){
-    *, *::before, *::after{
+    *,
+    *::before,
+    *::after{
         animation:none!important;
         transition:none!important;
         scroll-behavior:auto!important;
@@ -1080,13 +1277,18 @@ button{
 </head>
 
 <body>
+<!-- 高性能全屏动效画布：层级置于页面内容下方，完全穿透鼠标事件 -->
 <canvas id="bgCanvas"></canvas>
 
 <div class="container">
 <header class="topbar">
     <a href="#" class="brand">
         <span class="brand-mark">
-            <img src="https://img.baidu.re/i/2026/08/swgwn4.jpg" alt="硕策头像" fetchpriority="high" decoding="async">
+            <img
+                src="https://img.baidu.re/i/2026/08/swgwn4.jpg"
+                alt="硕策头像"
+                fetchpriority="high"
+                decoding="async">
         </span>
         <span>
             硕策导航
@@ -1100,16 +1302,30 @@ button{
             <a href="#musicContent">音乐</a>
         </nav>
 
-        <button type="button" class="icon-btn" id="playerToggleButton" title="显示或隐藏播放器" aria-label="显示或隐藏播放器">
+        <button
+            type="button"
+            class="icon-btn"
+            id="playerToggleButton"
+            title="显示或隐藏播放器"
+            aria-label="显示或隐藏播放器">
             <i class="bi bi-music-note-beamed"></i>
         </button>
 
         <div class="appearance-wrap">
-            <button type="button" class="icon-btn appearance-btn" id="appearanceBtn" title="外观设置" aria-label="外观设置" aria-expanded="false">
+            <button
+                type="button"
+                class="icon-btn appearance-btn"
+                id="appearanceBtn"
+                title="外观设置"
+                aria-label="外观设置"
+                aria-expanded="false">
                 <i class="bi bi-palette2"></i>
             </button>
 
-            <div class="appearance-panel" id="appearancePanel" aria-hidden="true">
+            <div
+                class="appearance-panel"
+                id="appearancePanel"
+                aria-hidden="true">
                 <div class="appearance-title">
                     <span>外观设置</span>
                     <small>APPEARANCE</small>
@@ -1117,39 +1333,79 @@ button{
 
                 <div class="theme-options">
                     <button type="button" class="theme-option" data-theme="glass">
-                        <span class="theme-option-icon"><i class="bi bi-droplet"></i></span>
-                        <span class="theme-option-text"><strong>毛玻璃</strong><small>Glass</small></span>
+                        <span class="theme-option-icon">
+                            <i class="bi bi-droplet"></i>
+                        </span>
+                        <span class="theme-option-text">
+                            <strong>毛玻璃</strong>
+                            <small>Glass</small>
+                        </span>
                         <i class="bi bi-check2 theme-check"></i>
                     </button>
+
                     <button type="button" class="theme-option" data-theme="transparent">
-                        <span class="theme-option-icon"><i class="bi bi-eye"></i></span>
-                        <span class="theme-option-text"><strong>透明</strong><small>Clear</small></span>
+                        <span class="theme-option-icon">
+                            <i class="bi bi-eye"></i>
+                        </span>
+                        <span class="theme-option-text">
+                            <strong>透明</strong>
+                            <small>Clear</small>
+                        </span>
                         <i class="bi bi-check2 theme-check"></i>
                     </button>
+
                     <button type="button" class="theme-option" data-theme="dark">
-                        <span class="theme-option-icon"><i class="bi bi-moon-stars"></i></span>
-                        <span class="theme-option-text"><strong>深色</strong><small>Dark</small></span>
+                        <span class="theme-option-icon">
+                            <i class="bi bi-moon-stars"></i>
+                        </span>
+                        <span class="theme-option-text">
+                            <strong>深色</strong>
+                            <small>Dark</small>
+                        </span>
                         <i class="bi bi-check2 theme-check"></i>
                     </button>
+
                     <button type="button" class="theme-option" data-theme="light">
-                        <span class="theme-option-icon"><i class="bi bi-sun"></i></span>
-                        <span class="theme-option-text"><strong>浅色</strong><small>Light</small></span>
+                        <span class="theme-option-icon">
+                            <i class="bi bi-sun"></i>
+                        </span>
+                        <span class="theme-option-text">
+                            <strong>浅色</strong>
+                            <small>Light</small>
+                        </span>
                         <i class="bi bi-check2 theme-check"></i>
                     </button>
+
                     <button type="button" class="theme-option" data-theme="system">
-                        <span class="theme-option-icon"><i class="bi bi-circle-half"></i></span>
-                        <span class="theme-option-text"><strong>跟随系统</strong><small>System</small></span>
+                        <span class="theme-option-icon">
+                            <i class="bi bi-circle-half"></i>
+                        </span>
+                        <span class="theme-option-text">
+                            <strong>跟随系统</strong>
+                            <small>System</small>
+                        </span>
                         <i class="bi bi-check2 theme-check"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <a class="icon-btn admin-link" href="https://shuoce.eu.cc/admin.html" target="_blank" rel="noopener noreferrer" title="网站管理" aria-label="网站管理">
+        <a
+            class="icon-btn admin-link"
+            href="https://shuoce.eu.cc/admin.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="网站管理"
+            aria-label="网站管理">
             <i class="bi bi-gear-fill"></i>
         </a>
 
-        <button type="button" class="icon-btn" id="topButton" title="回到顶部" aria-label="回到顶部">
+        <button
+            type="button"
+            class="icon-btn"
+            id="topButton"
+            title="回到顶部"
+            aria-label="回到顶部">
             <i class="bi bi-arrow-up"></i>
         </button>
     </div>
@@ -1159,7 +1415,11 @@ button{
     <section class="hero">
         <div class="hero-main">
             <div class="hero-gif">
-                <img src="Personalization/gif.gif" alt="装饰动图" loading="lazy" decoding="async">
+                <img
+                    src="Personalization/gif.gif"
+                    alt="装饰动图"
+                    loading="lazy"
+                    decoding="async">
             </div>
 
             <div class="eyebrow">
@@ -1173,20 +1433,43 @@ button{
             </h1>
 
             <p class="hero-desc">
-                这里是你的专属数字空间。快速访问常用网站，发现有趣内容，让每一次打开浏览器都更加高效。
+                这里是你的专属数字空间。
+                快速访问常用网站，发现有趣内容，让每一次打开浏览器都更加高效。
             </p>
 
             <div class="hero-footer">
-                <img class="avatar" id="avatar" src="Personalization/avatar.png" alt="头像" title="点击显示或隐藏音乐播放器" decoding="async">
-                <div class="welcome" id="welcome">正在加载问候语...</div>
+                <img
+                    class="avatar"
+                    id="avatar"
+                    src="Personalization/avatar.png"
+                    alt="头像"
+                    title="点击显示或隐藏音乐播放器"
+                    decoding="async">
+
+                <div class="welcome" id="welcome">
+                    正在加载问候语...
+                </div>
             </div>
         </div>
 
         <div class="info-card">
-            <div class="info-label">LOCAL TIME · 本地时间</div>
-            <div class="time" id="time">00:00:00</div>
-            <div class="date" id="date">加载中...</div>
-            <div class="weather" id="weather"><span>🌤️</span> 天气将在后台加载</div>
+            <div class="info-label">
+                LOCAL TIME · 本地时间
+            </div>
+
+            <div class="time" id="time">
+                00:00:00
+            </div>
+
+            <div class="date" id="date">
+                加载中...
+            </div>
+
+            <div class="weather" id="weather">
+                <span>🌤️</span>
+                天气将在后台加载
+            </div>
+
             <div class="time-extra">
                 <span>按 / 快速聚焦搜索框</span>
                 <span>按空格键播放或暂停音乐</span>
@@ -1199,25 +1482,54 @@ button{
             <option value="bing">Bing</option>
             <option value="google">Google</option>
         </select>
-        <input id="keyword" type="text" autocomplete="off" placeholder="搜索网页、图片、问题或灵感..." aria-label="搜索关键词" required>
+
+        <input
+            id="keyword"
+            type="text"
+            autocomplete="off"
+            placeholder="搜索网页、图片、问题或灵感..."
+            aria-label="搜索关键词"
+            required>
+
         <span class="search-shortcut">按 /</span>
-        <button type="submit"><i class="bi bi-search"></i> 搜索</button>
+
+        <button type="submit">
+            <i class="bi bi-search"></i>
+            搜索
+        </button>
     </form>
 
-    <a class="banner" href="https://m.sdyuntuo.cn/ProductEn/Index/c68981b403e80740" target="_blank" rel="noopener noreferrer">
+    <a
+        class="banner"
+        href="https://m.sdyuntuo.cn/ProductEn/Index/c68981b403e80740"
+        target="_blank"
+        rel="noopener noreferrer">
         <span class="banner-label">HOT</span>
+
         <div class="banner-content">
-            <div class="banner-title"><i class="bi bi-broadcast-pin"></i> 流量卡专区</div>
-            <div class="banner-desc">高性价套餐 · 大流量 · 在线办理</div>
+            <div class="banner-title">
+                <i class="bi bi-broadcast-pin"></i>
+                流量卡专区
+            </div>
+
+            <div class="banner-desc">
+                高性价套餐 · 大流量 · 在线办理
+            </div>
         </div>
-        <span class="banner-btn">立即办理 <i class="bi bi-arrow-up-right"></i></span>
+
+        <span class="banner-btn">
+            立即办理
+            <i class="bi bi-arrow-up-right"></i>
+        </span>
     </a>
 
-    <!-- 默认导航 -->
+    <!-- KV 请求失败时保留的默认导航 -->
     <section class="category">
         <div class="section-head" role="button" tabindex="0" aria-expanded="true">
             <div class="section-name">
-                <span class="section-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                <span class="section-icon">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </span>
                 常用网站
             </div>
             <i class="bi bi-chevron-down arrow open"></i>
@@ -1225,32 +1537,61 @@ button{
 
         <div class="section-content show" id="commonContent">
             <div class="grid">
-                <a class="card card-chatgpt" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card card-chatgpt"
+                    href="https://chatgpt.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-robot"></i>
                     <div class="card-title">ChatGPT</div>
                     <div class="card-desc">AI 智能助手</div>
                 </a>
-                <a class="card card-youtube" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card card-youtube"
+                    href="https://www.youtube.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-youtube"></i>
                     <div class="card-title">YouTube</div>
                     <div class="card-desc">全球视频平台</div>
                 </a>
-                <a class="card card-bilibili" href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card card-bilibili"
+                    href="https://www.bilibili.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-play-btn-fill"></i>
                     <div class="card-title">哔哩哔哩</div>
                     <div class="card-desc">年轻人的潮流文化</div>
                 </a>
-                <a class="card card-douyin" href="https://www.douyin.com" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card card-douyin"
+                    href="https://www.douyin.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-music-note-beamed"></i>
                     <div class="card-title">抖音</div>
                     <div class="card-desc">记录美好生活</div>
                 </a>
-                <a class="card card-x" href="https://x.com" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card card-x"
+                    href="https://x.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-twitter-x"></i>
                     <div class="card-title">X</div>
                     <div class="card-desc">全球社交平台</div>
                 </a>
-                <a class="card" href="https://www.idaohang123.com/" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card"
+                    href="https://www.idaohang123.com/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-cloud-arrow-down-fill"></i>
                     <div class="card-title">短视频解析</div>
                     <div class="card-desc">短视频下载解析</div>
@@ -1262,7 +1603,9 @@ button{
     <section class="category">
         <div class="section-head" role="button" tabindex="0" aria-expanded="false">
             <div class="section-name">
-                <span class="section-icon"><i class="bi bi-vinyl-fill"></i></span>
+                <span class="section-icon">
+                    <i class="bi bi-vinyl-fill"></i>
+                </span>
                 音乐资源
             </div>
             <i class="bi bi-chevron-down arrow"></i>
@@ -1270,17 +1613,31 @@ button{
 
         <div class="section-content" id="musicContent">
             <div class="grid">
-                <a class="card" href="https://www.gequbao.com/" target="_blank" rel="noopener noreferrer">
+                <a
+                    class="card"
+                    href="https://www.gequbao.com/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-cloud-download-fill"></i>
                     <div class="card-title">歌曲宝</div>
                     <div class="card-desc">在线试听 / 下载</div>
                 </a>
-                <a class="card" href="https://zz123.com/" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card"
+                    href="https://zz123.com/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-music-note-list"></i>
                     <div class="card-title">种子音乐</div>
                     <div class="card-desc">在线听歌</div>
                 </a>
-                <a class="card" href="https://www.qqmp3.vip/" target="_blank" rel="noopener noreferrer">
+
+                <a
+                    class="card"
+                    href="https://www.qqmp3.vip/"
+                    target="_blank"
+                    rel="noopener noreferrer">
                     <i class="bi bi-headphones"></i>
                     <div class="card-title">米兔音乐</div>
                     <div class="card-desc">免费音乐资源</div>
@@ -1298,52 +1655,103 @@ button{
     <div id="runtime">🚀 已运行 0 天</div>
     © 2026 shuoce.eu.cc
     <br>
-    <a href="mailto:shuo@shuoce.eu.cc"><i class="bi bi-envelope"></i> shuo@shuoce.eu.cc</a>
+    <a href="mailto:shuo@shuoce.eu.cc">
+        <i class="bi bi-envelope"></i>
+        shuo@shuoce.eu.cc
+    </a>
     <br>
-    <span>👀 <span id="busuanzi_value_site_pv"></span> 次访问</span>
+    <span>
+        👀
+        <span id="busuanzi_value_site_pv"></span>
+        次访问
+    </span>
     &nbsp; · &nbsp;
-    <span>🌍 <span id="busuanzi_value_site_uv"></span> 位访客</span>
+    <span>
+        🌍
+        <span id="busuanzi_value_site_uv"></span>
+        位访客
+    </span>
 </footer>
 </div>
 
-<!-- 音乐播放器（统一原生组件） -->
+<!-- 音乐播放器 -->
 <div class="music-player" id="musicPlayer">
     <div class="music-top">
         <div class="music-cover">
-            <img src="Personalization/player-icon.png" alt="音乐封面" decoding="async">
+            <img
+                src="Personalization/player-icon.png"
+                alt="音乐封面"
+                decoding="async">
         </div>
+
         <div class="music-meta">
             <div class="music-title" id="musicTitle">奶酪</div>
-            <div class="music-artist" id="musicArtist">未知歌手 · Personal Music</div>
+            <div class="music-artist" id="musicArtist">
+                未知歌手 · Personal Music
+            </div>
         </div>
-        <button type="button" class="music-close" id="musicClose" title="隐藏播放器" aria-label="隐藏播放器">
+
+        <button
+            type="button"
+            class="music-close"
+            id="musicClose"
+            title="隐藏播放器"
+            aria-label="隐藏播放器">
             <i class="bi bi-x-lg"></i>
         </button>
     </div>
 
-    <input type="range" id="progress" min="0" max="100" value="0" aria-label="播放进度">
+    <input
+        type="range"
+        id="progress"
+        min="0"
+        max="100"
+        value="0"
+        aria-label="播放进度">
+
     <div class="music-time">
         <span id="currentTime">00:00</span>
         <span id="duration">00:00</span>
     </div>
 
     <div class="music-controls">
-        <button type="button" id="prevBtn" title="上一首" aria-label="上一首">
+        <button
+            type="button"
+            id="prevBtn"
+            title="上一首"
+            aria-label="上一首">
             <i class="bi bi-skip-backward-fill"></i>
         </button>
-        <button type="button" id="playBtn" title="播放或暂停" aria-label="播放或暂停">
+
+        <button
+            type="button"
+            id="playBtn"
+            title="播放或暂停"
+            aria-label="播放或暂停">
             <i class="bi bi-play-fill"></i>
         </button>
-        <button type="button" id="nextBtn" title="下一首" aria-label="下一首">
+
+        <button
+            type="button"
+            id="nextBtn"
+            title="下一首"
+            aria-label="下一首">
             <i class="bi bi-skip-forward-fill"></i>
         </button>
     </div>
 
-    <audio id="audio" preload="auto" playsinline></audio>
+    <audio
+        id="audio"
+        preload="auto"
+        playsinline></audio>
 </div>
 
 <script>
 "use strict";
+
+/* =========================
+   通用工具
+========================= */
 
 const $ = selector => document.querySelector(selector);
 
@@ -1370,73 +1778,313 @@ function withTimeout(url, options = {}, timeout = 8000) {
 function safeUrl(value) {
     try {
         const url = new URL(String(value || ""));
-        if (url.protocol !== "http:" && url.protocol !== "https:") return "#";
+        if (url.protocol !== "http:" && url.protocol !== "https:") {
+            return "#";
+        }
         return url.href;
     } catch {
         return "#";
     }
 }
 
-/* 时间与问候 */
+/* =========================
+   时间与问候
+========================= */
+
 function updateTime() {
     const now = new Date();
-    $("#time").textContent = now.toLocaleTimeString("zh-CN", { hour12: false });
-    $("#date").textContent = now.toLocaleDateString("zh-CN", {
-        year: "numeric", month: "long", day: "numeric", weekday: "long"
-    });
+
+    $("#time").textContent =
+        now.toLocaleTimeString("zh-CN", {
+            hour12: false
+        });
+
+    $("#date").textContent =
+        now.toLocaleDateString("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long"
+        });
 
     const hour = now.getHours();
     let welcome = "🌆 晚上好，愿你保持好心情";
-    if (hour < 6) welcome = "🌙 夜深了，早点休息";
-    else if (hour < 12) welcome = "☀️ 早上好，今天也要元气满满";
-    else if (hour < 18) welcome = "🌤️ 下午好，继续加油";
+
+    if (hour < 6) {
+        welcome = "🌙 夜深了，早点休息";
+    } else if (hour < 12) {
+        welcome = "☀️ 早上好，今天也要元气满满";
+    } else if (hour < 18) {
+        welcome = "🌤️ 下午好，继续加油";
+    }
 
     $("#welcome").textContent = welcome;
 }
+
 updateTime();
 setInterval(updateTime, 1000);
 
-/* 搜索栏 */
+/* =========================
+   搜索
+========================= */
+
 $("#searchForm").addEventListener("submit", event => {
     event.preventDefault();
+
     const input = $("#keyword");
     const value = input.value.trim();
-    if (!value) { input.focus(); return; }
+
+    if (!value) {
+        input.focus();
+        return;
+    }
 
     const engines = {
         bing: "https://www.bing.com/search?q=",
         google: "https://www.google.com/search?q="
     };
-    const url = (engines[$("#engine").value] || engines.bing) + encodeURIComponent(value);
+
+    const url =
+        (engines[$("#engine").value] || engines.bing) +
+        encodeURIComponent(value);
+
     window.open(url, "_blank", "noopener,noreferrer");
 });
 
-/* 静态折叠菜单 */
-function bindStaticCategoryEvents() {
-    document.querySelectorAll("main .category").forEach(category => {
-        const head = category.querySelector(".section-head");
-        const content = category.querySelector(".section-content");
-        const arrow = category.querySelector(".arrow");
-        if (!head || !content || !arrow || head.dataset.bound === "true") return;
+/* =========================
+   分类折叠（静态）
+========================= */
 
-        head.dataset.bound = "true";
-        const toggleCategory = () => {
-            const isOpen = content.classList.toggle("show");
-            arrow.classList.toggle("open", isOpen);
-            head.setAttribute("aria-expanded", String(isOpen));
-        };
-        head.addEventListener("click", toggleCategory);
-        head.addEventListener("keydown", e => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleCategory();
+function bindStaticCategoryEvents() {
+    document
+        .querySelectorAll("main .category")
+        .forEach(category => {
+            const head = category.querySelector(".section-head");
+            const content = category.querySelector(".section-content");
+            const arrow = category.querySelector(".arrow");
+
+            if (!head || !content || !arrow || head.dataset.bound === "true") {
+                return;
             }
+
+            head.dataset.bound = "true";
+
+            const toggleCategory = () => {
+                const isOpen = content.classList.toggle("show");
+                arrow.classList.toggle("open", isOpen);
+                head.setAttribute("aria-expanded", String(isOpen));
+            };
+
+            head.addEventListener("click", toggleCategory);
+            head.addEventListener("keydown", event => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleCategory();
+                }
+            });
         });
-    });
 }
+
 bindStaticCategoryEvents();
 
-/* 播放器核心 */
+/* =========================
+   Cloudflare KV 动态导航
+========================= */
+
+const NAVIGATION_API =
+    "https://proxyd.picpi.top/https://shuoce-navigation.shuoce.workers.dev/api/navigation";
+
+function getCategoryTitle(category) {
+    return category.title || category.name || category.id || "未命名分类";
+}
+
+function getCategoryCards(category) {
+    if (Array.isArray(category.cards)) return category.cards;
+    if (Array.isArray(category.sites)) return category.sites;
+    return [];
+}
+
+function getCardTitle(card) {
+    return card.title || card.name || "未命名网站";
+}
+
+function getCardDescription(card) {
+    return card.description || card.desc || "";
+}
+
+function getCategoryContentId(category, index) {
+    const id = String(category.id || "").trim();
+    if (id === "common") return "commonContent";
+    if (id === "music") return "musicContent";
+    return "kvCategoryContent" + index;
+}
+
+function normaliseIcon(icon, fallback) {
+    let name = icon || fallback;
+    if (!name.startsWith("bi-")) {
+        name = "bi-" + name;
+    }
+    return name;
+}
+
+function createNavigationCard(card) {
+    const link = document.createElement("a");
+    link.className = `card ${card.className || ""}`.trim();
+    link.href = safeUrl(card.url);
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    const icon = document.createElement("i");
+    icon.className = `bi ${normaliseIcon(card.icon, "bi-link-45deg")}`;
+
+    const title = document.createElement("div");
+    title.className = "card-title";
+    title.textContent = getCardTitle(card);
+
+    const description = document.createElement("div");
+    description.className = "card-desc";
+    description.textContent = getCardDescription(card);
+
+    link.append(icon, title, description);
+    return link;
+}
+
+function createCategoryElement(category, index) {
+    const section = document.createElement("section");
+    section.className = "category";
+    section.dataset.kvCategory = "true";
+
+    const contentId = getCategoryContentId(category, index);
+
+    const head = document.createElement("div");
+    head.className = "section-head";
+    head.setAttribute("role", "button");
+    head.setAttribute("tabindex", "0");
+    head.setAttribute("aria-expanded", index === 0 ? "true" : "false");
+
+    const name = document.createElement("div");
+    name.className = "section-name";
+
+    const iconBox = document.createElement("span");
+    iconBox.className = "section-icon";
+
+    const icon = document.createElement("i");
+    icon.className = `bi ${normaliseIcon(category.icon, "bi-folder2-open")}`;
+
+    iconBox.appendChild(icon);
+    name.append(iconBox);
+    name.appendChild(document.createTextNode(getCategoryTitle(category)));
+
+    const arrow = document.createElement("i");
+    arrow.className = index === 0 ? "bi bi-chevron-down arrow open" : "bi bi-chevron-down arrow";
+
+    const content = document.createElement("div");
+    content.id = contentId;
+    content.className = index === 0 ? "section-content show" : "section-content";
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    getCategoryCards(category).forEach(card => {
+        if (card && typeof card === "object") {
+            grid.appendChild(createNavigationCard(card));
+        }
+    });
+
+    content.appendChild(grid);
+    head.append(name, arrow);
+
+    const toggleCategory = () => {
+        const isOpen = content.classList.toggle("show");
+        arrow.classList.toggle("open", isOpen);
+        head.setAttribute("aria-expanded", String(isOpen));
+    };
+
+    head.addEventListener("click", toggleCategory);
+    head.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleCategory();
+        }
+    });
+
+    section.append(head, content);
+    return section;
+}
+
+function updateQuickNavigation(categories) {
+    const quickNav = $(".quick-nav");
+    if (!quickNav) return;
+
+    quickNav.replaceChildren();
+
+    categories.forEach((category, index) => {
+        if (!category || typeof category !== "object") return;
+
+        const link = document.createElement("a");
+        link.href = "#" + getCategoryContentId(category, index);
+        link.textContent = getCategoryTitle(category);
+        quickNav.appendChild(link);
+    });
+}
+
+function renderNavigation(data) {
+    if (!data || !Array.isArray(data.categories)) {
+        throw new Error("导航数据格式不正确");
+    }
+
+    const main = $("main");
+    const quoteBox = main.querySelector(".quote-box");
+
+    Array.from(main.children)
+        .filter(element => element.classList.contains("category"))
+        .forEach(section => section.remove());
+
+    const fragment = document.createDocumentFragment();
+
+    data.categories.forEach((category, index) => {
+        if (category && typeof category === "object") {
+            fragment.appendChild(createCategoryElement(category, index));
+        }
+    });
+
+    if (quoteBox) {
+        main.insertBefore(fragment, quoteBox);
+    } else {
+        main.appendChild(fragment);
+    }
+
+    updateQuickNavigation(data.categories);
+}
+
+async function loadNavigationFromKV() {
+    try {
+        const response = await withTimeout(
+            NAVIGATION_API,
+            {
+                method: "GET",
+                headers: { Accept: "application/json" },
+                cache: "default"
+            },
+            8000
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        renderNavigation(data);
+        console.log("Cloudflare KV 导航加载成功");
+    } catch (error) {
+        console.warn("KV 导航加载失败，保留默认导航：", error);
+    }
+}
+
+/* =========================
+   播放器（带拖拽防抖优化）
+========================= */
+
 const player = $("#musicPlayer");
 const audio = $("#audio");
 const progress = $("#progress");
@@ -1460,14 +2108,17 @@ const playlist = [
 ];
 
 let currentIndex = 0;
-let isSeeking = false;
+let isSeeking = false; // 拖动进度条状态锁
 
 function formatTime(seconds) {
     seconds = Math.floor(seconds || 0);
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = String(seconds % 60).padStart(2, "0");
-    if (hrs > 0) return `${hrs}:${String(mins).padStart(2, "0")}:${secs}`;
+
+    if (hrs > 0) {
+        return `${hrs}:${String(mins).padStart(2, "0")}:${secs}`;
+    }
     return `${String(mins).padStart(2, "0")}:${secs}`;
 }
 
@@ -1476,8 +2127,10 @@ function loadSong(index) {
     const song = playlist[index];
     audio.src = song.src;
     audio.preload = "auto";
+
     musicTitle.textContent = song.title;
     musicArtist.textContent = `${song.artist} · Personal Music`;
+
     progress.value = 0;
     currentTime.textContent = "00:00";
     duration.textContent = "00:00";
@@ -1485,15 +2138,21 @@ function loadSong(index) {
 }
 
 function updatePlayButton(isPlaying) {
-    playBtn.innerHTML = isPlaying ? '<i class="bi bi-pause-fill"></i>' : '<i class="bi bi-play-fill"></i>';
-    playBtn.setAttribute("aria-label", isPlaying ? "暂停音乐" : "播放音乐");
+    playBtn.innerHTML = isPlaying
+        ? '<i class="bi bi-pause-fill"></i>'
+        : '<i class="bi bi-play-fill"></i>';
+
+    playBtn.setAttribute(
+        "aria-label",
+        isPlaying ? "暂停音乐" : "播放音乐"
+    );
 }
 
 function playAudio() {
     const promise = audio.play();
     if (promise) {
         promise.catch(error => {
-            console.warn("音乐播放提示：", error);
+            console.warn("音乐播放失败：", error);
             updatePlayButton(false);
         });
     }
@@ -1530,18 +2189,22 @@ nextBtn.addEventListener("click", () => {
 
 audio.addEventListener("play", () => updatePlayButton(true));
 audio.addEventListener("pause", () => updatePlayButton(false));
+
 audio.addEventListener("timeupdate", () => {
     if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
         progress.value = (audio.currentTime / audio.duration) * 100;
         currentTime.textContent = formatTime(audio.currentTime);
     }
 });
+
 audio.addEventListener("loadedmetadata", () => {
     duration.textContent = formatTime(audio.duration);
 });
 
+// 监听拖动：拖拽中更新时间预览，松手后才 seek，彻底避免进度条抖动
 progress.addEventListener("mousedown", () => { isSeeking = true; });
 progress.addEventListener("touchstart", () => { isSeeking = true; }, { passive: true });
+
 progress.addEventListener("input", () => {
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
         const previewTime = (progress.value / 100) * audio.duration;
@@ -1555,6 +2218,7 @@ const finishSeeking = () => {
         isSeeking = false;
     }
 };
+
 progress.addEventListener("change", finishSeeking);
 progress.addEventListener("mouseup", finishSeeking);
 progress.addEventListener("touchend", finishSeeking);
@@ -1566,7 +2230,9 @@ audio.addEventListener("ended", () => {
 loadSong(currentIndex);
 document.body.classList.add("player-visible");
 
-/* 异步集成 Audius 在线曲库 */
+/* =========================================
+   Audius 在线音乐接入（无缝合并至原生播放器）
+========================================= */
 async function loadAudiusTracks() {
     const AUDIUS_API_KEY = "e610bb25a74812e3baf63b5d92acec200ac497d6";
     try {
@@ -1577,26 +2243,33 @@ async function loadAudiusTracks() {
             },
             7000
         );
+
+        if (!response.ok) throw new Error("Audius 请求失败");
         const result = await response.json();
         const tracks = result.data || [];
+
         if (tracks.length > 0) {
-            playlist.length = 0;
+            playlist.length = 0; // 清空本地默认列表，换入 Audius 热门榜单
             tracks.forEach(track => {
                 playlist.push({
-                    title: track.title || "未知曲目",
+                    title: track.title || "未知歌曲",
                     artist: track.user?.name || "Audius 音乐人",
                     src: `https://api.audius.co/v1/tracks/${encodeURIComponent(track.id)}/stream?app_name=ShuoceNav`
                 });
             });
             currentIndex = 0;
             loadSong(0);
+            console.log("Audius 在线曲库已同步至播放器");
         }
     } catch (e) {
-        console.warn("Audius 音乐加载超时或失败，保持本地音轨：", e);
+        console.warn("Audius 音乐加载失败，保留本地默认歌曲：", e);
     }
 }
 
-/* 主题切换 */
+/* =========================
+   主题切换
+========================= */
+
 const appearanceBtn = $("#appearanceBtn");
 const appearancePanel = $("#appearancePanel");
 const themeOptions = document.querySelectorAll(".theme-option");
@@ -1604,18 +2277,28 @@ const systemTheme = window.matchMedia("(prefers-color-scheme: light)");
 
 function applyTheme(theme) {
     document.body.classList.remove("light-mode", "transparent-mode");
-    let actualTheme = theme === "system" ? (systemTheme.matches ? "light" : "dark") : theme;
+
+    let actualTheme = theme;
+    if (theme === "system") {
+        actualTheme = systemTheme.matches ? "light" : "dark";
+    }
+
     const themeColorMeta = $('meta[name="theme-color"]');
 
     if (actualTheme === "light") {
         document.body.classList.add("light-mode");
         if (themeColorMeta) themeColorMeta.setAttribute("content", "#e9f1f8");
     } else {
-        if (actualTheme === "transparent") document.body.classList.add("transparent-mode");
+        if (actualTheme === "transparent") {
+            document.body.classList.add("transparent-mode");
+        }
         if (themeColorMeta) themeColorMeta.setAttribute("content", "#07111f");
     }
 
-    themeOptions.forEach(opt => opt.classList.toggle("active", opt.dataset.theme === theme));
+    themeOptions.forEach(option => {
+        option.classList.toggle("active", option.dataset.theme === theme);
+    });
+
     localStorage.setItem("theme", theme);
 }
 
@@ -1625,73 +2308,352 @@ function closeAppearancePanel() {
     appearancePanel.setAttribute("aria-hidden", "true");
 }
 
-appearanceBtn.addEventListener("click", e => {
-    e.stopPropagation();
+appearanceBtn.addEventListener("click", event => {
+    event.stopPropagation();
     const isOpen = appearancePanel.classList.toggle("show");
     appearanceBtn.setAttribute("aria-expanded", String(isOpen));
     appearancePanel.setAttribute("aria-hidden", String(!isOpen));
 });
 
-themeOptions.forEach(opt => {
-    opt.addEventListener("click", e => {
-        e.stopPropagation();
-        applyTheme(e.currentTarget.dataset.theme);
+themeOptions.forEach(option => {
+    option.addEventListener("click", event => {
+        event.stopPropagation();
+        applyTheme(event.currentTarget.dataset.theme);
         closeAppearancePanel();
     });
 });
 
-appearancePanel.addEventListener("click", e => e.stopPropagation());
+appearancePanel.addEventListener("click", event => event.stopPropagation());
 document.addEventListener("click", closeAppearancePanel);
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeAppearancePanel(); });
-systemTheme.addEventListener("change", () => {
-    if (localStorage.getItem("theme") === "system") applyTheme("system");
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeAppearancePanel();
+    }
 });
+
+systemTheme.addEventListener("change", () => {
+    if (localStorage.getItem("theme") === "system") {
+        applyTheme("system");
+    }
+});
+
 applyTheme(localStorage.getItem("theme") || "glass");
 
-/* 运行时间 */
+/* =========================
+   运行时间
+========================= */
+
 const startDate = new Date("2025-06-25T00:00:00");
+
 function updateRuntime() {
     const diff = Math.max(0, Date.now() - startDate.getTime());
     const days = Math.floor(diff / 86400000);
     const hours = Math.floor(diff / 3600000) % 24;
     const minutes = Math.floor(diff / 60000) % 60;
-    $("#runtime").textContent = `🚀 已运行 ${days} 天 ${hours} 小时 ${minutes} 分钟`;
+
+    $("#runtime").textContent =
+        `🚀 已运行 ${days} 天 ${hours} 小时 ${minutes} 分钟`;
 }
+
 updateRuntime();
 setInterval(updateRuntime, 60000);
 
-/* 回到顶部与快捷键 */
-$("#topButton").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+/* =========================
+   快捷键与返回顶部
+========================= */
 
-document.addEventListener("keydown", e => {
+$("#topButton").addEventListener("click", () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
+
+document.addEventListener("keydown", event => {
     const activeEl = document.activeElement;
-    const isInteractive = ["INPUT","TEXTAREA","SELECT","BUTTON","A"].includes(activeEl?.tagName) ||
-                          activeEl?.isContentEditable || activeEl?.getAttribute("role") === "button";
-    if (e.key === "/" && !isInteractive) {
-        e.preventDefault();
+    const activeTag = activeEl?.tagName;
+
+    const isInteractive =
+        activeTag === "INPUT" ||
+        activeTag === "TEXTAREA" ||
+        activeTag === "SELECT" ||
+        activeTag === "BUTTON" ||
+        activeTag === "A" ||
+        activeEl?.isContentEditable ||
+        activeEl?.getAttribute("role") === "button";
+
+    if (event.key === "/" && !isInteractive) {
+        event.preventDefault();
         $("#keyword").focus();
     }
-    if (e.code === "Space" && !isInteractive) {
-        e.preventDefault();
+
+    if (event.code === "Space" && !isInteractive) {
+        event.preventDefault();
         playBtn.click();
     }
 });
 
-/* 后台并行调度 */
+/* =========================
+   后台任务调度（并行加载）
+========================= */
+
+const weatherTextMap = {
+    0: "晴朗", 1: "大致晴朗", 2: "局部多云", 3: "阴天",
+    45: "雾", 48: "雾凇", 51: "小毛毛雨", 53: "毛毛雨",
+    55: "较强毛毛雨", 61: "小雨", 63: "中雨", 65: "大雨",
+    71: "小雪", 73: "中雪", 75: "大雪", 80: "小阵雨",
+    81: "中阵雨", 82: "强阵雨", 95: "雷雨", 96: "雷雨伴冰雹",
+    99: "强雷雨伴冰雹"
+};
+
+function getWeatherIcon(code) {
+    if (code === 0) return "☀️";
+    if ([1, 2].includes(code)) return "🌤️";
+    if ([3, 45, 48].includes(code)) return "☁️";
+    if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "🌧️";
+    if ([71, 73, 75].includes(code)) return "❄️";
+    if ([95, 96, 99].includes(code)) return "⛈️";
+    return "🌤️";
+}
+
+function showWeatherError() {
+    $("#weather").textContent = "🌤️ 天气暂时不可用";
+}
+
+async function loadWeather() {
+    const defaultLocation = {
+        latitude: 39.9042,
+        longitude: 116.4074
+    };
+
+    const fetchWeather = async (latitude, longitude) => {
+        const url =
+            "https://api.open-meteo.com/v1/forecast" +
+            `?latitude=${encodeURIComponent(latitude)}` +
+            `&longitude=${encodeURIComponent(longitude)}` +
+            "&current=temperature_2m,weather_code" +
+            "&temperature_unit=celsius" +
+            "&timezone=auto";
+
+        const response = await withTimeout(url, { headers: { Accept: "application/json" } }, 5000);
+        if (!response.ok) throw new Error("天气请求失败");
+
+        const data = await response.json();
+        if (!data?.current) throw new Error("天气数据无效");
+
+        const current = data.current;
+        const temperature = Math.round(current.temperature_2m);
+        const code = current.weather_code;
+        const description = weatherTextMap[code] || "天气未知";
+
+        $("#weather").innerHTML =
+            `<span>${getWeatherIcon(code)}</span> ` +
+            `${temperature}°C · ${description}`;
+    };
+
+    try {
+        if ("geolocation" in navigator) {
+            await new Promise(resolve => {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        fetchWeather(position.coords.latitude, position.coords.longitude)
+                            .catch(() => fetchWeather(defaultLocation.latitude, defaultLocation.longitude))
+                            .finally(resolve);
+                    },
+                    () => {
+                        fetchWeather(defaultLocation.latitude, defaultLocation.longitude).finally(resolve);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 5000,
+                        maximumAge: 1800000
+                    }
+                );
+            });
+        } else {
+            await fetchWeather(defaultLocation.latitude, defaultLocation.longitude);
+        }
+    } catch (error) {
+        console.warn("天气接口异常：", error);
+        showWeatherError();
+    }
+}
+
+async function loadHitokoto() {
+    try {
+        const response = await withTimeout(
+            "https://v1.hitokoto.cn/",
+            { headers: { Accept: "application/json" } },
+            4000
+        );
+
+        if (!response.ok) throw new Error("一言请求失败");
+
+        const data = await response.json();
+        $("#hitokoto").textContent = `「${data.hitokoto || "保持热爱，奔赴山海。"}」`;
+    } catch (error) {
+        console.warn("每日一言接口异常：", error);
+        $("#hitokoto").textContent = "「保持热爱，奔赴山海。」";
+    }
+}
+
+function loadStatisticsScript() {
+    if (document.querySelector('script[data-statistics="busuanzi"]')) {
+        return;
+    }
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
+    script.dataset.statistics = "busuanzi";
+    document.body.appendChild(script);
+}
+
 runWhenIdle(async () => {
     await Promise.allSettled([
-        loadAudiusTracks(),
-        // 其它后台请求保持原样
+        loadNavigationFromKV(),
+        loadWeather(),
+        loadHitokoto(),
+        loadAudiusTracks()
     ]);
-}, 1500);
 
-/* 星空动效画布 (Canvas) */
+    loadStatisticsScript();
+}, 2500);
+
+/* =========================
+   自动 Favicon 补全逻辑
+========================= */
+
 (function () {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const FAVICON_PROXY = "https://proxyd.picpi.top/";
+
+    function getAutomaticFavicons(url) {
+        try {
+            const target = new URL(url);
+            if (target.protocol !== "http:" && target.protocol !== "https:") {
+                return [];
+            }
+            const hostname = target.hostname;
+            return [
+                FAVICON_PROXY + "https://icons.duckduckgo.com/ip3/" + encodeURIComponent(hostname) + ".ico",
+                FAVICON_PROXY + target.origin + "/favicon.ico",
+                FAVICON_PROXY + target.origin + "/favicon.png"
+            ];
+        } catch {
+            return [];
+        }
+    }
+
+    function createFaviconBox(card, oldIcon) {
+        if (!card || card.querySelector(":scope > .card-favicon")) {
+            return;
+        }
+
+        const fallbackIcon = oldIcon
+            ? oldIcon.cloneNode(true)
+            : (() => {
+                const icon = document.createElement("i");
+                icon.className = "bi bi-globe";
+                return icon;
+            })();
+
+        const faviconBox = document.createElement("span");
+        faviconBox.className = "card-favicon";
+
+        const cardUrl = card.getAttribute("href") || card.href || "";
+        const faviconUrls = getAutomaticFavicons(cardUrl);
+
+        if (!faviconUrls.length) {
+            faviconBox.appendChild(fallbackIcon);
+            if (oldIcon && oldIcon.parentNode) {
+                oldIcon.replaceWith(faviconBox);
+            } else {
+                card.prepend(faviconBox);
+            }
+            return;
+        }
+
+        const image = document.createElement("img");
+        image.alt = "网站图标";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.referrerPolicy = "no-referrer";
+
+        let currentIndex = 0;
+
+        function tryNextFavicon() {
+            if (currentIndex >= faviconUrls.length) {
+                faviconBox.replaceChildren(fallbackIcon);
+                return;
+            }
+            image.src = faviconUrls[currentIndex];
+            currentIndex++;
+        }
+
+        image.addEventListener("error", tryNextFavicon);
+        faviconBox.appendChild(image);
+
+        if (oldIcon && oldIcon.parentNode) {
+            oldIcon.replaceWith(faviconBox);
+        } else {
+            card.prepend(faviconBox);
+        }
+
+        tryNextFavicon();
+    }
+
+    function upgradeWebsiteCards(root = document) {
+        if (root.nodeType === Node.ELEMENT_NODE && root.matches?.("main .card")) {
+            const icon = root.querySelector(":scope > i");
+            if (icon) createFaviconBox(root, icon);
+        }
+
+        root.querySelectorAll?.("main .card, .card").forEach(card => {
+            const icon = card.querySelector(":scope > i");
+            if (icon) createFaviconBox(card, icon);
+        });
+    }
+
+    upgradeWebsiteCards();
+
+    const main = document.querySelector("main");
+    if (main) {
+        const observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        upgradeWebsiteCards(node);
+                    }
+                }
+            }
+        });
+
+        observer.observe(main, {
+            childList: true,
+            subtree: true
+        });
+    }
+})();
+
+/* ========================================================
+   Canvas 高性能星空粒子引擎（轻量、低功耗、切后台休眠）
+======================================================== */
+(function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+    }
+
     const canvas = document.getElementById("bgCanvas");
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: true });
-    let width = 0, height = 0, particles = [], isRunning = true, animationFrameId = null;
+
+    let width = 0, height = 0;
+    let particles = [];
+    let animationFrameId = null;
+    let isRunning = true;
+
+    // 限制最大 DPR 为 2，防止视网膜 4K 屏过度绘制发热
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resize() {
@@ -1702,8 +2664,15 @@ runWhenIdle(async () => {
         ctx.scale(dpr, dpr);
     }
 
+    function getParticleCount() {
+        return window.innerWidth < 768 ? 20 : 38;
+    }
+
     class Particle {
-        constructor() { this.reset(true); }
+        constructor() {
+            this.reset(true);
+        }
+
         reset(isInitial = false) {
             this.x = Math.random() * width;
             this.y = isInitial ? Math.random() * height : (Math.random() > 0.5 ? 0 : height);
@@ -1713,14 +2682,17 @@ runWhenIdle(async () => {
             this.opacity = Math.random() * 0.45 + 0.15;
             this.color = Math.random() > 0.4 ? "86, 214, 255" : "141, 124, 255";
         }
+
         update() {
             this.x += this.speedX;
             this.y += this.speedY;
+
             if (this.x < 0) this.x = width;
             if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height;
             if (this.y > height) this.y = 0;
         }
+
         draw() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -1731,20 +2703,24 @@ runWhenIdle(async () => {
 
     function init() {
         resize();
-        particles = Array.from({ length: window.innerWidth < 768 ? 20 : 38 }, () => new Particle());
+        particles = Array.from({ length: getParticleCount() }, () => new Particle());
         loop();
     }
 
     function loop() {
         if (!isRunning) return;
+
         ctx.clearRect(0, 0, width, height);
-        const maxDist = 115, maxDistSq = maxDist * maxDist;
+
+        const maxDist = 115;
+        const maxDistSq = maxDist * maxDist;
 
         for (let i = 0; i < particles.length; i++) {
             for (let j = i + 1; j < particles.length; j++) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
                 const distSq = dx * dx + dy * dy;
+
                 if (distSq < maxDistSq) {
                     const alpha = (1 - Math.sqrt(distSq) / maxDist) * 0.12;
                     ctx.strokeStyle = `rgba(86, 214, 255, ${alpha})`;
@@ -1757,25 +2733,33 @@ runWhenIdle(async () => {
             }
         }
 
-        for (let p of particles) {
-            p.update();
-            p.draw();
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
         }
+
         animationFrameId = requestAnimationFrame(loop);
     }
 
+    let resizeTimer = null;
     window.addEventListener("resize", () => {
-        resize();
-        particles = Array.from({ length: window.innerWidth < 768 ? 20 : 38 }, () => new Particle());
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            resize();
+            particles = Array.from({ length: getParticleCount() }, () => new Particle());
+        }, 200);
     });
 
+    // 切到后台或者最小化时完全停用动画，零 CPU 占用
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
             isRunning = false;
             cancelAnimationFrame(animationFrameId);
-        } else if (!isRunning) {
-            isRunning = true;
-            loop();
+        } else {
+            if (!isRunning) {
+                isRunning = true;
+                loop();
+            }
         }
     });
 
