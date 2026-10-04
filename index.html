@@ -107,12 +107,10 @@ body::before{
         url("background.jpg") center/cover no-repeat;
 }
 
-/* 原静态大径向渐变已由高性能 Canvas 粒子动效层替代 */
 body::after{
     display: none;
 }
 
-/* Canvas 动效层：置于背景(-5)之上、内容(0)之下，穿透鼠标事件保证点击不受干扰 */
 #bgCanvas {
     position: fixed;
     inset: 0;
@@ -123,7 +121,7 @@ body::after{
 }
 
 body.player-visible{
-    padding-bottom:110px;
+    padding-bottom:120px;
 }
 
 button,
@@ -957,8 +955,8 @@ button{
     right:24px;
     bottom:28px;
     z-index:40;
-    width:315px;
-    padding:20px;
+    width:320px;
+    padding:18px 20px;
     border:1px solid rgba(86,214,255,.22);
     border-radius:25px;
     background:rgba(8,20,35,.94);
@@ -979,8 +977,8 @@ button{
 }
 
 .music-cover{
-    width:58px;
-    height:58px;
+    width:56px;
+    height:56px;
     flex:none;
     overflow:hidden;
     border-radius:17px;
@@ -1010,9 +1008,9 @@ button{
 }
 
 .music-artist{
-    margin-top:5px;
+    margin-top:4px;
     color:var(--muted);
-    font-size:13px;
+    font-size:12px;
 }
 
 .music-close{
@@ -1030,7 +1028,7 @@ button{
 #progress{
     width:100%;
     height:4px;
-    margin:19px 0 7px;
+    margin:15px 0 6px;
     accent-color:var(--primary);
 }
 
@@ -1041,19 +1039,53 @@ button{
     font-size:10px;
 }
 
+/* 控制栏与反馈按钮整合 */
+.music-bottom-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:14px;
+}
+
+.music-feedback-group{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.feedback-btn{
+    display:grid;
+    place-items:center;
+    width:28px;
+    height:28px;
+    border:0;
+    border-radius:50%;
+    color:var(--muted);
+    background:transparent;
+    font-size:13px;
+    transition:.2s;
+}
+
+.feedback-btn:hover{
+    color:var(--text);
+    background:rgba(255,255,255,.08);
+}
+
+.feedback-btn.liked{
+    color:#ff5e7e;
+}
+
 .music-controls{
     display:flex;
     align-items:center;
-    justify-content:center;
-    gap:18px;
-    margin-top:17px;
+    gap:10px;
 }
 
 .music-controls button{
     display:grid;
     place-items:center;
-    width:36px;
-    height:36px;
+    width:34px;
+    height:34px;
     border:0;
     border-radius:50%;
     color:var(--text);
@@ -1061,8 +1093,8 @@ button{
 }
 
 #playBtn{
-    width:46px;
-    height:46px;
+    width:42px;
+    height:42px;
     color:#07111f;
     background:var(--primary);
 }
@@ -1187,18 +1219,13 @@ button{
         right:12px;
         bottom:12px;
         width:auto;
-        padding:12px;
+        padding:12px 14px;
         border-radius:19px;
     }
 
     .music-cover{
         width:48px;
         height:48px;
-    }
-
-    .music-controls{
-        gap:8px;
-        margin-top:10px;
     }
 }
 
@@ -1217,14 +1244,8 @@ button{
 
     .music-player{
         display:flex;
-        align-items:center;
-        gap:9px;
-        min-height:66px;
-    }
-
-    .music-top{
-        min-width:0;
-        flex:1;
+        flex-direction:column;
+        padding:10px 12px;
     }
 
     .music-player #progress,
@@ -1232,10 +1253,8 @@ button{
         display:none;
     }
 
-    .music-controls{
-        flex:none;
-        gap:5px;
-        margin:0;
+    .music-bottom-bar{
+        margin-top:8px;
     }
 
     .music-controls button{
@@ -1244,8 +1263,8 @@ button{
     }
 
     #playBtn{
-        width:38px;
-        height:38px;
+        width:36px;
+        height:36px;
     }
 
     .card-title,
@@ -1277,7 +1296,6 @@ button{
 </head>
 
 <body>
-<!-- 高性能全屏动效画布：层级置于页面内容下方，完全穿透鼠标事件 -->
 <canvas id="bgCanvas"></canvas>
 
 <div class="container">
@@ -1674,13 +1692,14 @@ button{
 </footer>
 </div>
 
-<!-- 音乐播放器 -->
+<!-- 音乐播放器（升级整合轻量反馈按键） -->
 <div class="music-player" id="musicPlayer">
     <div class="music-top">
         <div class="music-cover">
             <img
                 src="Personalization/player-icon.png"
                 alt="音乐封面"
+                id="musicCoverImg"
                 decoding="async">
         </div>
 
@@ -1714,30 +1733,60 @@ button{
         <span id="duration">00:00</span>
     </div>
 
-    <div class="music-controls">
-        <button
-            type="button"
-            id="prevBtn"
-            title="上一首"
-            aria-label="上一首">
-            <i class="bi bi-skip-backward-fill"></i>
-        </button>
+    <div class="music-bottom-bar">
+        <!-- 显式反馈按键：极简微交互，不破坏整体视觉 -->
+        <div class="music-feedback-group">
+            <button
+                type="button"
+                class="feedback-btn"
+                id="likeBtn"
+                title="喜欢这首风格"
+                aria-label="喜欢这首歌">
+                <i class="bi bi-heart"></i>
+            </button>
+            <button
+                type="button"
+                class="feedback-btn"
+                id="dislikeBtn"
+                title="不喜欢这首"
+                aria-label="不喜欢">
+                <i class="bi bi-hand-thumbs-down"></i>
+            </button>
+            <button
+                type="button"
+                class="feedback-btn"
+                id="blockBtn"
+                title="永久屏蔽此曲/作者"
+                aria-label="屏蔽此曲">
+                <i class="bi bi-slash-circle"></i>
+            </button>
+        </div>
 
-        <button
-            type="button"
-            id="playBtn"
-            title="播放或暂停"
-            aria-label="播放或暂停">
-            <i class="bi bi-play-fill"></i>
-        </button>
+        <div class="music-controls">
+            <button
+                type="button"
+                id="prevBtn"
+                title="上一首"
+                aria-label="上一首">
+                <i class="bi bi-skip-backward-fill"></i>
+            </button>
 
-        <button
-            type="button"
-            id="nextBtn"
-            title="下一首"
-            aria-label="下一首">
-            <i class="bi bi-skip-forward-fill"></i>
-        </button>
+            <button
+                type="button"
+                id="playBtn"
+                title="播放或暂停"
+                aria-label="播放或暂停">
+                <i class="bi bi-play-fill"></i>
+            </button>
+
+            <button
+                type="button"
+                id="nextBtn"
+                title="下一首"
+                aria-label="下一首">
+                <i class="bi bi-skip-forward-fill"></i>
+            </button>
+        </div>
     </div>
 
     <audio
@@ -2081,9 +2130,492 @@ async function loadNavigationFromKV() {
     }
 }
 
-/* =========================
-   播放器（带拖拽防抖优化）
-========================= */
+/* ========================================================
+   自适应背景音乐系统内核 (Recommendation & Audio Engine)
+======================================================== */
+
+const AUDIUS_APP_NAME = "ShuoceNav";
+const AUDIUS_API_KEY = "e610bb25a74812e3baf63b5d92acec200ac497d6";
+const LOCAL_FALLBACK_TRACK = {
+    id: "local_cheese_mp3",
+    title: "奶酪",
+    artist: "未知歌手",
+    src: "Personalization/Music/Music/cheese.mp3",
+    isLocal: true,
+    genre: "Ambient",
+    tags: ["cheese", "chill", "local"]
+};
+
+// 本地存储键定义
+const STORAGE_KEYS = {
+    PROFILE: "sn_music_profile_v1",
+    HISTORY: "sn_music_history_v1",
+    BLACKLIST: "sn_music_blacklist_v1",
+    CACHE_POOL: "sn_music_cache_pool_v1"
+};
+
+// 用户个性化画像管理器 (带 LRU 自动精简)
+class MusicProfileManager {
+    constructor() {
+        this.profile = this.load(STORAGE_KEYS.PROFILE, {
+            playCount: 0,
+            genres: { "Lo-Fi": 6.0, "Ambient": 8.0, "Downtempo": 6.0 },
+            tags: { "chill": 6.0, "instrumental": 8.0, "peaceful": 6.0 },
+            combos: { "Lo-Fi|instrumental": 6.0 },
+            artists: {}
+        });
+
+        this.history = this.load(STORAGE_KEYS.HISTORY, {
+            recentTracks: [],   // 最多保留 25 首用于冷却
+            recentArtists: []   // 最多保留 8 个用于防连播
+        });
+
+        this.blacklist = this.load(STORAGE_KEYS.BLACKLIST, {
+            tracks: [],         // 最多 100 条
+            artists: [],        // 最多 50 条
+            genres: []          // 最多 15 条
+        });
+
+        this.exploreRate = 0.15;
+    }
+
+    load(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    save() {
+        try {
+            // 容量精简保护 (LRU / Threshold Trimming)
+            const cleanDict = (dict, limit = 45) => {
+                const keys = Object.keys(dict);
+                if (keys.length > limit) {
+                    keys.sort((a, b) => Math.abs(dict[a]) - Math.abs(dict[b]));
+                    while (keys.length > limit) {
+                        delete dict[keys.shift()];
+                    }
+                }
+            };
+
+            cleanDict(this.profile.tags);
+            cleanDict(this.profile.combos);
+            cleanDict(this.profile.artists);
+
+            if (this.history.recentTracks.length > 25) {
+                this.history.recentTracks = this.history.recentTracks.slice(-25);
+            }
+            if (this.history.recentArtists.length > 8) {
+                this.history.recentArtists = this.history.recentArtists.slice(-8);
+            }
+
+            localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(this.profile));
+            localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(this.history));
+            localStorage.setItem(STORAGE_KEYS.BLACKLIST, JSON.stringify(this.blacklist));
+        } catch (e) {
+            console.warn("保存偏好配置失败：", e);
+        }
+    }
+
+    isBlocked(track) {
+        if (!track || track.isLocal) return false;
+        if (this.blacklist.tracks.includes(String(track.id))) return true;
+        if (track.artistId && this.blacklist.artists.includes(String(track.artistId))) return true;
+        if (track.genre && this.blacklist.genres.includes(track.genre)) return true;
+        return false;
+    }
+
+    recordHistory(track) {
+        if (!track || track.isLocal) return;
+        this.history.recentTracks.push(String(track.id));
+        if (track.artistId || track.artist) {
+            this.history.recentArtists.push(String(track.artistId || track.artist));
+        }
+        this.profile.playCount = (this.profile.playCount || 0) + 1;
+        this.save();
+    }
+
+    applyFeedback(track, action) {
+        if (!track || track.isLocal) return;
+        const weights = {
+            like: { feat: 3.0, combo: 4.0, art: 2.0 },
+            dislike: { feat: -4.0, combo: -5.0, art: -3.0 },
+            complete: { feat: 1.2, combo: 2.0, art: 0.8 },
+            substantial: { feat: 0.5, combo: 0.8, art: 0.3 },
+            instantSkip: { feat: -0.8, combo: -1.5, art: -0.5 }
+        }[action];
+
+        if (!weights) return;
+
+        const genre = track.genre;
+        if (genre) {
+            this.profile.genres[genre] = (this.profile.genres[genre] || 0) + weights.feat;
+        }
+
+        const tags = Array.isArray(track.tags) ? track.tags : (typeof track.tags === "string" ? track.tags.split(",") : []);
+        tags.forEach(rawTag => {
+            const tag = rawTag.trim().toLowerCase();
+            if (!tag) return;
+            this.profile.tags[tag] = (this.profile.tags[tag] || 0) + (weights.feat * 0.7);
+            if (genre) {
+                const comboKey = `${genre}|${tag}`;
+                this.profile.combos[comboKey] = (this.profile.combos[comboKey] || 0) + weights.combo;
+            }
+        });
+
+        if (track.artistId) {
+            const aId = String(track.artistId);
+            this.profile.artists[aId] = (this.profile.artists[aId] || 0) + weights.art;
+        }
+
+        // 动态微调探索比例
+        if (action === "instantSkip" || action === "dislike") {
+            this.exploreRate = Math.max(0.08, this.exploreRate - 0.02);
+        } else if (action === "like") {
+            this.exploreRate = Math.min(0.25, this.exploreRate + 0.01);
+        }
+
+        this.save();
+    }
+
+    blockTrack(track) {
+        if (!track || track.isLocal) return;
+        if (!this.blacklist.tracks.includes(String(track.id))) {
+            this.blacklist.tracks.push(String(track.id));
+        }
+        if (track.artistId && !this.blacklist.artists.includes(String(track.artistId))) {
+            this.blacklist.artists.push(String(track.artistId));
+        }
+        this.save();
+    }
+}
+
+// 推荐算法打分与特征评估器
+class MusicScorer {
+    // 文本推测能级 Heuristic Energy Estimate (0.0~1.0)
+    static estimateEnergy(track) {
+        const text = `${track.title || ""} ${track.genre || ""} ${track.mood || ""} ${(track.tags || []).join(" ")} ${track.description || ""}`.toLowerCase();
+
+        let energy = 0.40; // 默认中性能级
+        
+        // 低能级舒缓特征
+        const lowSignals = ["ambient", "peaceful", "calm", "sleep", "drone", "rain", "piano", "meditation", "relax", "quiet", "minimal"];
+        // 中低舒适背景声 (黄金区间)
+        const chillSignals = ["lo-fi", "lofi", "chill", "downtempo", "instrumental", "soft", "jazz", "mellow", "vintage", "beats", "coffee"];
+        // 中高动感
+        const activeSignals = ["electronic", "synthwave", "dance", "upbeat", "house", "groove"];
+        // 超高激进
+        const aggressiveSignals = ["hardcore", "hardstyle", "dubstep", "metal", "trap", "bass boost", "heavy", "aggressive", "phonk", "rage", "screamo"];
+
+        lowSignals.forEach(w => { if (text.includes(w)) energy -= 0.05; });
+        chillSignals.forEach(w => { if (text.includes(w)) energy -= 0.03; });
+        activeSignals.forEach(w => { if (text.includes(w)) energy += 0.06; });
+        aggressiveSignals.forEach(w => { if (text.includes(w)) energy += 0.16; });
+
+        return Math.min(1.0, Math.max(0.0, energy));
+    }
+
+    static score(track, profileMgr) {
+        if (track.isLocal) return 100;
+
+        let score = 50; // S_base 底分
+
+        // 1. 流派匹配 S_genre
+        const g = (track.genre || "").toLowerCase();
+        if (g.includes("lo-fi") || g.includes("lofi")) score += 20;
+        else if (g.includes("ambient")) score += 20;
+        else if (g.includes("downtempo")) score += 18;
+        else if (g.includes("jazz") || g.includes("acoustic")) score += 14;
+        else if (g.includes("electronic") || g.includes("chillout")) score += 10;
+        else if (g.includes("metal") || g.includes("hardcore") || g.includes("punk")) score -= 30;
+
+        // 2. 氛围 S_mood
+        const m = (track.mood || "").toLowerCase();
+        if (["peaceful", "easygoing", "melancholy", "sensual", "tender"].some(v => m.includes(v))) score += 15;
+        if (["aggressive", "fiery", "rowdy", "defiant"].some(v => m.includes(v))) score -= 20;
+
+        // 3. 标签匹配 S_tags
+        const tags = Array.isArray(track.tags) ? track.tags : (typeof track.tags === "string" ? track.tags.split(",") : []);
+        const tagText = tags.join(" ").toLowerCase();
+        if (tagText.includes("instrumental") || tagText.includes("chill") || tagText.includes("study") || tagText.includes("background")) score += 12;
+        if (tagText.includes("drop") || tagText.includes("club") || tagText.includes("bass")) score -= 15;
+
+        // 4. 能级推测得分 S_energy (靶心 0.35)
+        const estEnergy = this.estimateEnergy(track);
+        track.estEnergy = estEnergy;
+        const energyDelta = Math.abs(estEnergy - 0.35);
+        score += Math.max(-25, Math.round(20 - (50 * energyDelta)));
+
+        // 5. 时长适配 S_duration
+        const dur = track.duration || 180;
+        if (dur >= 120 && dur <= 360) score += 10;
+        else if (dur >= 90 && dur <= 480) score += 5;
+        else if (dur < 75 || dur > 600) score -= 15;
+
+        // 6. 热度质量平滑分 S_quality (防止全站热门霸屏，仅辅助淘汰零互动)
+        const favCount = Number(track.favouriteCount || track.favoriteCount || 0);
+        score += Math.min(8, Math.round(1.8 * Math.log10(favCount + 1)));
+
+        // 7. 用户画像偏好融合 S_pref
+        let userPref = 0;
+        const p = profileMgr.profile;
+        if (track.genre && p.genres[track.genre]) userPref += p.genres[track.genre] * 0.8;
+
+        tags.forEach(t => {
+            const cleanT = t.trim().toLowerCase();
+            if (p.tags[cleanT]) userPref += p.tags[cleanT] * 0.4;
+            if (track.genre && p.combos[`${track.genre}|${cleanT}`]) {
+                userPref += p.combos[`${track.genre}|${cleanT}`] * 0.6;
+            }
+        });
+        if (track.artistId && p.artists[String(track.artistId)]) {
+            userPref += p.artists[String(track.artistId)] * 0.8;
+        }
+        score += Math.min(25, Math.max(-25, Math.round(userPref)));
+
+        // 8. 弹性冷却惩罚 (Track / Artist)
+        const h = profileMgr.history;
+        const recentTrackIdx = h.recentTracks.lastIndexOf(String(track.id));
+        if (recentTrackIdx !== -1) {
+            const dist = h.recentTracks.length - 1 - recentTrackIdx;
+            if (dist < 12) score -= Math.round((12 - dist) * 6);
+        }
+
+        const recentArtistIdx = h.recentArtists.lastIndexOf(String(track.artistId || track.artist));
+        if (recentArtistIdx !== -1) {
+            const dist = h.recentArtists.length - 1 - recentArtistIdx;
+            if (dist === 0) score -= 45; // 刚播过该作者，重罚避免连播
+            else if (dist === 1) score -= 25;
+            else if (dist < 4) score -= 10;
+        }
+
+        return Math.max(1, Math.min(100, score));
+    }
+}
+
+// 调度引擎
+class MusicEngine {
+    constructor() {
+        this.profileMgr = new MusicProfileManager();
+        this.pool = [];            // 候选池 (已清洗打分)
+        this.activeTrack = null;
+        this.playStartTime = 0;
+        this.activeForegroundTime = 0;
+        this.lastVisibilityTs = Date.now();
+        this.requestCount = 0;
+        this.maxRequestsPerSession = 4;
+        this.isFetching = false;
+    }
+
+    init() {
+        // 挂载失焦监听，避免切后台挂机误判喜好
+        document.addEventListener("visibilitychange", () => {
+            const now = Date.now();
+            if (document.hidden) {
+                this.activeForegroundTime += Math.max(0, now - this.lastVisibilityTs);
+            }
+            this.lastVisibilityTs = now;
+        });
+
+        // 尝试从持久化缓存恢复 (3 小时内有效)
+        this.restoreCache();
+    }
+
+    restoreCache() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEYS.CACHE_POOL);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            if (data && data.expiresAt > Date.now() && Array.isArray(data.tracks) && data.tracks.length >= 4) {
+                this.pool = data.tracks.filter(t => !this.profileMgr.isBlocked(t));
+                console.log("从本地存储恢复背景音乐候选池：", this.pool.length, "首");
+            }
+        } catch (e) {
+            // 忽略异常，后续 API 自愈补齐
+        }
+    }
+
+    saveCache() {
+        try {
+            if (this.pool.length < 3) return;
+            const cacheData = {
+                expiresAt: Date.now() + (3 * 3600 * 1000), // 3 小时有效
+                tracks: this.pool.slice(0, 18).map(t => ({
+                    id: t.id,
+                    title: t.title,
+                    artist: t.artist,
+                    artistId: t.artistId,
+                    duration: t.duration,
+                    genre: t.genre,
+                    mood: t.mood,
+                    tags: t.tags,
+                    score: t.score
+                }))
+            };
+            localStorage.setItem(STORAGE_KEYS.CACHE_POOL, JSON.stringify(cacheData));
+        } catch (e) {}
+    }
+
+    // 动态组装高容错 Stream URL (不缓存临时 CDN 地址，规避过期)
+    buildStreamUrl(trackId) {
+        return `https://api.audius.co/v1/tracks/${encodeURIComponent(trackId)}/stream?app_name=${AUDIUS_APP_NAME}`;
+    }
+
+    async fetchCandidateBatch(genre = "Lo-Fi") {
+        if (this.isFetching || this.requestCount >= this.maxRequestsPerSession) return [];
+        this.isFetching = true;
+        this.requestCount++;
+
+        try {
+            const url = `https://api.audius.co/v1/tracks/trending?genre=${encodeURIComponent(genre)}&limit=25&app_name=${AUDIUS_APP_NAME}`;
+            const res = await withTimeout(url, { headers: { "x-api-key": AUDIUS_API_KEY } }, 6500);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const json = await res.json();
+            return Array.isArray(json.data) ? json.data : [];
+        } catch (e) {
+            console.warn(`拉取 ${genre} 候选音频失败：`, e);
+            return [];
+        } finally {
+            this.isFetching = false;
+        }
+    }
+
+    // 三级自愈式充能管道 (Tier Ingestion)
+    async replenishPool() {
+        if (this.pool.length >= 8 || this.requestCount >= this.maxRequestsPerSession) return;
+
+        // Tier 1: 黄金流派
+        let rawTracks = await this.fetchCandidateBatch("Lo-Fi");
+        if (rawTracks.length < 10) {
+            // Tier 2: 拓展流派补救
+            const ambientTracks = await this.fetchCandidateBatch("Ambient");
+            rawTracks = rawTracks.concat(ambientTracks);
+        }
+
+        const validCandidates = [];
+        rawTracks.forEach(raw => {
+            if (!raw || !raw.id) return;
+
+            const t = {
+                id: String(raw.id),
+                title: raw.title || "未知曲目",
+                artist: raw.user?.name || "Audius 音乐人",
+                artistId: raw.user?.id || raw.user?.handle || "",
+                duration: Math.round(raw.duration || 180),
+                genre: raw.genre || "Ambient",
+                mood: raw.mood || "",
+                tags: (raw.tags || "").split(",").map(s => s.trim()).filter(Boolean),
+                favoriteCount: raw.favorite_count || raw.favourite_count || 0
+            };
+
+            // 审美底线硬过滤 (黑名单 / 极端时长 / 极端刺耳高能)
+            if (this.profileMgr.isBlocked(t)) return;
+            if (t.duration < 60 || t.duration > 660) return;
+
+            const score = MusicScorer.score(t, this.profileMgr);
+            t.score = score;
+
+            // 能级大于 0.78 (极度吵闹/Hardcore) 坚决拦截
+            if (t.estEnergy && t.estEnergy > 0.78) return;
+
+            // 避免重复堆入池
+            if (!this.pool.some(item => item.id === t.id)) {
+                validCandidates.push(t);
+            }
+        });
+
+        // 依综合分从高到低排序入池
+        validCandidates.sort((a, b) => b.score - a.score);
+        this.pool = this.pool.concat(validCandidates);
+
+        // 维护健康度与上限
+        if (this.pool.length > 25) {
+            this.pool = this.pool.slice(0, 25);
+        }
+        this.saveCache();
+        console.log("背景音乐池更新完毕，当前可用存量：", this.pool.length);
+    }
+
+    // 核心决策采样：稳定模式 (85%) 与 探索模式 (15%)
+    pickNextTrack() {
+        // 若没有在线候选，平滑回退本地歌曲
+        if (!this.pool || this.pool.length === 0) {
+            return { ...LOCAL_FALLBACK_TRACK };
+        }
+
+        // 清洗池内已拉黑歌曲
+        this.pool = this.pool.filter(t => !this.profileMgr.isBlocked(t));
+        if (this.pool.length === 0) return { ...LOCAL_FALLBACK_TRACK };
+
+        // 动态探索决策
+        const isExplore = Math.random() < this.profileMgr.exploreRate;
+        let selected = null;
+
+        if (isExplore && this.pool.length >= 4) {
+            // 探索模式：在中后段合格曲目中挑一首新鲜尝试
+            const exploreSlice = this.pool.slice(Math.floor(this.pool.length * 0.35));
+            const idx = Math.floor(Math.random() * exploreSlice.length);
+            selected = exploreSlice[idx];
+            selected.isExplore = true;
+        } else {
+            // 稳定模式：加权抽取高分头部曲目
+            const topSlice = this.pool.slice(0, Math.min(6, this.pool.length));
+            const idx = Math.floor(Math.random() * topSlice.length);
+            selected = topSlice[idx];
+        }
+
+        // 从池中移出选中项，避免同一 session 紧挨重复
+        this.pool = this.pool.filter(t => t.id !== selected.id);
+
+        // 补充装配 Stream URL
+        selected.src = this.buildStreamUrl(selected.id);
+
+        // 触底自动异步补水
+        if (this.pool.length < 4) {
+            runWhenIdle(() => this.replenishPool(), 1500);
+        }
+
+        return selected;
+    }
+
+    onTrackStarted(track) {
+        this.activeTrack = track;
+        this.playStartTime = Date.now();
+        this.activeForegroundTime = 0;
+        this.lastVisibilityTs = Date.now();
+        this.profileMgr.recordHistory(track);
+    }
+
+    onTrackEndedNaturally() {
+        if (!this.activeTrack || this.activeTrack.isLocal) return;
+
+        const totalPlayed = (Date.now() - this.playStartTime) / 1000;
+        const fgRatio = this.activeForegroundTime / Math.max(1, Date.now() - this.playStartTime);
+
+        // 挂机失焦保护：前台时间不足 40% 时不产生喜好权重偏离
+        if (fgRatio >= 0.4 && totalPlayed >= 45) {
+            this.profileMgr.applyFeedback(this.activeTrack, "complete");
+        }
+    }
+
+    onManualSkip() {
+        if (!this.activeTrack || this.activeTrack.isLocal) return;
+
+        const playedSec = (Date.now() - this.playStartTime) / 1000;
+        if (playedSec < 15) {
+            this.profileMgr.applyFeedback(this.activeTrack, "instantSkip");
+        } else if (playedSec >= 100) {
+            this.profileMgr.applyFeedback(this.activeTrack, "substantial");
+        }
+    }
+}
+
+/* =========================================
+   播放器交互绑定与视图渲染
+========================================= */
 
 const player = $("#musicPlayer");
 const audio = $("#audio");
@@ -2091,45 +2623,42 @@ const progress = $("#progress");
 const playBtn = $("#playBtn");
 const prevBtn = $("#prevBtn");
 const nextBtn = $("#nextBtn");
+const likeBtn = $("#likeBtn");
+const dislikeBtn = $("#dislikeBtn");
+const blockBtn = $("#blockBtn");
 const musicClose = $("#musicClose");
 const playerToggleButton = $("#playerToggleButton");
 const avatar = $("#avatar");
 const musicTitle = $("#musicTitle");
 const musicArtist = $("#musicArtist");
+const musicCoverImg = $("#musicCoverImg");
 const currentTime = $("#currentTime");
 const duration = $("#duration");
 
-const playlist = [
-    {
-        title: "奶酪",
-        artist: "未知歌手",
-        src: "Personalization/Music/Music/cheese.mp3"
-    }
-];
+const engine = new MusicEngine();
+engine.init();
 
-let currentIndex = 0;
-let isSeeking = false; // 拖动进度条状态锁
+let currentTrack = { ...LOCAL_FALLBACK_TRACK };
+let playbackHistory = []; // 用于上一首回溯
+let isSeeking = false;
 
 function formatTime(seconds) {
     seconds = Math.floor(seconds || 0);
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
+    const mins = Math.floor(seconds / 60);
     const secs = String(seconds % 60).padStart(2, "0");
-
-    if (hrs > 0) {
-        return `${hrs}:${String(mins).padStart(2, "0")}:${secs}`;
-    }
     return `${String(mins).padStart(2, "0")}:${secs}`;
 }
 
-function loadSong(index) {
-    if (!playlist[index]) return;
-    const song = playlist[index];
-    audio.src = song.src;
+function renderTrackInfo(track) {
+    currentTrack = track;
+    audio.src = track.src;
     audio.preload = "auto";
 
-    musicTitle.textContent = song.title;
-    musicArtist.textContent = `${song.artist} · Personal Music`;
+    musicTitle.textContent = track.title || "背景音乐";
+    musicArtist.textContent = track.isLocal ? "未知歌手 · Personal Music" : `${track.artist || "Audius"} · 背景电台`;
+
+    likeBtn.classList.remove("liked");
+    likeBtn.innerHTML = '<i class="bi bi-heart"></i>';
 
     progress.value = 0;
     currentTime.textContent = "00:00";
@@ -2142,17 +2671,14 @@ function updatePlayButton(isPlaying) {
         ? '<i class="bi bi-pause-fill"></i>'
         : '<i class="bi bi-play-fill"></i>';
 
-    playBtn.setAttribute(
-        "aria-label",
-        isPlaying ? "暂停音乐" : "播放音乐"
-    );
+    playBtn.setAttribute("aria-label", isPlaying ? "暂停音乐" : "播放音乐");
 }
 
 function playAudio() {
     const promise = audio.play();
     if (promise) {
         promise.catch(error => {
-            console.warn("音乐播放失败：", error);
+            console.warn("音频启动被拦截或网络加载中：", error);
             updatePlayButton(false);
         });
     }
@@ -2162,6 +2688,29 @@ function togglePlayer() {
     const isHidden = player.classList.toggle("hidden");
     document.body.classList.toggle("player-visible", !isHidden);
 }
+
+function playNextSong(isManual = true) {
+    if (isManual) {
+        engine.onManualSkip();
+    }
+    if (currentTrack) {
+        playbackHistory.push(currentTrack);
+        if (playbackHistory.length > 10) playbackHistory.shift();
+    }
+
+    const next = engine.pickNextTrack();
+    renderTrackInfo(next);
+    playAudio();
+}
+
+// 异常自动降级至本地音乐
+audio.addEventListener("error", () => {
+    console.warn("当前在线音乐流载入失败，无缝回退至本地音乐");
+    if (!currentTrack.isLocal) {
+        renderTrackInfo({ ...LOCAL_FALLBACK_TRACK });
+        playAudio();
+    }
+});
 
 playBtn.addEventListener("click", () => {
     if (audio.paused) {
@@ -2176,18 +2725,51 @@ musicClose.addEventListener("click", togglePlayer);
 avatar.addEventListener("click", togglePlayer);
 
 prevBtn.addEventListener("click", () => {
-    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-    loadSong(currentIndex);
-    playAudio();
+    if (playbackHistory.length > 0) {
+        const prev = playbackHistory.pop();
+        renderTrackInfo(prev);
+        playAudio();
+    } else {
+        audio.currentTime = 0;
+    }
 });
 
 nextBtn.addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % playlist.length;
-    loadSong(currentIndex);
-    playAudio();
+    playNextSong(true);
 });
 
-audio.addEventListener("play", () => updatePlayButton(true));
+// 用户显式反馈交互
+likeBtn.addEventListener("click", () => {
+    if (currentTrack.isLocal) return;
+    const isLiked = likeBtn.classList.toggle("liked");
+    if (isLiked) {
+        likeBtn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+        engine.profileMgr.applyFeedback(currentTrack, "like");
+    } else {
+        likeBtn.innerHTML = '<i class="bi bi-heart"></i>';
+    }
+});
+
+dislikeBtn.addEventListener("click", () => {
+    if (currentTrack.isLocal) return;
+    engine.profileMgr.applyFeedback(currentTrack, "dislike");
+    playNextSong(false);
+});
+
+blockBtn.addEventListener("click", () => {
+    if (currentTrack.isLocal) return;
+    const ok = window.confirm(`确定永久屏蔽《${currentTrack.title}》吗？系统将不再推荐该曲目及相关创作者。`);
+    if (ok) {
+        engine.profileMgr.blockTrack(currentTrack);
+        playNextSong(false);
+    }
+});
+
+audio.addEventListener("play", () => {
+    updatePlayButton(true);
+    engine.onTrackStarted(currentTrack);
+});
+
 audio.addEventListener("pause", () => updatePlayButton(false));
 
 audio.addEventListener("timeupdate", () => {
@@ -2201,14 +2783,12 @@ audio.addEventListener("loadedmetadata", () => {
     duration.textContent = formatTime(audio.duration);
 });
 
-// 监听拖动：拖拽中更新时间预览，松手后才 seek，彻底避免进度条抖动
 progress.addEventListener("mousedown", () => { isSeeking = true; });
 progress.addEventListener("touchstart", () => { isSeeking = true; }, { passive: true });
 
 progress.addEventListener("input", () => {
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
-        const previewTime = (progress.value / 100) * audio.duration;
-        currentTime.textContent = formatTime(previewTime);
+        currentTime.textContent = formatTime((progress.value / 100) * audio.duration);
     }
 });
 
@@ -2224,47 +2804,13 @@ progress.addEventListener("mouseup", finishSeeking);
 progress.addEventListener("touchend", finishSeeking);
 
 audio.addEventListener("ended", () => {
-    nextBtn.click();
+    engine.onTrackEndedNaturally();
+    playNextSong(false);
 });
 
-loadSong(currentIndex);
+// 初始化挂载本地音乐作为默认底座（零等待，首屏立即可用）
+renderTrackInfo(LOCAL_FALLBACK_TRACK);
 document.body.classList.add("player-visible");
-
-/* =========================================
-   Audius 在线音乐接入（无缝合并至原生播放器）
-========================================= */
-async function loadAudiusTracks() {
-    const AUDIUS_API_KEY = "e610bb25a74812e3baf63b5d92acec200ac497d6";
-    try {
-        const response = await withTimeout(
-            "https://api.audius.co/v1/tracks/trending?limit=20&app_name=ShuoceNav",
-            {
-                headers: { "x-api-key": AUDIUS_API_KEY }
-            },
-            7000
-        );
-
-        if (!response.ok) throw new Error("Audius 请求失败");
-        const result = await response.json();
-        const tracks = result.data || [];
-
-        if (tracks.length > 0) {
-            playlist.length = 0; // 清空本地默认列表，换入 Audius 热门榜单
-            tracks.forEach(track => {
-                playlist.push({
-                    title: track.title || "未知歌曲",
-                    artist: track.user?.name || "Audius 音乐人",
-                    src: `https://api.audius.co/v1/tracks/${encodeURIComponent(track.id)}/stream?app_name=ShuoceNav`
-                });
-            });
-            currentIndex = 0;
-            loadSong(0);
-            console.log("Audius 在线曲库已同步至播放器");
-        }
-    } catch (e) {
-        console.warn("Audius 音乐加载失败，保留本地默认歌曲：", e);
-    }
-}
 
 /* =========================
    主题切换
@@ -2515,7 +3061,7 @@ runWhenIdle(async () => {
         loadNavigationFromKV(),
         loadWeather(),
         loadHitokoto(),
-        loadAudiusTracks()
+        engine.replenishPool() // 后台静默充能背景音乐候选池
     ]);
 
     loadStatisticsScript();
@@ -2653,7 +3199,6 @@ runWhenIdle(async () => {
     let animationFrameId = null;
     let isRunning = true;
 
-    // 限制最大 DPR 为 2，防止视网膜 4K 屏过度绘制发热
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resize() {
@@ -2750,7 +3295,6 @@ runWhenIdle(async () => {
         }, 200);
     });
 
-    // 切到后台或者最小化时完全停用动画，零 CPU 占用
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
             isRunning = false;
